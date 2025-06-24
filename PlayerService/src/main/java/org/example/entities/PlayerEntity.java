@@ -39,10 +39,22 @@ public class PlayerEntity {
     private Double height;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "creation_date", nullable = false, updatable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_modified_date", nullable = false, insertable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "last_modified_date", nullable = false)
     private Date lastModifiedDate;
+
+    // Lifecycle hooks for automatic date management
+    @PrePersist
+    protected void onCreate() {
+        this.creationDate = new Date();
+        this.lastModifiedDate = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.lastModifiedDate = new Date();
+    }
 }
