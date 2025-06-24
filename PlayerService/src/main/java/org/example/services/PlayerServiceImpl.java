@@ -5,9 +5,7 @@ import org.example.dtos.PlayerDTO;
 import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
-import org.example.repositories.NationalityRepository;
 import org.example.repositories.PlayerRepository;
-import org.example.repositories.PositionRepository;
 import org.example.utils.PositionUtils;
 import org.example.utils.Positions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,19 +27,18 @@ import java.util.List;
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerRepository playerRepository;
-    private NationalityRepository nationalityRepository;
-    private PositionRepository positionRepository;
 
     @Autowired
-    public PlayerServiceImpl(PlayerRepository playerRepository, NationalityRepository nationalityRepository, PositionRepository positionRepository) {
+    public PlayerServiceImpl(PlayerRepository playerRepository) {
         this.playerRepository = playerRepository;
-        this.nationalityRepository = nationalityRepository;
-        this.positionRepository = positionRepository;
     }
 
     @Override
     public PlayerDTO createPlayer(PlayerDTO dto) {
+        log.info("Creating player: {} {}", dto.getFirstName(), dto.getLastName());
+
         if (dto.getDateOfBirth() == null || dto.getDateOfBirth().isAfter(LocalDate.now())) {
+            log.warn("Invalid date of birth: {}", dto.getDateOfBirth());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date of birth must be in the past");
         }
 
@@ -49,65 +46,89 @@ public class PlayerServiceImpl implements PlayerService {
                 dto.getFirstName(), dto.getLastName(), dto.getDateOfBirth());
 
         if (exists) {
+            log.warn("Duplicate player detected: {} {} ({})", dto.getFirstName(), dto.getLastName(), dto.getDateOfBirth());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Player already exists");
         }
 
-        PlayerEntity entity = PlayerDTO.toEntity(dto);
-        return PlayerDTO.fromEntity(playerRepository.save(entity));
-    }
+        if (dto.getHeight() < 1.4) {
+            log.warn("Rejected player due to short height: {} {} ({}m)",
+                    dto.getFirstName(), dto.getLastName(), dto.getHeight());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The player is too short haha! :D");
+        }
 
+        PlayerEntity entity = PlayerDTO.toEntity(dto);
+        PlayerEntity saved = playerRepository.save(entity);
+        log.info("Player created with ID: {}", saved.getId());
+
+        return PlayerDTO.fromEntity(saved);
+    }
 
     @Override
     public PlayerDTO updatePlayer(Long id, PlayerDTO dto) {
+        log.info("Updating player with ID: {}", id);
+
         PlayerEntity existing = playerRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+                .orElseThrow(() -> {
+                    log.warn("Player not found for update: {}", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
+                });
 
         existing.setFirstName(dto.getFirstName());
         existing.setLastName(dto.getLastName());
         existing.setDateOfBirth(dto.getDateOfBirth());
 
         if (dto.getHeight() < 1.4) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "The player is too short haha! :D"
-            );
+            log.warn("Rejected player due to short height: {} {} ({}m)",
+                    dto.getFirstName(), dto.getLastName(), dto.getHeight());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The player is too short haha! :D");
         }
 
         existing.setHeight(dto.getHeight());
 
+        //TODO: need to fix the null assignment
         existing.setNationalities(dto.getNationalities().stream()
                 .map(n -> new NationalityEntity(null, n))
                 .toList());
 
+        //TODO: need to fix the null assignment
         existing.setPositions(dto.getPositions().stream()
                 .map(code -> {
                     Positions group = PositionUtils.resolvePositionGroup(code);
                     return new PositionEntity(null, group, code.toUpperCase());
                 })
                 .toList());
+        System.err.println(existing);
+        PlayerEntity saved = playerRepository.saveAndFlush(existing);
+        System.err.println("Saved nationalities: " + saved.getNationalities());
+        System.err.println("Saved positions: " + saved.getPositions());
+        log.info("Player updated: ID {}", saved.getId());
 
-        return PlayerDTO.fromEntity(playerRepository.save(existing));
+        return PlayerDTO.fromEntity(saved);
     }
-
 
     @Override
     public void deletePlayer(Long id) {
+        log.info("Deleting player with ID: {}", id);
         playerRepository.deleteById(id);
     }
 
     @Override
     public PlayerDTO getPlayerById(Long id) {
+        log.info("Fetching player by ID: {}", id);
         return playerRepository.findById(id)
                 .map(PlayerDTO::fromEntity)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found"));
+                .orElseThrow(() -> {
+                    log.warn("Player not found: {}", id);
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
+                });
     }
 
-
+    //TODO: Need to fix intersection by all filters
     @Override
     public Page<PlayerDTO> getPlayers(String firstName, String lastName, String nationality, String position,
                                       String sortBy, String order, int page, int size) {
+        log.info("Fetching players with filters [firstName: {}, lastName: {}, nationality: {}, position: {}], page {}, size {}",
+                firstName, lastName, nationality, position, page, size);
 
         Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy == null ? "id" : sortBy));
@@ -133,16 +154,20 @@ public class PlayerServiceImpl implements PlayerService {
             return predicates;
         }, pageable);
 
+        log.info("Fetched {} players", result.getTotalElements());
         return result.map(PlayerDTO::fromEntity);
     }
 
+    //TODO: need to implement this
     @Override
     public List<PlayerDTO> bulkUploadPlayers(MultipartFile file) {
+        log.warn("Bulk upload not implemented yet");
         return Collections.emptyList();
     }
 
     @Override
     public List<PlayerDTO> getAll() {
+        log.info("Fetching all players (DEV/TEST only)");
         return this.playerRepository
                 .findAll()
                 .stream()
@@ -152,6 +177,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public void deleteAll() {
+        log.warn("Deleting all players (DEV/TEST only)");
         this.playerRepository.deleteAll();
     }
 }
