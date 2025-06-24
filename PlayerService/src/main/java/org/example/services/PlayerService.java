@@ -19,4 +19,8 @@ public interface PlayerService {
                                String sortBy, String order, int page, int size);
 
     List<PlayerDTO> bulkUploadPlayers(MultipartFile file);
+
+    List<PlayerDTO> getAll();
+
+    void deleteAll();
 }

@@ -91,7 +91,6 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
 
-
     @Override
     public void deletePlayer(Long id) {
         playerRepository.deleteById(id);
@@ -140,5 +139,19 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<PlayerDTO> bulkUploadPlayers(MultipartFile file) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public List<PlayerDTO> getAll() {
+        return this.playerRepository
+                .findAll()
+                .stream()
+                .map(PlayerDTO::fromEntity)
+                .toList();
+    }
+
+    @Override
+    public void deleteAll() {
+        this.playerRepository.deleteAll();
     }
 }
