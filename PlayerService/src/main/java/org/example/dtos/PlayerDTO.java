@@ -1,0 +1,107 @@
+package org.example.dtos;
+
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.example.entities.NationalityEntity;
+import org.example.entities.PlayerEntity;
+import org.example.entities.PositionEntity;
+import org.example.utils.PositionUtils;
+import org.example.utils.Positions;
+
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PlayerDTO {
+
+    @PositiveOrZero(message = "Id must be zero or a positive number")
+    private Long id; //Optional on POST request
+
+    @NotBlank(message = "First name must not be blank")
+    @Size(max = 50, message = "First name must not exceed 50 characters")
+    private String firstName;
+
+    @NotBlank(message = "Last name must not be blank")
+    @Size(max = 50, message = "Last name must not exceed 50 characters")
+    private String lastName;
+
+    @NotNull(message = "Nationalities list cannot be null")
+    @Size(min = 1, message = "At least one nationality must be provided")
+    private List<@NotBlank(message = "Nationality name must not be blank") String> nationalities;
+
+    @Past(message = "Date of birth must be in the past")
+    private LocalDate dateOfBirth;
+
+    @NotNull(message = "Positions list cannot be null")
+    @Size(min = 1, message = "At least one position must be provided")
+    private List<@NotBlank(message = "Position name must not be blank") String> positions;
+
+    @NotNull(message = "Height must be provided")
+    @Positive(message = "Height must be a positive number")
+    private Double height; // Measured with Meters
+
+    private Date creationDate; //Optional on POST request
+
+    private Date lastModifiedDate; //Optional on POST request
+
+    public static PlayerDTO fromEntity(PlayerEntity player) {
+        List<String> nationalities = player.getNationalities() != null
+                ? player.getNationalities().stream()
+                .map(NationalityEntity::getName)
+                .collect(Collectors.toList())
+                : null;
+
+        List<String> positions = player.getPositions() != null
+                ? player.getPositions().stream()
+                .map(PositionEntity::getName)
+                .collect(Collectors.toList())
+                : null;
+
+        return new PlayerDTO(
+                player.getId(), // can be null or populated with value
+                player.getFirstName(),
+                player.getLastName(),
+                nationalities,
+                player.getDateOfBirth(),
+                positions,
+                player.getHeight(),
+                player.getCreationDate(),
+                player.getLastModifiedDate()
+        );
+    }
+
+    public static PlayerEntity toEntity(PlayerDTO dto) {
+        List<NationalityEntity> nationalityEntities = dto.getNationalities() != null
+                ? dto.getNationalities().stream()
+                .map(name -> new NationalityEntity(null, name))
+                .collect(Collectors.toList())
+                : null;
+
+        List<PositionEntity> positionEntities = dto.getPositions() != null
+                ? dto.getPositions().stream()
+                .map(code -> {
+                    Positions group = PositionUtils.resolvePositionGroup(code);
+                    return new PositionEntity(null, group, code.toUpperCase());
+                })
+                .collect(Collectors.toList())
+                : null;
+
+        return new PlayerEntity(
+                dto.getId(), // can be null or populated with value
+                dto.getFirstName(),
+                dto.getLastName(),
+                nationalityEntities,
+                positionEntities,
+                dto.getDateOfBirth(),
+                dto.getHeight(),
+                dto.getCreationDate(),
+                dto.getLastModifiedDate()
+        );
+    }
+}
