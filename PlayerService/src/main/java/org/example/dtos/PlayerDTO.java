@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class PlayerDTO {
 
     @PositiveOrZero(message = "Id must be zero or a positive number")
-    private Long id; //Optional on POST request
+    private Long id; // Optional on POST request
 
     @NotBlank(message = "First name must not be blank")
     @Size(max = 50, message = "First name must not exceed 50 characters")
@@ -46,21 +46,21 @@ public class PlayerDTO {
     @DecimalMax(value = "2.2", inclusive = true, message = "The player is too tall to play")
     private Double height; // Measured with Meters
 
-    private Date creationDate; //Optional on POST request
+    private Date creationDate; // Optional on POST request
 
-    private Date lastModifiedDate; //Optional on POST request
+    private Date lastModifiedDate; // Optional on POST request
 
     public static PlayerDTO fromEntity(PlayerEntity player) {
         Set<String> nationalities = player.getNationalities() != null
                 ? player.getNationalities().stream()
-                .map(NationalityEntity::getName)
-                .collect(Collectors.toSet())
+                        .map(NationalityEntity::getName)
+                        .collect(Collectors.toSet())
                 : null;
 
         Set<String> positions = player.getPositions() != null
                 ? player.getPositions().stream()
-                .map(PositionEntity::getName)
-                .collect(Collectors.toSet())
+                        .map(PositionEntity::getName)
+                        .collect(Collectors.toSet())
                 : null;
 
         return new PlayerDTO(
@@ -72,24 +72,23 @@ public class PlayerDTO {
                 positions,
                 player.getHeight(),
                 player.getCreationDate(),
-                player.getLastModifiedDate()
-        );
+                player.getLastModifiedDate());
     }
 
     public static PlayerEntity toEntity(PlayerDTO dto) {
         Set<NationalityEntity> nationalityEntities = dto.getNationalities() != null
                 ? dto.getNationalities().stream()
-                .map(name -> new NationalityEntity(null, name))
-                .collect(Collectors.toSet())
+                        .map(name -> new NationalityEntity(null, name))
+                        .collect(Collectors.toSet())
                 : null;
 
         Set<PositionEntity> positionEntities = dto.getPositions() != null
                 ? dto.getPositions().stream()
-                .map(code -> {
-                    Positions group = PositionUtils.resolvePositionGroup(code);
-                    return new PositionEntity(null, group, code.toUpperCase());
-                })
-                .collect(Collectors.toSet())
+                        .map(code -> {
+                            Positions group = PositionUtils.resolvePositionGroup(code);
+                            return new PositionEntity(null, group, code.toUpperCase());
+                        })
+                        .collect(Collectors.toSet())
                 : null;
 
         return new PlayerEntity(
@@ -101,7 +100,6 @@ public class PlayerDTO {
                 dto.getDateOfBirth(),
                 dto.getHeight(),
                 null,
-                null
-        );
+                null);
     }
 }
