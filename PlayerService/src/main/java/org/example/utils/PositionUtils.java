@@ -1,5 +1,7 @@
 package org.example.utils;
 
+import org.example.utils.enums.Positions;
+
 public class PositionUtils {
     public static Positions resolvePositionGroup(String code) {
         for (Positions group : Positions.values()) {

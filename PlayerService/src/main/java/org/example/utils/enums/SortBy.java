@@ -1,4 +1,4 @@
-package org.example.utils;
+package org.example.utils.enums;
 
 public enum SortBy {
     NAME,

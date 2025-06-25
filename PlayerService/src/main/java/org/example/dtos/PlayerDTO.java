@@ -8,7 +8,7 @@ import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.utils.PositionUtils;
-import org.example.utils.Positions;
+import org.example.utils.enums.Positions;
 
 import java.time.LocalDate;
 import java.util.Date;
