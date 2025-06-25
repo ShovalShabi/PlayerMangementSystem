@@ -1,10 +1,28 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { ThemeProvider, CssBaseline, createTheme } from "@mui/material";
+import { themeSettings } from "./theme";
+import { Provider, useSelector } from "react-redux";
+import store, { RootState } from "./store";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const ThemedApp = () => {
+  const mode = useSelector((state: RootState) => state.theme.mode);
+  const theme = React.useMemo(() => createTheme(themeSettings(mode)), [mode]);
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <ThemedApp />
+    </Provider>
+  </React.StrictMode>
+);
+
+export default ThemedApp;
