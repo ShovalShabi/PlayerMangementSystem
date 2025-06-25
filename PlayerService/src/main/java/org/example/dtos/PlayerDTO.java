@@ -9,10 +9,9 @@ import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.utils.PositionUtils;
 import org.example.utils.Positions;
-
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
@@ -33,14 +32,14 @@ public class PlayerDTO {
 
     @NotNull(message = "Nationalities list cannot be null")
     @Size(min = 1, message = "At least one nationality must be provided")
-    private List<@NotBlank(message = "Nationality name must not be blank") String> nationalities;
+    private Set<@NotBlank(message = "Nationality name must not be blank") String> nationalities;
 
     @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth;
 
     @NotNull(message = "Positions list cannot be null")
     @Size(min = 1, message = "At least one position must be provided")
-    private List<@NotBlank(message = "Position name must not be blank") String> positions;
+    private Set<@NotBlank(message = "Position name must not be blank") String> positions;
 
     @NotNull(message = "Height must be provided")
     @Min(value = (long) 1.5, message = "The player is too short to play")
@@ -52,20 +51,20 @@ public class PlayerDTO {
     private Date lastModifiedDate; //Optional on POST request
 
     public static PlayerDTO fromEntity(PlayerEntity player) {
-        List<String> nationalities = player.getNationalities() != null
+        Set<String> nationalities = player.getNationalities() != null
                 ? player.getNationalities().stream()
                 .map(NationalityEntity::getName)
-                .collect(Collectors.toList())
+                .collect(Collectors.toSet())
                 : null;
 
-        List<String> positions = player.getPositions() != null
+        Set<String> positions = player.getPositions() != null
                 ? player.getPositions().stream()
                 .map(PositionEntity::getName)
-                .collect(Collectors.toList())
+                .collect(Collectors.toSet())
                 : null;
 
         return new PlayerDTO(
-                player.getId(), // can be null or populated with value
+                player.getId(), // can be null or populated value
                 player.getFirstName(),
                 player.getLastName(),
                 nationalities,
@@ -78,23 +77,23 @@ public class PlayerDTO {
     }
 
     public static PlayerEntity toEntity(PlayerDTO dto) {
-        List<NationalityEntity> nationalityEntities = dto.getNationalities() != null
+        Set<NationalityEntity> nationalityEntities = dto.getNationalities() != null
                 ? dto.getNationalities().stream()
                 .map(name -> new NationalityEntity(null, name))
-                .collect(Collectors.toList())
+                .collect(Collectors.toSet())
                 : null;
 
-        List<PositionEntity> positionEntities = dto.getPositions() != null
+        Set<PositionEntity> positionEntities = dto.getPositions() != null
                 ? dto.getPositions().stream()
                 .map(code -> {
                     Positions group = PositionUtils.resolvePositionGroup(code);
                     return new PositionEntity(null, group, code.toUpperCase());
                 })
-                .collect(Collectors.toList())
+                .collect(Collectors.toSet())
                 : null;
 
         return new PlayerEntity(
-                dto.getId(), // can be null or populated with value
+                dto.getId(), // can be null or populated value
                 dto.getFirstName(),
                 dto.getLastName(),
                 nationalityEntities,

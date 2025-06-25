@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -26,11 +26,11 @@ public class PlayerEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "player_id")
-    private List<NationalityEntity> nationalities;
+    private Set<NationalityEntity> nationalities;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "player_id")
-    private List<PositionEntity> positions;
+    private Set<PositionEntity> positions;
 
     @Column(nullable = false)
     private LocalDate dateOfBirth;
