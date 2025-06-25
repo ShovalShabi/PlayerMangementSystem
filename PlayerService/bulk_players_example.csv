@@ -1,0 +1,501 @@
+firstName,lastName,dateOfBirth,height,nationalities,positions
+Dustin,Pierce,2006-05-15,1.63,Japan|Nigeria,ST
+Jessica,Boyd,2003-06-02,1.79,Italy|Spain,CAM|LB
+Melissa,Ford,2007-03-14,1.7,France,LW
+John,Jackson,1990-02-20,2.05,South Korea|Brazil,RB
+Mark,Little,2005-11-30,1.92,France,CDM
+Sandra,Salinas,2002-06-27,1.76,Argentina|Japan,RB|ST
+Brandi,Smith,1990-09-30,1.74,Germany,RW|CB|LW
+Megan,Phillips,1993-04-21,1.82,Argentina|Italy,LW
+Amber,Thornton,1992-11-21,1.81,Nigeria|Brazil,CDM|CAM
+Jennifer,Clark,1991-05-24,1.95,USA,RW|CDM|LB
+Jessica,Brown,1994-10-20,1.59,Italy|Japan,RW
+Sara,Bartlett,2004-08-06,2.05,Italy,ST|RB|CB
+Laura,Ayala,2001-10-27,1.81,Nigeria,RW|CM|CAM
+Gary,Stephens,2005-12-20,1.96,USA,CB|CM
+Robert,Davis,2005-01-30,2.08,Germany|Argentina,CAM
+Kristin,Campbell,1993-03-25,1.9,France,RB|RW|CM
+Alexis,Snyder,1998-09-19,2.1,Nigeria|Italy,RW
+Tracy,Robinson,1991-01-08,1.66,Germany,ST|CM|LW
+Patrick,White,1993-06-07,1.61,USA,RB
+Stephanie,Juarez,2002-11-29,2.04,USA|Argentina,CM|ST|LW
+Jessica,Young,1993-11-06,1.63,South Korea|Nigeria,CDM|CAM|LB
+Christopher,Smith,1990-05-11,1.58,Germany,LW
+Lisa,Jimenez,1990-10-01,1.78,Japan,CDM
+Devin,Davis,1991-11-18,2.09,South Korea,RB|CDM
+Donald,Thomas,1996-03-26,1.57,USA,CAM|RW|LW
+Christina,Edwards,2003-01-12,1.96,France|USA,LW|CAM
+Kimberly,Wood,2003-07-09,1.59,Italy|Spain,LB|CDM
+Douglas,Klein,2001-10-28,1.69,Italy,CM|LB|RW
+Tammy,Watkins,1994-11-11,1.89,France,ST|LW
+Vanessa,Bird,2004-05-08,1.91,Italy,RW|CM
+Victor,Sanders,2001-05-22,2.08,Nigeria|France,RB
+Laura,Watson,2000-03-08,1.68,Italy,CM|CB
+Amanda,Cooper,1996-06-21,1.97,USA,CAM|RW
+Ryan,Carlson,1993-01-13,1.64,South Korea,RW|CAM
+Amy,Harper,2003-01-09,1.92,USA|Nigeria,RB|RW
+Brian,Moore,1995-07-31,1.58,Brazil,RW|ST
+Lisa,Jones,2000-07-05,1.73,Japan,CDM
+Brian,Fisher,2005-03-25,1.57,Argentina,ST|RW|CAM
+Nicole,Tyler,1997-01-26,1.89,South Korea,CAM|ST
+Katie,Mccall,1999-01-20,1.66,Nigeria|USA,CDM
+Christopher,Hernandez,1992-09-07,2.03,Argentina|USA,CDM|CAM
+Steven,Nixon,2001-01-21,1.94,USA,RW|CAM
+Randall,Rogers,2004-02-07,1.97,Germany,CB|CDM
+Kenneth,Fuller,2006-12-06,2.0,Brazil|Germany,CB|CM
+Ashley,Koch,2003-10-23,2.09,France,LB
+Philip,Martin,1998-06-25,1.64,Japan|Nigeria,LB
+Douglas,Taylor,2006-02-19,1.85,France,RB|CM
+Carla,Collins,1999-12-10,1.85,Argentina|Nigeria,CB
+Lisa,White,1994-06-29,1.63,France|Nigeria,LB|CAM
+Kathleen,Harmon,2002-07-15,1.55,Argentina,CM|LB
+Stephanie,Murray,2005-02-12,2.09,Spain|USA,RW|ST
+Rachel,Long,2005-10-13,1.89,South Korea|Japan,CM
+Lacey,Richardson,1994-05-24,1.7,South Korea,RW
+Margaret,Neal,2000-04-17,1.71,France,LB|CB|CAM
+Lucas,Robinson,1994-11-09,2.07,Italy|Japan,LB
+Sarah,Olsen,1993-10-02,1.56,Argentina,CAM|ST
+Robert,James,2005-12-26,1.59,Nigeria,RW
+Brian,Morse,1999-12-16,2.09,France,LB|CDM|RB
+Tanya,Johnson,2002-10-17,2.06,Argentina|South Korea,CM
+Andrew,Brown,1989-11-29,1.64,Japan,CAM|LW
+Kelly,White,2005-01-30,2.05,Japan,LW
+Anthony,Clark,2003-04-10,1.59,Argentina,CB
+Leroy,Miller,2004-11-16,1.84,USA,LB|CM
+Nathan,Burton,1994-10-17,1.74,Argentina|Italy,RB|ST
+Bradley,Estrada,1997-06-22,1.72,South Korea|Germany,RW
+Ruth,Lewis,2001-07-04,1.61,Brazil|Spain,CAM
+William,Robinson,1990-03-17,1.81,South Korea|France,CDM|RB
+John,Blackwell,2005-05-17,1.85,Brazil|Germany,RB
+Eric,Smith,1990-11-30,1.78,Italy,CDM|RW
+Paul,Graham,2002-04-26,2.0,Argentina|Japan,CAM
+David,Vargas,1994-06-28,1.8,Italy,ST
+Dustin,Walker,1994-08-14,1.64,Argentina,CM|LB
+Jacqueline,Golden,1990-07-10,1.65,South Korea|Germany,RB|CAM
+Joel,Jones,1991-10-04,1.95,Italy,CB
+Chelsea,Jones,2007-04-25,1.81,Italy|USA,CB|LB
+David,Moore,2001-11-13,1.84,Brazil,CDM|CM
+Renee,Russo,2003-10-06,2.0,Nigeria,CB|CDM|CM
+Cassidy,Lee,2000-06-25,1.7,Germany|South Korea,ST|RW|CM
+Katrina,Johnson,2000-04-14,2.01,France,LB|CB|CM
+Tiffany,Johnson,1998-08-20,1.65,France,CB
+Ashley,Ali,2000-09-09,1.84,Germany|Italy,LW|ST|CAM
+Kyle,Pineda,2001-11-10,1.94,France|Brazil,RB|RW|CDM
+Garrett,Wilson,2000-03-14,1.81,USA|France,CDM|RB
+Jenny,Jones,2007-04-17,1.6,USA,CB
+Angela,Allen,2007-05-06,1.82,France,ST|RW|LW
+Patricia,Townsend,1991-07-18,1.9,Spain|France,CB|CM|ST
+Emily,Ray,1995-12-15,1.67,Nigeria|Japan,CB|ST
+Taylor,Vega,2006-06-11,2.01,Argentina,CB|RW
+Clifford,Simmons,1996-12-25,1.59,Brazil,CM
+Joseph,Olson,2006-08-30,1.81,Nigeria|Brazil,LW
+Michael,Nelson,2002-07-22,1.94,USA,RB
+Joanne,Kim,2003-11-24,1.82,Germany,CDM
+Patricia,Castaneda,2003-03-05,1.79,France|Italy,CAM|CM|RW
+Michelle,Stout,2004-02-26,2.08,Brazil,CB
+Andrew,Hall,1993-05-20,1.75,Spain,ST|RB
+Karl,Carr,1996-09-10,1.92,South Korea,ST
+Ryan,Collins,2001-10-15,1.72,South Korea|Brazil,CM|ST
+Ryan,Huerta,2000-02-23,1.8,South Korea|Nigeria,RB
+Shawn,Walker,1990-03-31,1.74,Germany|Italy,CDM
+Jennifer,Baxter,1994-10-10,2.0,Spain|Japan,CM|LW
+Michele,Taylor,1991-03-18,1.95,Italy,RB|CAM
+Sharon,Yates,2005-08-06,2.09,USA|South Korea,CB|CDM
+Bridget,Johnston,1990-05-28,2.01,Germany|Brazil,CAM
+Richard,Bishop,1991-09-09,1.98,Brazil,CAM|CDM
+Michelle,Mitchell,1989-08-29,1.73,Brazil,LB|RB
+Kristen,Garner,1996-03-05,1.96,Japan|Argentina,CB
+Brett,Stevens,2007-05-16,1.69,South Korea|Argentina,LB|LW
+Heather,Wright,1991-12-29,2.01,Spain|Italy,LW
+Timothy,Mcguire,1993-05-27,1.97,Japan|France,CDM|LB|CAM
+Patricia,Miller,1993-04-29,1.6,Brazil,CB|CDM
+Timothy,Franklin,1998-12-08,1.6,South Korea|Argentina,CAM|CM
+Whitney,Black,1997-07-22,1.89,South Korea|Germany,CM
+Suzanne,Zuniga,1991-06-19,1.74,Brazil|Spain,RW
+Jennifer,Smith,1990-07-31,1.8,USA,LW|CDM
+Kayla,Carroll,1997-07-17,2.01,Spain|Japan,LB|CB|CAM
+Trevor,Jones,2004-05-07,1.91,Nigeria,RB|LB|LW
+Chelsea,Johnson,2001-09-08,1.76,South Korea|Spain,CDM|CM
+Bernard,Taylor,2005-11-18,1.83,Germany,CM|RB
+Haley,Fuller,1990-02-04,1.7,Nigeria,ST|RW
+Andrew,Warren,1993-05-29,1.94,Italy|Nigeria,LB|ST|RW
+Darlene,Morgan,1999-02-01,1.76,USA|South Korea,LB
+Billy,Miller,1990-11-23,1.96,Spain,RB
+Veronica,Abbott,1991-05-28,1.84,South Korea,CB|CM
+Rhonda,Scott,2003-10-22,1.79,Italy|Japan,CM
+Allen,Mcintyre,1996-04-21,1.57,Italy,LB|CM|CDM
+Manuel,Warren,2000-06-24,1.94,Germany,LB|RW
+Alejandra,Cox,2004-05-11,1.94,South Korea|Japan,CM
+Erik,Murray,2005-02-23,1.91,South Korea|Brazil,CAM
+Mary,Herring,1992-07-02,1.75,Nigeria,RW|CAM|ST
+Samantha,Robinson,1991-09-01,2.01,Germany|Italy,ST|LW|CM
+Larry,Taylor,2003-12-16,1.89,South Korea|Brazil,CM|RB
+Sheila,Lutz,1997-02-02,1.74,Germany|USA,LB|RB|CM
+Joseph,Bennett,2005-08-20,1.9,Argentina,RB|CDM
+Michael,Perry,1994-01-20,1.74,Italy|France,RW|LW
+Mark,Gordon,1994-04-03,1.72,Nigeria|Spain,CDM
+Meghan,Davis,1997-11-29,1.71,Spain|Germany,RB|CDM|CB
+Kevin,Ellis,1999-10-19,1.93,Nigeria|Spain,CAM
+Eric,Walsh,1992-05-16,1.88,France|Brazil,CAM
+Evan,Horton,1989-07-09,2.03,Spain|Italy,RW|CM|CAM
+Julie,Kane,2003-03-08,1.91,USA|Italy,CM
+Jeffery,Carpenter,1996-02-14,2.07,Japan|Brazil,ST|LW|RW
+Tracy,Jacobs,1995-01-11,1.98,Argentina,CDM
+William,Ellis,1993-08-08,1.78,Germany|Italy,LB
+Charlene,Chang,2002-12-17,1.88,Italy|Germany,LB|RW
+Jose,Walls,1995-02-10,1.6,Brazil,RB|CAM|RW
+Michael,Smith,1990-08-10,2.06,Spain|Germany,ST|CB
+Amber,Cole,2003-03-02,2.02,Spain,CAM|CDM
+Kathryn,Whitehead,2002-03-24,1.81,Italy,ST|LW
+Annette,Knight,1998-07-21,1.77,Italy|France,ST|CDM
+William,Mccullough,1998-10-21,1.8,South Korea,CM|CB
+Christine,Lee,2002-11-15,1.79,Nigeria,LB|ST|LW
+Emily,Owens,1998-12-14,1.62,Japan,CAM|ST
+Thomas,Peters,1990-11-09,1.56,South Korea|USA,LW
+Rachel,Rollins,2005-05-21,2.02,Argentina|Nigeria,CDM|CB
+Melissa,Thompson,1996-03-13,1.75,France|South Korea,LB
+Sonya,Mcdonald,1990-10-27,2.07,France|Spain,RB|CAM
+Timothy,Cisneros,2002-07-27,2.01,Germany|Brazil,CDM|CAM
+Ashley,Garcia,1993-12-02,1.81,South Korea|France,CM|CAM
+Robert,Anderson,1991-08-16,2.1,Japan,ST|CM
+Alicia,Moore,1992-01-21,2.01,Argentina|Germany,CAM|CDM
+Veronica,Santana,1993-11-05,1.82,France,ST|RB
+Richard,Parker,1992-10-26,2.02,USA,LW
+Lauren,Vazquez,1996-10-24,1.82,Spain,CB|ST|RW
+Jennifer,Smith,1991-01-12,1.62,Nigeria|Brazil,ST|CM|LB
+Charles,King,1991-06-30,1.61,France|Nigeria,CB
+Lori,Duncan,1996-03-19,1.9,Japan|Spain,RB|LW
+Rebecca,Alvarez,1997-07-02,1.85,Brazil|Japan,LB|CDM
+Tara,Burton,1994-01-01,1.62,Germany,CAM|CM|CB
+Ricardo,Moore,2000-07-13,2.02,Spain|Argentina,ST|LW
+Benjamin,Dunn,1997-08-16,1.66,Spain|Japan,RW
+Timothy,Lynch,2005-12-08,1.8,South Korea|Argentina,CB|ST|LB
+Paul,Graves,2001-09-05,1.93,Italy|USA,RW|LW|RB
+Jason,Stephens,2006-08-06,1.58,USA,CDM
+Charles,Frye,1995-02-10,1.76,USA,LB
+Chelsea,Nelson,1998-09-15,1.65,Germany,CM|CDM
+Donna,Holmes,1997-03-05,1.94,France|Spain,LB|CM|RW
+James,Werner,1991-09-14,1.98,Italy,RW|ST
+Thomas,Bryant,1998-09-22,1.79,South Korea,CAM|CM|RW
+Wendy,Jimenez,1990-08-18,1.59,Italy|Spain,LB
+Anthony,Arnold,1998-07-04,2.01,South Korea|Japan,ST|RB|CAM
+Mario,Murphy,2003-11-25,2.07,Argentina|Brazil,RW
+Jared,Smith,1999-09-02,1.84,South Korea,CB|RB
+Marissa,Beck,2006-02-09,1.78,France,LW|RB
+Jason,Shaw,2000-04-15,2.02,Brazil,CAM|ST
+Michelle,Haynes,1989-11-11,1.96,Italy|Argentina,CB
+Scott,Simpson,1997-09-24,1.91,Nigeria|Italy,ST
+Cynthia,Fleming,2005-07-29,1.97,USA,CB|CAM
+Kathryn,Moody,2007-03-23,1.81,Italy,ST|CDM
+Jessica,Williams,1993-09-07,1.67,Germany,CM
+Tracy,Williams,1998-04-01,1.58,Argentina,RW
+Steve,Torres,2001-05-27,1.71,Italy,CDM
+Andrea,Mills,1992-04-28,1.78,USA|Italy,RW|LW
+Angela,Oliver,2003-02-28,2.0,USA|Italy,CDM|RB|LW
+Shane,Clay,2004-08-19,2.03,Japan|USA,RW|ST
+Jeffrey,Riddle,2001-10-19,1.9,South Korea,RB|RW|LW
+Colin,Wilson,1994-03-24,1.76,Japan|South Korea,RB
+Kimberly,Campbell,1998-02-09,1.7,USA|Argentina,CAM
+Nicholas,Trujillo,1994-10-23,1.9,Japan,ST|LB|CAM
+Ian,James,1999-05-18,1.83,Brazil,LW|CAM|CDM
+Christopher,Cunningham,1991-02-04,1.95,USA|Argentina,RB|CM
+Larry,King,2003-10-19,2.1,Germany|Italy,CAM|CM
+Donna,Ramsey,1991-10-23,1.66,France|South Korea,CM|ST
+Mark,Cox,1992-07-07,1.91,Argentina,CB
+Veronica,Myers,1997-08-08,2.07,France|Japan,LB|CAM
+Stephanie,Alvarez,2001-10-18,2.0,Brazil|Italy,LB
+Megan,Oneill,1992-06-07,1.56,Italy|Brazil,ST|LW
+Jason,Thornton,1998-12-20,2.05,USA,CM|ST|RB
+Paul,Simon,2004-04-23,1.94,France|Nigeria,LB
+Rebecca,Crawford,2002-10-23,1.69,South Korea,CDM|CAM
+Richard,Kramer,1991-09-30,2.09,Spain|Japan,LB
+Charles,Garner,2004-07-22,2.08,South Korea|Japan,RB
+Timothy,Anderson,1999-12-21,2.03,South Korea|Brazil,CB|CDM
+Todd,Park,2006-10-09,2.06,Germany,CM|LW|RB
+Anthony,Tucker,1991-03-14,1.66,Argentina,RW|RB
+Andrea,Pugh,2000-04-12,1.58,Italy,CAM
+Sally,Hall,1990-11-30,1.75,France|Argentina,LB|CB
+Tom,Herrera,1990-10-20,1.83,Germany,ST
+Michael,Beck,1995-07-11,1.88,Nigeria|Spain,LB
+Carrie,Rodriguez,2002-03-07,1.83,Japan|Brazil,LW
+Rachel,Morgan,1998-01-24,1.76,Nigeria,CM|CDM
+Joel,Young,2000-11-21,1.88,Japan|Argentina,RB|LB
+Calvin,Anderson,1993-04-16,1.8,Germany,RB
+Madison,Davis,1997-01-01,1.62,Spain,CB|RW
+Brian,Mcmahon,1999-12-15,1.78,Nigeria|Argentina,LB|LW
+Brian,Mccullough,2002-01-24,2.08,Italy|Germany,RB|LW|ST
+Jill,Lowery,2003-03-23,1.6,USA,LW
+Jeffrey,Davis,1990-05-11,2.03,Argentina|Spain,CM
+Lisa,Byrd,1993-03-12,1.85,Nigeria,CDM|LW
+Joe,Mclaughlin,1991-02-15,1.77,Brazil,CAM|RB|CM
+Joann,Hunter,2003-10-06,1.85,Japan|Nigeria,RW|LW
+Nicholas,Sloan,1993-05-12,2.05,Japan,RW|CAM
+Kimberly,Webster,1999-12-22,1.95,Brazil,RB
+Marilyn,Bruce,1995-04-23,1.8,Nigeria|Italy,ST|CM
+Timothy,Stewart,2004-11-26,1.67,Germany,RW|CB
+Jerry,Garcia,1998-11-04,1.76,Germany,ST|RB|LW
+Michael,Parker,1990-12-07,1.86,Argentina|Italy,LB|LW
+Amanda,Wheeler,1995-06-09,2.07,Japan|Italy,CM|CDM|ST
+Jesse,Petty,2002-07-25,1.9,France|South Korea,CB
+Aaron,Carr,1994-02-16,1.7,South Korea|Nigeria,RB
+Justin,Brooks,2005-05-31,1.7,South Korea|Germany,RB|CM|CAM
+Tara,Chen,1990-01-14,1.91,Argentina|South Korea,CDM|RB
+Christine,Morgan,1999-09-15,1.81,Germany,RB|CAM|CM
+Ariel,Jenkins,1994-10-07,1.68,South Korea|Italy,CM|RB|ST
+Nicholas,Wilson,2001-03-01,1.89,Nigeria|Japan,RB|CB
+Bryan,Parks,2000-01-12,1.65,Spain,RB
+Mitchell,Howard,1990-03-10,1.83,France,CDM|LW|CAM
+Michelle,Martinez,1998-07-15,1.77,Nigeria,CDM|RW
+Kari,Martin,1995-02-04,2.04,Argentina,CM|CB|CDM
+Edward,Fischer,1999-12-30,1.68,France,RW
+Shelly,Swanson,1993-06-26,1.72,Italy|Spain,CAM
+Rebecca,Werner,1999-01-23,1.56,Italy,CM|ST|LB
+Lisa,Payne,2005-03-02,1.67,Spain,LB|CAM
+Brandi,Sharp,1997-03-04,2.02,Brazil,RB|CAM|CDM
+Robert,Ruiz,1999-01-07,1.57,USA,RW
+Jesse,Williams,2003-08-22,1.57,Italy,CB
+Christopher,Harris,1993-09-30,1.85,USA|South Korea,CDM|LB|LW
+Vanessa,Johnson,2006-10-01,1.75,USA|Spain,CDM
+Mario,Gates,1990-05-20,1.98,Japan|Italy,RB|CM
+Kelly,Hubbard,2003-11-05,1.6,Argentina|Nigeria,RB|CDM
+Paula,Nguyen,2004-03-05,1.66,Italy|Nigeria,RB|LW|RW
+Christopher,Miller,2005-03-02,1.64,Germany,CB
+Sheila,Mitchell,1990-05-20,2.0,South Korea,LW
+Courtney,Morris,1991-04-25,1.89,Japan|Spain,CAM|ST|RW
+Seth,Brown,2004-05-25,1.6,USA,CAM
+Jennifer,Hammond,1993-08-31,1.78,Nigeria,LW|CAM
+Marc,Page,1993-01-16,1.65,Japan|Argentina,CM|LW
+Jennifer,Jones,2000-08-11,1.89,Spain,LW|CDM
+Ronald,Green,1990-09-28,1.81,France,LW|CB|RB
+Nathaniel,Gaines,1996-05-15,1.56,Japan,CAM|LB
+Christopher,Olsen,1996-11-18,1.72,Spain|South Korea,RW
+James,Yates,1991-07-11,1.79,France,ST|CM|LB
+David,Wolf,1992-03-25,1.83,USA|Nigeria,CM|CAM|RB
+Michelle,Fernandez,2005-01-25,1.74,Argentina|Spain,LB
+Lori,Moore,2006-05-31,1.78,South Korea,CDM
+Alexander,Zavala,1989-07-05,1.62,Germany,LB|LW|CDM
+Holly,Ross,2003-07-07,2.08,Italy,LB
+Patrick,Ramirez,1999-10-10,1.65,South Korea,RW
+Julie,Johnson,1993-09-25,1.59,France|Spain,CDM|CM|LB
+Angela,Russo,2004-02-17,1.98,Spain,CB|LW
+Thomas,Smith,2006-09-08,1.89,Brazil,LB|LW
+Raymond,Stevens,1996-06-25,1.97,USA,LW
+Kenneth,Marquez,2006-11-05,1.72,Nigeria,RW|LW
+Tricia,Sullivan,2005-09-03,1.83,Argentina,ST|CAM|LW
+Robert,Osborne,1995-06-12,1.96,Nigeria,LW|CM
+Jessica,Williams,1992-04-20,1.93,Italy,RB|RW
+Regina,Nguyen,1995-06-08,1.66,France|Brazil,LW
+Mary,Morgan,1991-06-17,1.79,USA|Nigeria,ST|CAM|LB
+Patricia,Valenzuela,2006-09-18,1.81,Nigeria,ST|RW|CAM
+Carol,Rogers,2001-09-28,1.88,Brazil|Japan,CB
+James,Pitts,1990-10-04,1.62,Germany|Italy,ST|CB
+Allison,Eaton,2003-12-15,1.68,South Korea|Brazil,CAM
+Jennifer,Maddox,1995-02-05,1.82,Germany|Japan,CDM|CAM
+Brian,Delgado,1999-10-11,1.67,Germany|South Korea,RW|LW
+Katherine,Clark,1997-11-14,1.56,Italy,LB|CB
+Leslie,Schmidt,1994-05-28,2.07,Italy,RB
+Gary,Castaneda,1991-10-25,1.6,Japan,ST|CAM
+Molly,Mccall,1993-12-02,1.97,Nigeria,RW
+James,Barber,1996-08-06,1.83,USA,LB
+Jaime,Smith,1992-07-31,1.57,Japan,LW|CDM
+Amy,Silva,2004-03-27,1.71,South Korea|USA,RW|RB
+Erik,Miller,1992-07-29,2.03,Japan|Nigeria,CAM|LB
+Patrick,Clark,2002-07-30,1.87,France|Germany,CM
+Allison,Braun,2007-05-31,2.09,Nigeria|South Korea,CAM|LW|ST
+Daniel,Thompson,2003-01-01,1.74,Japan,ST
+Bradley,Flores,1992-12-29,1.87,Brazil,CB
+Raymond,Edwards,1999-11-26,1.7,Spain|Nigeria,ST|RB
+Paul,Wood,1999-10-09,1.99,Spain,LW
+Laura,Woods,1990-03-25,2.1,Nigeria,RB|CDM|CB
+Sarah,Estrada,1998-06-08,1.75,France|Nigeria,CM|LW|LB
+Derek,Sanford,1999-07-26,1.84,Argentina|Italy,RW
+Brittany,Le,2001-11-29,1.64,Argentina|Nigeria,CB
+Kristi,Holmes,2001-02-22,1.62,France|Argentina,CDM|CM
+Erika,Reed,2003-01-10,1.66,Germany|South Korea,LW
+Paul,Burton,2005-03-14,2.02,Japan|Nigeria,RB|CAM
+Nathaniel,Campbell,1989-11-17,2.09,France|Japan,RB|CDM|CB
+Gregory,Burns,1994-12-18,1.62,Nigeria,RW
+Holly,Jacobs,1996-11-30,1.68,South Korea|Japan,ST|CB
+Brian,Vaughan,1998-03-23,1.66,Spain,ST
+Christina,Berry,1999-11-03,1.9,Argentina|Japan,CM
+Michael,Jones,2004-09-12,1.63,USA|Brazil,RW|CDM|CM
+Lindsey,Lowery,2002-10-11,1.99,Brazil,LW|RW|CDM
+Susan,Johnson,1997-06-30,1.78,France,RB
+Amy,Brown,2003-07-15,1.89,France,RW|CDM|LW
+Joanna,Flores,2001-09-21,1.75,Spain,CB|LB
+Gail,Ruiz,1993-01-17,1.67,USA,CM
+Mark,Jones,2005-01-19,1.94,Japan,RW|CB
+Christine,Oliver,1990-12-14,1.56,USA,CAM|CM
+Julie,Baldwin,2004-06-15,2.02,Italy,CB|RB
+Jason,Wallace,1998-04-27,2.07,Italy|France,RB
+Katelyn,Stewart,1997-02-07,1.69,Argentina|South Korea,LW
+Michael,Miller,2004-03-18,1.58,Japan|Argentina,CB|RW
+Debbie,Roman,2002-03-13,1.9,Japan,LW|CAM|RB
+Lisa,Ellis,2006-12-11,1.96,Italy,CB|LW|CM
+Kimberly,Garcia,2006-06-25,2.04,France,CB|RW|CAM
+Michael,Brady,2000-07-31,1.95,Nigeria|Italy,LW
+John,Mcguire,2001-05-22,1.61,Italy,CAM
+Nancy,Roberts,1998-02-04,2.05,USA,RW
+Daniel,Schultz,2006-07-19,1.8,Germany,LW|CB
+Antonio,Foster,1999-02-27,2.06,Spain|Argentina,RB|RW
+Natalie,Perez,2003-01-04,1.8,USA|Brazil,LW|CB|CM
+Casey,King,1997-07-30,1.81,South Korea|Brazil,CAM|CM
+David,Harrison,2005-01-31,2.1,Spain|Germany,LW
+Tina,Hicks,2005-05-05,2.05,Germany|South Korea,CM|RW|CDM
+Christopher,Hamilton,2005-10-29,1.65,France,ST
+Daniel,Hall,2005-05-23,1.74,USA,LW|CAM|ST
+Theresa,Arellano,2006-01-14,1.94,Germany,RW
+Cassandra,Jenkins,1991-12-16,1.61,Japan,CM|RB
+Lori,Mccarthy,2006-06-01,1.57,Argentina|USA,RW
+John,Armstrong,2004-04-23,1.95,Japan,RB
+Meghan,Chavez,1991-09-07,1.95,Spain|Argentina,RW|CM
+Angela,Williams,2005-04-04,1.86,Brazil|Argentina,CAM|LW|CM
+Cindy,Ingram,1993-05-20,1.82,Japan,CAM
+Randy,Cox,1998-01-30,1.97,Brazil|France,CB
+Kimberly,Taylor,2006-03-05,1.83,South Korea,CB|RW
+Brenda,Wiley,2000-05-24,1.55,USA,LW
+Paul,Miller,2006-12-05,1.86,Japan,LW|LB
+Sean,Hansen,2002-12-23,1.97,Nigeria,CDM|RB
+Richard,Cole,1991-11-09,1.96,Germany|Argentina,LW|RB
+Shari,Payne,2002-12-08,1.81,Germany,LB|RB|ST
+Herbert,Mann,2000-06-25,2.07,Germany|Argentina,LB
+Adrian,Mcgee,1990-11-17,1.76,Germany,CAM
+Jenna,Kane,1993-03-14,1.75,Germany,CB
+Adam,Martin,1994-10-29,1.95,South Korea,RB|RW|LB
+Michael,Combs,1996-05-17,1.87,Japan,LB
+Mark,Mccormick,2005-10-10,1.69,USA|South Korea,CAM
+Cheryl,Keller,2001-04-28,1.61,Argentina|South Korea,CDM|CM|CAM
+Tammy,Smith,2005-05-07,1.68,France,CM
+David,Lee,1993-07-20,2.03,Germany|Spain,CDM|CAM|CM
+Megan,Bass,1994-03-12,1.82,Italy|France,CB|ST
+Jeffrey,Williams,1994-03-20,1.75,Italy|Brazil,CM|ST|LW
+Tracy,Carter,2005-03-18,1.68,Germany|Brazil,RW|ST
+Teresa,Nguyen,1990-02-18,2.1,Brazil,ST
+Amanda,Juarez,2006-12-30,1.72,Nigeria|Brazil,CM|CB|ST
+Amy,Holmes,1996-05-26,1.62,South Korea|Italy,RB
+Phillip,Moore,1995-12-07,1.69,USA|France,CAM|RB|CDM
+Barbara,Chen,1997-11-26,1.56,South Korea,LW|CDM
+Kristen,Miller,2006-12-13,2.04,Italy,CAM
+Patricia,Villegas,1991-12-22,1.77,Germany|Argentina,CB|CDM
+Jessica,Long,2006-11-02,1.78,Argentina|Italy,RB|ST
+Adam,Bray,2005-09-15,1.99,South Korea|Nigeria,CB
+John,Nelson,1990-04-25,1.91,France,CDM|RB
+Thomas,Ortiz,2001-09-12,1.64,Nigeria,ST|CB
+William,Patel,2001-04-20,1.7,Brazil|Germany,LW
+Tammy,Nguyen,1991-11-04,1.67,France,RB
+Taylor,Howell,2000-05-19,1.65,France|Japan,ST|LB
+Melanie,Day,1996-04-10,1.75,South Korea,CB|ST|CM
+Stephen,Foster,1999-02-15,2.04,France,RW
+Riley,Hoffman,2003-02-21,2.06,South Korea|Spain,RW|CB
+Amy,Davis,1999-06-10,2.0,France,CDM|LW
+Andrea,Johnston,1998-02-26,1.91,Argentina,RB
+Crystal,Welch,1995-01-10,1.97,USA,CM|RB
+Kevin,Schneider,1991-11-07,1.93,France|Japan,RW|ST
+Charles,Evans,1990-04-12,1.72,Spain|Nigeria,CDM
+Steve,Goodman,1989-12-24,1.57,Germany|Japan,CAM|RB
+Michelle,Hebert,1997-01-09,1.58,Italy|Argentina,CDM
+Sharon,Porter,2004-08-27,1.77,Italy|Argentina,ST|CDM|CB
+Mary,Melton,2001-07-10,2.07,Nigeria,RW|ST
+Shannon,Jackson,1993-03-14,2.01,France,CB
+Jacqueline,Hopkins,1994-03-05,2.1,Nigeria|France,LB
+Donald,Contreras,2005-06-24,1.69,Germany,ST
+Crystal,Griffith,1995-05-17,1.7,USA,LB|ST
+Jacob,Shields,1989-10-17,1.8,Japan|Germany,LB|ST
+Paul,Orozco,1999-04-06,1.81,Brazil,CB
+Marilyn,Heath,2005-12-30,1.65,Argentina,LW|ST
+James,Morse,2001-09-10,1.91,USA,LB|LW|CM
+Sara,Allen,1996-01-23,2.09,Argentina|South Korea,CDM|RW|CM
+Sarah,Morris,1992-12-23,1.65,Nigeria|Brazil,CDM|CB
+John,Smith,2001-05-23,1.7,USA|South Korea,CB|ST
+Eric,Marshall,1993-09-22,2.04,Germany,LW|CB
+Maria,Hill,1990-07-13,1.71,Nigeria,RB
+Donna,Smith,2007-03-15,2.08,Nigeria,RB|ST
+Heather,Wilson,2005-05-03,2.08,USA,LW
+Elizabeth,Miller,1993-04-09,1.97,France|Nigeria,CB
+Elizabeth,King,2002-10-25,2.05,Nigeria|Brazil,CB
+Samantha,Herrera,2001-11-14,1.56,Italy|Argentina,CDM
+Brittney,Koch,1991-03-05,1.57,Japan|USA,ST|CB
+Nichole,Perkins,1997-02-20,1.7,USA,LW|LB|CB
+Chelsea,Parker,1998-06-06,1.7,France|Brazil,CAM|CDM
+Garrett,Chavez,2007-03-19,1.76,South Korea,ST|RB
+Karen,Moran,2000-08-15,1.92,Spain,CM|LB
+Jason,Durham,1992-07-16,1.77,USA,RW
+Kyle,Burnett,1996-03-19,2.0,South Korea,ST|RW|LW
+Tammy,Johnson,1997-07-08,1.96,France,LB
+Taylor,Hayes,1997-08-29,1.89,Spain,RW|CDM
+Michael,Parker,2003-06-24,1.69,Japan|Italy,LW|CAM
+Kaylee,Cuevas,1998-04-29,1.64,Brazil|Spain,CDM|CAM
+William,Sherman,1998-12-30,2.06,Italy|France,ST|CM|CDM
+Paul,Anderson,1996-04-22,1.6,France,CM|ST
+Amanda,Barrett,2001-10-04,1.65,South Korea,CAM
+Christopher,Kim,1995-05-21,1.63,France,RW|CM
+Peter,Best,1995-08-19,1.76,USA|Italy,CDM|LB|ST
+John,Carter,2001-03-10,1.87,France,RW
+Robert,Davis,2002-08-11,2.09,Germany|USA,ST
+Crystal,Eaton,2003-11-30,1.83,Argentina|Germany,RB
+Andrea,Luna,1991-04-07,2.02,Italy|Japan,LW|RB
+Bonnie,White,1990-09-24,1.79,Brazil|Germany,CM|CB
+Robin,Prince,2000-06-13,1.79,France|Nigeria,CAM
+Rachael,Jacobs,2001-02-01,1.58,Japan|Spain,CAM|CB
+Sierra,Fleming,1997-06-28,1.59,Spain,CB|LB
+Jamie,Freeman,1994-08-17,2.07,Spain,LW|RB|CDM
+Misty,Long,2003-08-01,1.75,Nigeria,ST
+Kathy,Cunningham,1999-05-31,1.85,Germany,CM
+Robin,Chung,2006-01-07,1.76,France|Nigeria,ST|LB
+Drew,Hicks,1990-08-04,1.99,Spain|Germany,CAM|CM|CDM
+Joshua,Bradshaw,2005-02-07,1.76,Germany,CDM
+James,Morris,1997-04-23,1.74,Brazil|Spain,LW
+Megan,Price,1999-07-16,1.61,France|South Korea,RW|CAM|ST
+Michael,Sanders,1998-01-26,1.92,Japan|Brazil,ST|CAM
+Patricia,Hanson,2003-01-02,1.58,Brazil,ST
+Kenneth,Jackson,2002-10-15,1.73,Nigeria,CB
+Jack,Beltran,1999-02-02,1.58,Spain,RW|LB
+Jeremy,Lee,1992-05-10,1.57,Argentina,CAM
+Kevin,Martin,1990-07-03,1.82,Brazil,RB
+Jeremy,Wong,2005-01-20,1.82,Italy,CDM|CB|CAM
+Teresa,Kennedy,2005-12-18,2.07,Italy|South Korea,LW|CB|RW
+Jackson,Graham,2006-06-11,1.98,Germany,CDM|LB
+David,Bradley,1990-10-21,1.84,Italy,CDM
+Tracey,Flores,1994-09-13,1.88,Argentina,RB
+Jennifer,Pugh,1998-05-26,1.86,Brazil,ST|RB
+Adam,Young,2001-03-28,2.07,France|Italy,CDM|CAM
+Carol,Mills,1990-10-15,1.8,Japan|France,RW
+William,Smith,2005-12-17,1.58,Spain|Argentina,CAM
+Richard,Santos,1996-08-16,1.66,Argentina,ST
+William,Ruiz,1992-03-27,1.71,Germany|Argentina,CB
+Rebecca,Hubbard,1996-05-27,1.76,Italy|Argentina,RB|ST|CAM
+Amy,Sanchez,1990-11-24,1.88,Brazil|Italy,CM
+Ian,Jones,1998-12-07,1.65,Spain,LB|LW|RB
+James,Dennis,1991-06-25,2.04,Argentina|Spain,CB
+Martha,Malone,1991-11-01,1.61,Spain|Italy,LW|CM
+Catherine,Sanchez,1991-08-15,1.66,South Korea,LB|LW
+Dustin,Mahoney,2002-11-26,1.94,Nigeria,CDM|CB|CAM
+Craig,Berg,1992-10-26,1.92,USA,CDM
+Patrick,Baker,1996-09-16,1.67,Argentina|South Korea,ST
+Kathleen,Thomas,2002-04-29,2.09,Brazil|France,CM|RB|ST
+Michelle,Weber,2001-06-15,1.86,Japan|Nigeria,CDM|LW|ST
+James,Harris,2006-10-22,1.9,Bhutan,RWB
+Breanna,Smith,1991-04-19,1.72,Indonesia,CAM;RW;LW
+John,Crawford,1998-12-29,1.71,Djibouti;Bahrain,LF;CDM;LWB
+Derrick,Carpenter,1992-12-26,1.92,Swaziland,CAM;ST;CDM
+Jay,Christian,2003-02-19,1.88,Costa Rica;Peru,CF;LM
+Scott,Roth,2006-05-31,1.63,Aruba;Chile,RM;LB
+Julie,Robinson,1998-04-17,1.85,Palau,RW;LM
+Jasmine,Jefferson,1998-04-24,1.62,Liberia,RW
+Mary,Hines,2007-03-12,1.68,Jordan;Botswana,RWB;CB;LW
+Amber,Phillips,2002-05-17,1.61,Portugal;Greece,LF
+Jacob,Hill,2006-03-29,1.81,Ethiopia,CM;LM
+Nicole,Fuentes,1994-11-30,1.63,Cocos (Keeling) Islands;Finland,CAM;RWB;ST
+Michelle,Robbins,2002-05-06,1.97,Bhutan;United Arab Emirates,CF;RW;LB
+Andrew,Flores,2000-06-20,1.87,American Samoa;Bosnia and Herzegovina,LF;LWB;LW
+Andre,Spencer,1998-12-29,1.8,Argentina,RW;CF
+Edward,Gomez,1993-05-22,1.94,Azerbaijan;Zambia,CB
+William,Coleman,1998-07-23,1.86,Aruba;Samoa,CDM;CAM;CF
+Corey,Miller,1992-10-07,1.64,El Salvador,CF
+Scott,Munoz,2002-02-05,1.96,Swaziland;Wallis and Futuna,RWB;LW
+Tyler,Hall,1993-08-17,1.96,Heard Island and McDonald Islands,RW;ST;RF
+Corey,Adams,1997-03-27,1.85,Gibraltar;Guinea-Bissau,LWB;ST;LW
+Sarah,Barron,1996-04-13,1.78,Tajikistan;Saudi Arabia,LF;CF;RWB
+Jacob,Collins,1997-04-19,1.95,Jamaica,CF;CDM;LW
+Melissa,Romero,2005-02-07,1.68,Brazil;Iran,CDM
+Lori,Reilly,1999-01-19,1.92,France,CF
