@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
-import org.example.utils.PositionUtils;
+import org.example.utils.classes.PositionUtils;
 import org.example.utils.enums.Positions;
 
 import java.time.LocalDate;

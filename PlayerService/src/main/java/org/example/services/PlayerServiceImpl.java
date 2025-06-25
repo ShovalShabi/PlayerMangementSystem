@@ -9,7 +9,7 @@ import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.repositories.PlayerRepository;
-import org.example.utils.PositionUtils;
+import org.example.utils.classes.PositionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

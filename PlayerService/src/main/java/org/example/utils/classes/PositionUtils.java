@@ -1,4 +1,4 @@
-package org.example.utils;
+package org.example.utils.classes;
 
 import org.example.utils.enums.Positions;
 
