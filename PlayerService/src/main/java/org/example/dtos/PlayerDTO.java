@@ -42,8 +42,8 @@ public class PlayerDTO {
     private Set<@NotBlank(message = "Position name must not be blank") String> positions;
 
     @NotNull(message = "Height must be provided")
-    @Min(value = (long) 1.5, message = "The player is too short to play")
-    @Max(value = (long) 2.2, message = "The player is too tall to play")
+    @DecimalMin(value = "1.5", inclusive = true, message = "The player is too short to play")
+    @DecimalMax(value = "2.2", inclusive = true, message = "The player is too tall to play")
     private Double height; // Measured with Meters
 
     private Date creationDate; //Optional on POST request
