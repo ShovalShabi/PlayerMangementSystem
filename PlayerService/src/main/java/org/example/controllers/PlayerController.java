@@ -8,6 +8,7 @@ import org.example.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,7 +68,7 @@ public class PlayerController {
         return ResponseEntity.ok(players);
     }
 
-    @PostMapping("/bulk-upload")
+    @PostMapping(value = "/bulk-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> bulkUpload(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(playerService.bulkUploadPlayers(file));
     }
