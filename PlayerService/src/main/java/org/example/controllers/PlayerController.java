@@ -3,6 +3,7 @@ package org.example.controllers;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dtos.PlayerDTO;
+import org.example.dtos.UpdatePlayerDTO;
 import org.example.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -32,7 +33,7 @@ public class PlayerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlayerDTO> updatePlayer(@PathVariable Long id, @Valid @RequestBody PlayerDTO playerDTO) {
+    public ResponseEntity<PlayerDTO> updatePlayer(@PathVariable Long id, @Valid @RequestBody UpdatePlayerDTO playerDTO) {
         PlayerDTO updated = playerService.updatePlayer(id, playerDTO);
         return ResponseEntity.ok(updated);
     }

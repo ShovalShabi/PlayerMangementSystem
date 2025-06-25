@@ -1,6 +1,7 @@
 package org.example.services;
 
 import org.example.dtos.PlayerDTO;
+import org.example.dtos.UpdatePlayerDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface PlayerService {
     PlayerDTO createPlayer(PlayerDTO playerDTO);
 
-    PlayerDTO updatePlayer(Long id, PlayerDTO playerDTO);
+    PlayerDTO updatePlayer(Long id, UpdatePlayerDTO playerDTO);
 
     void deletePlayer(Long id);
 
