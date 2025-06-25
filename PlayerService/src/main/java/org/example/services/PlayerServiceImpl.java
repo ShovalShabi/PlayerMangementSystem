@@ -1,5 +1,6 @@
 package org.example.services;
 
+import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dtos.PlayerDTO;
 import org.example.dtos.UpdatePlayerDTO;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import jakarta.validation.Validator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,10 +32,12 @@ import java.util.stream.Collectors;
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerRepository playerRepository;
+    private final Validator validator;
 
     @Autowired
-    public PlayerServiceImpl(PlayerRepository playerRepository) {
+    public PlayerServiceImpl(PlayerRepository playerRepository, Validator validtor) {
         this.playerRepository = playerRepository;
+        this.validator = validtor;
     }
 
     @Override
@@ -189,69 +193,6 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public List<PlayerDTO> bulkUploadPlayers(MultipartFile file) {
-        if (file.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is empty");
-        }
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            String header = reader.readLine();
-            if (header == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing header row");
-            }
-
-            String[] columns = header.split(",");
-            List<String> expected = List.of("firstName", "lastName", "dateOfBirth", "height", "nationalities", "positions");
-
-            for (String col : expected) {
-                if (!Arrays.asList(columns).contains(col)) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required column: " + col);
-                }
-            }
-
-            List<PlayerDTO> createdPlayers = new ArrayList<>();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] tokens = line.split(",");
-
-                Map<String, String> data = new HashMap<>();
-                for (int i = 0; i < tokens.length && i < columns.length; i++) {
-                    data.put(columns[i].trim(), tokens[i].trim());
-                }
-
-                PlayerDTO dto = new PlayerDTO();
-                dto.setFirstName(data.get("firstName"));
-                dto.setLastName(data.get("lastName"));
-                dto.setDateOfBirth(LocalDate.parse(data.get("dateOfBirth")));
-                dto.setHeight(Double.parseDouble(data.get("height")));
-
-                Set<String> nationalities = Arrays.stream(data.get("nationalities").split("[|/;#!%]"))
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .collect(Collectors.toSet());
-                dto.setNationalities(nationalities);
-
-                Set<String> positions = Arrays.stream(data.get("positions").split("[|/;#!%]"))
-                        .map(String::trim)
-                        .filter(s -> !s.isEmpty())
-                        .collect(Collectors.toSet());
-                dto.setPositions(positions);
-
-                createdPlayers.add(createPlayer(dto));
-            }
-
-            return createdPlayers;
-
-        } catch (IOException e) {
-            log.error("Error reading file", e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error reading file");
-        } catch (Exception e) {
-            log.error("Bulk upload failed", e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Malformed data: " + e.getMessage());
-        }
-    }
-
-    @Override
     public List<PlayerDTO> getAll() {
         log.info("Fetching all players (DEV/TEST only)");
         return this.playerRepository
@@ -265,5 +206,109 @@ public class PlayerServiceImpl implements PlayerService {
     public void deleteAll() {
         log.warn("Deleting all players (DEV/TEST only)");
         this.playerRepository.deleteAll();
+    }
+
+    @Override
+    public Map<String, Object> bulkUploadPlayers(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded file is empty");
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String header = reader.readLine();
+            if (header == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing header row");
+            }
+
+            String[] columns = header.split(",");
+            validateCSVHeader(columns);
+
+            List<Integer> successful = new ArrayList<>();
+            List<Integer> failed = new ArrayList<>();
+
+            String line;
+            int lineNumber = 1; // 1-based line number for rows (excluding header)
+
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+
+                try {
+                    PlayerDTO dto = parseCSVRow(line, columns);
+                    boolean res = validateDtoOrThrow(dto,lineNumber);
+                    if (res){
+                        createPlayer(dto);
+                        successful.add(lineNumber);
+                    }
+                    else
+                        failed.add(lineNumber);// validation failure
+                } catch (Exception e) {
+                    log.warn("Failed to process line {}: {}", lineNumber, e.getMessage());
+                    failed.add(lineNumber);// Exist already by first name + last name + date of birth
+                }
+            }
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("successfully_created", successful);
+            result.put("failed_to_create", failed);
+            return result;
+
+        } catch (IOException e) {
+            log.error("Error reading file", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error reading file");
+        }
+    }
+
+
+    private void validateCSVHeader(String[] columns) {
+        List<String> expected = List.of("firstName", "lastName", "dateOfBirth", "height", "nationalities", "positions");
+        for (String col : expected) {
+            if (!Arrays.asList(columns).contains(col)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing required column: " + col);
+            }
+        }
+    }
+
+    private PlayerDTO parseCSVRow(String line, String[] columns) {
+        String[] tokens = line.split(",");
+        Map<String, String> data = new HashMap<>();
+
+        for (int i = 0; i < tokens.length && i < columns.length; i++) {
+            data.put(columns[i].trim(), tokens[i].trim());
+        }
+
+        PlayerDTO dto = new PlayerDTO();
+        dto.setFirstName(data.get("firstName"));
+        dto.setLastName(data.get("lastName"));
+        dto.setDateOfBirth(LocalDate.parse(data.get("dateOfBirth")));
+        dto.setHeight(Double.parseDouble(data.get("height")));
+
+        Set<String> nationalities = Arrays.stream(data.get("nationalities").split("[|/;#!%]"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
+        dto.setNationalities(nationalities);
+
+        Set<String> positions = Arrays.stream(data.get("positions").split("[|/;#!%]"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
+        dto.setPositions(positions);
+
+        return dto;
+    }
+
+
+    private boolean validateDtoOrThrow(PlayerDTO dto, int rowIndex) {
+        Set<ConstraintViolation<PlayerDTO>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            String errorMsg = violations.stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.joining("; "));
+            System.err.println(violations);
+            System.err.println(dto.getHeight());
+            log.error("Invalid Player structure has been occurred on bulk player add on row {}",rowIndex);
+            return false;
+         }
+        return true;// valid DTO
     }
 }
