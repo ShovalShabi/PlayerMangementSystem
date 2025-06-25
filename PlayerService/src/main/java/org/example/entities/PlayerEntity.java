@@ -9,39 +9,70 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
+/**
+ * JPA entity representing a player in the system.
+ * Contains personal details, nationalities, positions, and audit fields.
+ */
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerEntity {
+    /**
+     * Unique identifier for the player
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Player's first name
+     */
     @Column(nullable = false)
     private String firstName;
 
+    /**
+     * Player's last name
+     */
     @Column(nullable = false)
     private String lastName;
 
+    /**
+     * Set of nationalities associated with the player
+     */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "player_id")
     private Set<NationalityEntity> nationalities;
 
+    /**
+     * Set of positions associated with the player
+     */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "player_id")
     private Set<PositionEntity> positions;
 
+    /**
+     * Player's date of birth
+     */
     @Column(nullable = false)
     private LocalDate dateOfBirth;
 
+    /**
+     * Player's height in meters
+     */
     @Column(nullable = false)
     private Double height;
 
+    /**
+     * Date when the player was created
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "creation_date", nullable = false)
     private Date creationDate;
 
+    /**
+     * Date when the player was last modified
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_modified_date", nullable = false)
     private Date lastModifiedDate;

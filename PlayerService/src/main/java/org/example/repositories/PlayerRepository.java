@@ -7,9 +7,14 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 
+/**
+ * Repository interface for Player entities.
+ * Provides CRUD operations and custom queries for Player data.
+ */
 @Repository
 public interface PlayerRepository extends JpaRepository<PlayerEntity, Long>, JpaSpecificationExecutor<PlayerEntity> {
 
-    boolean existsByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndDateOfBirth(String firstName, String lastName, LocalDate dateOfBirth);
+    boolean existsByFirstNameIgnoreCaseAndLastNameIgnoreCaseAndDateOfBirth(String firstName, String lastName,
+                                                                           LocalDate dateOfBirth);
 
 }

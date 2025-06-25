@@ -1,5 +1,7 @@
 package org.example.services;
 
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Expression;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,6 +30,11 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of PlayerService interface.
+ * Handles business logic for player management, including creation, update,
+ * deletion, retrieval, and advanced filtering/sorting.
+ */
 @Slf4j
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -42,6 +48,12 @@ public class PlayerServiceImpl implements PlayerService {
         this.validator = validtor;
     }
 
+    /**
+     * Create a new player.
+     *
+     * @param dto the player data
+     * @return the created player
+     */
     @Override
     public PlayerDTO createPlayer(PlayerDTO dto) {
         log.info("Attempting to create player: {} {}", dto.getFirstName(), dto.getLastName());
@@ -85,6 +97,13 @@ public class PlayerServiceImpl implements PlayerService {
         return PlayerDTO.fromEntity(saved);
     }
 
+    /**
+     * Update an existing player by ID.
+     *
+     * @param id  the player ID
+     * @param dto the updated player data
+     * @return the updated player
+     */
     @Override
     public PlayerDTO updatePlayer(Long id, UpdatePlayerDTO dto) {
         log.info("Updating player with ID: {}", id);
@@ -141,12 +160,23 @@ public class PlayerServiceImpl implements PlayerService {
         return PlayerDTO.fromEntity(saved);
     }
 
+    /**
+     * Delete a player by ID.
+     *
+     * @param id the player ID
+     */
     @Override
     public void deletePlayer(Long id) {
         log.info("Deleting player with ID: {}", id);
         playerRepository.deleteById(id);
     }
 
+    /**
+     * Get a player by ID.
+     *
+     * @param id the player ID
+     * @return the player data
+     */
     @Override
     public PlayerDTO getPlayerById(Long id) {
         log.info("Fetching player by ID: {}", id);
@@ -158,6 +188,22 @@ public class PlayerServiceImpl implements PlayerService {
                 });
     }
 
+    /**
+     * Get a paginated list of players with advanced filtering and sorting.
+     *
+     * @param name          filter by full name (contains)
+     * @param nationalities filter by nationalities (intersection)
+     * @param minAge        minimum age (inclusive)
+     * @param maxAge        maximum age (inclusive)
+     * @param positions     filter by positions (intersection)
+     * @param minHeight     minimum height (inclusive)
+     * @param maxHeight     maximum height (inclusive)
+     * @param sortBy        sorting field
+     * @param order         sorting order (asc/desc)
+     * @param page          page number
+     * @param size          page size
+     * @return paginated list of players
+     */
     @Override
     public Page<PlayerDTO> getPlayers(
             String name,
@@ -167,7 +213,7 @@ public class PlayerServiceImpl implements PlayerService {
             List<String> positions,
             Double minHeight,
             Double maxHeight,
-            org.example.utils.enums.SortBy sortBy,
+            SortBy sortBy,
             String order,
             int page,
             int size) {
@@ -223,6 +269,11 @@ public class PlayerServiceImpl implements PlayerService {
         }, getPageableWithSort(sortBy, order, page, size)).map(PlayerDTO::fromEntity);
     }
 
+    /**
+     * Get all players.
+     *
+     * @return list of all players
+     */
     @Override
     public List<PlayerDTO> getAll() {
         log.info("Fetching all players (DEV/TEST only)");
@@ -233,12 +284,22 @@ public class PlayerServiceImpl implements PlayerService {
                 .toList();
     }
 
+    /**
+     * Delete all players.
+     *
+     */
     @Override
     public void deleteAll() {
         log.warn("Deleting all players (DEV/TEST only)");
         this.playerRepository.deleteAll();
     }
 
+    /**
+     * Bulk upload players from a CSV file.
+     *
+     * @param file
+     * @return map of successful and failed players
+     */
     @Override
     public Map<String, Object> bulkUploadPlayers(MultipartFile file) {
         if (file.isEmpty()) {
@@ -288,6 +349,16 @@ public class PlayerServiceImpl implements PlayerService {
         }
     }
 
+    /**
+     * Build a Pageable object with sorting based on the given SortBy enum and
+     * order.
+     *
+     * @param page   page number
+     * @param size   page size
+     * @param sortBy sorting field
+     * @param order  sorting order (asc/desc)
+     * @return Pageable object with sorting
+     */
     private Pageable getPageableWithSort(SortBy sortBy, String order, int page, int size) {
         Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
         String sortField;
@@ -323,6 +394,13 @@ public class PlayerServiceImpl implements PlayerService {
         }
     }
 
+    /**
+     * Parse a CSV row into a PlayerDTO.
+     *
+     * @param line
+     * @param columns
+     * @return PlayerDTO
+     */
     private PlayerDTO parseCSVRow(String line, String[] columns) {
         String[] tokens = line.split(",");
         Map<String, String> data = new HashMap<>();
@@ -352,6 +430,13 @@ public class PlayerServiceImpl implements PlayerService {
         return dto;
     }
 
+    /**
+     * Validate the DTO and throw an exception if it is invalid.
+     *
+     * @param dto
+     * @param rowIndex
+     * @return boolean of validation result
+     */
     private boolean validateDtoOrThrow(PlayerDTO dto, int rowIndex) {
         Set<ConstraintViolation<PlayerDTO>> violations = validator.validate(dto);
         if (!violations.isEmpty()) {

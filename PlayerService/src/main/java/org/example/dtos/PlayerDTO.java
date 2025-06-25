@@ -15,42 +15,79 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Data Transfer Object for Player entity.
+ * Encapsulates player data for API requests and responses.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerDTO {
 
+    /**
+     * Player ID (optional on POST request)
+     */
     @PositiveOrZero(message = "Id must be zero or a positive number")
-    private Long id; // Optional on POST request
+    private Long id;
 
+    /**
+     * Player's first name
+     */
     @NotBlank(message = "First name must not be blank")
     @Size(max = 50, message = "First name must not exceed 50 characters")
     private String firstName;
 
+    /**
+     * Player's last name
+     */
     @NotBlank(message = "Last name must not be blank")
     @Size(max = 50, message = "Last name must not exceed 50 characters")
     private String lastName;
 
+    /**
+     * Set of nationalities (must not be null or empty)
+     */
     @NotNull(message = "Nationalities list cannot be null")
     @Size(min = 1, message = "At least one nationality must be provided")
     private Set<@NotBlank(message = "Nationality name must not be blank") String> nationalities;
 
+    /**
+     * Player's date of birth (must be in the past)
+     */
     @Past(message = "Date of birth must be in the past")
     private LocalDate dateOfBirth;
 
+    /**
+     * Set of positions (must not be null or empty)
+     */
     @NotNull(message = "Positions list cannot be null")
     @Size(min = 1, message = "At least one position must be provided")
     private Set<@NotBlank(message = "Position name must not be blank") String> positions;
 
+    /**
+     * Player's height in meters (must be between 1.5 and 2.2)
+     */
     @NotNull(message = "Height must be provided")
     @DecimalMin(value = "1.5", inclusive = true, message = "The player is too short to play")
     @DecimalMax(value = "2.2", inclusive = true, message = "The player is too tall to play")
-    private Double height; // Measured with Meters
+    private Double height;
 
-    private Date creationDate; // Optional on POST request
+    /**
+     * Creation date (optional on POST request)
+     */
+    private Date creationDate;
 
-    private Date lastModifiedDate; // Optional on POST request
+    /**
+     * Last modified date (optional on POST request)
+     */
+    private Date lastModifiedDate;
 
+    /**
+     * Maps a PlayerEntity to PlayerDTO.
+     *
+     * @param player the PlayerEntity
+     * @return the corresponding PlayerDTO
+     */
     public static PlayerDTO fromEntity(PlayerEntity player) {
         Set<String> nationalities = player.getNationalities() != null
                 ? player.getNationalities().stream()
@@ -76,6 +113,12 @@ public class PlayerDTO {
                 player.getLastModifiedDate());
     }
 
+    /**
+     * Maps a PlayerDTO to PlayerEntity.
+     *
+     * @param dto the PlayerDTO
+     * @return the corresponding PlayerEntity
+     */
     public static PlayerEntity toEntity(PlayerDTO dto) {
         Set<NationalityEntity> nationalityEntities = dto.getNationalities() != null
                 ? dto.getNationalities().stream()

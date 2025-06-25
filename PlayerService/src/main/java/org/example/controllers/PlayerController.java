@@ -16,6 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * REST controller for managing player-related operations such as creation,
+ * update, deletion, retrieval, and bulk upload.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/players")
@@ -28,31 +32,73 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
+    /**
+     * Create a new player.
+     * using Jakarta to validate the object.
+     *
+     * @param playerDTO the player data
+     * @return the created player
+     */
     @PostMapping
     public ResponseEntity<PlayerDTO> createPlayer(@Valid @RequestBody PlayerDTO playerDTO) {
         PlayerDTO created = playerService.createPlayer(playerDTO);
         return ResponseEntity.status(201).body(created);
     }
 
+    /**
+     * Update an existing player by ID.
+     *
+     * @param id        the player ID
+     * @param playerDTO the updated player data
+     * @return the updated player
+     */
     @PutMapping("/{id}")
     public ResponseEntity<PlayerDTO> updatePlayer(@PathVariable Long id,
-            @Valid @RequestBody UpdatePlayerDTO playerDTO) {
+                                                  @Valid @RequestBody UpdatePlayerDTO playerDTO) {
         PlayerDTO updated = playerService.updatePlayer(id, playerDTO);
         return ResponseEntity.ok(updated);
     }
 
+    /**
+     * Delete a player by ID.
+     *
+     * @param id the player ID
+     * @return HTTP 200 if deleted
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePlayer(@PathVariable Long id) {
         playerService.deletePlayer(id);
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Get a player by ID.
+     *
+     * @param id the player ID
+     * @return the player data
+     */
     @GetMapping("/{id}")
     public ResponseEntity<PlayerDTO> getPlayerById(@PathVariable Long id) {
         PlayerDTO player = playerService.getPlayerById(id);
         return ResponseEntity.ok(player);
     }
 
+    /**
+     * Get a paginated list of players with advanced filtering and sorting.
+     *
+     * @param name          filter by full name (first + last)
+     * @param nationalities filter by nationalities (intersection)
+     * @param minAge        minimum age
+     * @param maxAge        maximum age
+     * @param positions     filter by positions (intersection)
+     * @param minHeight     minimum height
+     * @param maxHeight     maximum height
+     * @param sortBy        sorting field
+     * @param order         sorting order (asc/desc)
+     * @param page          page number
+     * @param size          page size
+     * @return paginated list of players
+     */
     @GetMapping
     public ResponseEntity<Page<PlayerDTO>> getPlayers(
             @RequestParam(required = false) String name,
@@ -71,19 +117,35 @@ public class PlayerController {
         return ResponseEntity.ok(players);
     }
 
+    /**
+     * Bulk upload players from a CSV file.
+     *
+     * @param file the CSV file
+     * @return upload result
+     */
     @PostMapping(value = "/bulk-upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> bulkUpload(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(playerService.bulkUploadPlayers(file));
     }
 
+    /**
+     * Get all players (DEV/TEST only).
+     *
+     * @return list of all players
+     */
     @GetMapping("/all")
-    @Profile({ "dev", "test" })
+    @Profile({"dev", "test"})
     public ResponseEntity<List<PlayerDTO>> getAll() {
         return ResponseEntity.ok(playerService.getAll());
     }
 
+    /**
+     * Delete all players (DEV/TEST only).
+     *
+     * @return HTTP 200 if deleted
+     */
     @DeleteMapping("/all")
-    @Profile({ "dev", "test" })
+    @Profile({"dev", "test"})
     public ResponseEntity<Void> deleteAll() {
         playerService.deleteAll();
         return ResponseEntity.ok().build();

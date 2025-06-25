@@ -1,8 +1,10 @@
 package org.example.utils.enums;
 
-
 import lombok.Getter;
 
+/**
+ * Enum representing defender positions in football (soccer).
+ */
 @Getter
 public enum Defenders {
     CB("Centre-Back"),

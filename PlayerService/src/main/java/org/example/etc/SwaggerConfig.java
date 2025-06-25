@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+/**
+ * Swagger/OpenAPI configuration for API documentation.
+ */
 @Configuration
 @Profile({"dev", "test"})
 public class SwaggerConfig {

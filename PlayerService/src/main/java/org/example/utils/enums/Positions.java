@@ -1,8 +1,11 @@
 package org.example.utils.enums;
 
-
 import lombok.Getter;
 
+/**
+ * Enum representing all possible player positions, grouped by type (Defenders,
+ * Midfielders, Forwards).
+ */
 @Getter
 public enum Positions {
     Defenders(Defenders.class),
