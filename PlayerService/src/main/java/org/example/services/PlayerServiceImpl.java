@@ -2,12 +2,12 @@ package org.example.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.dtos.PlayerDTO;
+import org.example.dtos.UpdatePlayerDTO;
 import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.repositories.PlayerRepository;
 import org.example.utils.PositionUtils;
-import org.example.utils.Positions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,7 +36,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public PlayerDTO createPlayer(PlayerDTO dto) {
-        log.info("Creating player: {} {}", dto.getFirstName(), dto.getLastName());
+        log.info("Attempting to create player: {} {}", dto.getFirstName(), dto.getLastName());
 
         if (dto.getDateOfBirth() == null || dto.getDateOfBirth().isAfter(LocalDate.now())) {
             log.warn("Invalid date of birth: {}", dto.getDateOfBirth());
@@ -50,10 +51,23 @@ public class PlayerServiceImpl implements PlayerService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Player already exists");
         }
 
-        if (dto.getHeight() < 1.4) {
-            log.warn("Rejected player due to short height: {} {} ({}m)",
-                    dto.getFirstName(), dto.getLastName(), dto.getHeight());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The player is too short haha! :D");
+
+        if (dto.getHeight() == null) {
+            log.warn("Rejected player due to null height value: {} {}",
+                    dto.getFirstName(), dto.getLastName());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal height has been provided");
+        }
+
+        if (dto.getNationalities() == null){
+            log.warn("Rejected player due to null nationalities value: {} {}",
+                    dto.getFirstName(), dto.getLastName());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal nationalities list has been provided");
+        }
+
+        if (dto.getPositions() == null){
+            log.warn("Rejected player due to null positions value: {} {}",
+                    dto.getFirstName(), dto.getLastName());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal positions list has been provided");
         }
 
         PlayerEntity entity = PlayerDTO.toEntity(dto);
@@ -64,7 +78,7 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public PlayerDTO updatePlayer(Long id, PlayerDTO dto) {
+    public PlayerDTO updatePlayer(Long id, UpdatePlayerDTO dto) {
         log.info("Updating player with ID: {}", id);
 
         PlayerEntity existing = playerRepository.findById(id)
@@ -73,35 +87,49 @@ public class PlayerServiceImpl implements PlayerService {
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
                 });
 
-        existing.setFirstName(dto.getFirstName());
-        existing.setLastName(dto.getLastName());
-        existing.setDateOfBirth(dto.getDateOfBirth());
 
-        if (dto.getHeight() < 1.4) {
-            log.warn("Rejected player due to short height: {} {} ({}m)",
-                    dto.getFirstName(), dto.getLastName(), dto.getHeight());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The player is too short haha! :D");
+        // Safe editing on non nullish values
+        if (dto.getFirstName() != null)
+            existing.setFirstName(dto.getFirstName());
+
+        if (dto.getLastName() != null)
+            existing.setLastName(dto.getLastName());
+
+        if (dto.getDateOfBirth() != null)
+            existing.setDateOfBirth(dto.getDateOfBirth());
+
+        if (dto.getHeight() != null)
+            existing.setHeight(dto.getHeight());
+
+        // Rebuild and link Nationalities on Set existence
+        if (dto.getNationalities() != null){
+            Set<NationalityEntity> newNationalities = dto.getNationalities().stream()
+                    .map(name -> {
+                        NationalityEntity entity = new NationalityEntity();
+                        entity.setName(name);
+                        return entity;
+                    })
+                    .collect(Collectors.toSet());
+            existing.getNationalities().clear();
+            existing.getNationalities().addAll(newNationalities);
         }
 
-        existing.setHeight(dto.getHeight());
+        // Rebuild and link Positions on Set existence
+        if (dto.getPositions() != null){
+            Set<PositionEntity> newPositions = dto.getPositions().stream()
+                    .map(pos -> {
+                        PositionEntity entity = new PositionEntity();
+                        entity.setName(pos.toUpperCase());
+                        entity.setPositionGroup(PositionUtils.resolvePositionGroup(pos));
+                        return entity;
+                    })
+                    .collect(Collectors.toSet());
+            existing.getPositions().clear();
+            existing.getPositions().addAll(newPositions);
+        }
 
-        //TODO: need to fix the null assignment
-        existing.setNationalities(dto.getNationalities().stream()
-                .map(n -> new NationalityEntity(null, n))
-                .toList());
-
-        //TODO: need to fix the null assignment
-        existing.setPositions(dto.getPositions().stream()
-                .map(code -> {
-                    Positions group = PositionUtils.resolvePositionGroup(code);
-                    return new PositionEntity(null, group, code.toUpperCase());
-                })
-                .toList());
-        System.err.println(existing);
+        log.debug("Saving player entity: {}", existing);
         PlayerEntity saved = playerRepository.saveAndFlush(existing);
-        System.err.println("Saved nationalities: " + saved.getNationalities());
-        System.err.println("Saved positions: " + saved.getPositions());
-        log.info("Player updated: ID {}", saved.getId());
 
         return PlayerDTO.fromEntity(saved);
     }
