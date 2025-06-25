@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PlayerService {
     PlayerDTO createPlayer(PlayerDTO playerDTO);
@@ -19,7 +20,7 @@ public interface PlayerService {
     Page<PlayerDTO> getPlayers(String firstName, String lastName, String nationality, String position,
                                String sortBy, String order, int page, int size);
 
-    List<PlayerDTO> bulkUploadPlayers(MultipartFile file);
+    Map<String, Object> bulkUploadPlayers(MultipartFile file);
 
     List<PlayerDTO> getAll();
 
