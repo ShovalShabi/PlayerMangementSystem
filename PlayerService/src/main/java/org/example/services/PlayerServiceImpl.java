@@ -19,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -53,10 +55,10 @@ public class PlayerServiceImpl implements PlayerService {
                 dto.getFirstName(), dto.getLastName(), dto.getDateOfBirth());
 
         if (exists) {
-            log.warn("Duplicate player detected: {} {} ({})", dto.getFirstName(), dto.getLastName(), dto.getDateOfBirth());
+            log.warn("Duplicate player detected: {} {} ({})", dto.getFirstName(), dto.getLastName(),
+                    dto.getDateOfBirth());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Player already exists");
         }
-
 
         if (dto.getHeight() == null) {
             log.warn("Rejected player due to null height value: {} {}",
@@ -92,7 +94,6 @@ public class PlayerServiceImpl implements PlayerService {
                     log.warn("Player not found for update: {}", id);
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Player not found");
                 });
-
 
         // Safe editing on non nullish values
         if (dto.getFirstName() != null)
@@ -157,39 +158,69 @@ public class PlayerServiceImpl implements PlayerService {
                 });
     }
 
-    //TODO: Need to fix intersection by all filters
     @Override
-    public Page<PlayerDTO> getPlayers(String firstName, String lastName, String nationality, String position,
-                                      String sortBy, String order, int page, int size) {
-        log.info("Fetching players with filters [firstName: {}, lastName: {}, nationality: {}, position: {}], page {}, size {}",
-                firstName, lastName, nationality, position, page, size);
+    public Page<PlayerDTO> getPlayers(
+            String name,
+            List<String> nationalities,
+            Integer minAge,
+            Integer maxAge,
+            List<String> positions,
+            Double minHeight,
+            Double maxHeight,
+            org.example.utils.enums.SortBy sortBy,
+            String order,
+            int page,
+            int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return playerRepository.findAll((root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
 
-        Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy == null ? "id" : sortBy));
-
-        Page<PlayerEntity> result = playerRepository.findAll((root, query, cb) -> {
-            var predicates = cb.conjunction();
-
-            if (firstName != null && !firstName.isBlank()) {
-                predicates.getExpressions().add(cb.like(cb.lower(root.get("firstName")), "%" + firstName.toLowerCase() + "%"));
-            }
-            if (lastName != null && !lastName.isBlank()) {
-                predicates.getExpressions().add(cb.like(cb.lower(root.get("lastName")), "%" + lastName.toLowerCase() + "%"));
-            }
-            if (nationality != null && !nationality.isBlank()) {
-                predicates.getExpressions().add(cb.isMember(new NationalityEntity(null, nationality), root.get("nationalities")));
-            }
-            if (position != null && !position.isBlank()) {
-                predicates.getExpressions().add(cb.isMember(
-                        new PositionEntity(null, PositionUtils.resolvePositionGroup(position), position.toUpperCase()),
-                        root.get("positions")));
+            // Name filter
+            if (name != null && !name.isBlank()) {
+                Expression<String> fullName = cb.concat(cb.lower(root.get("firstName")),
+                        cb.concat(" ", cb.lower(root.get("lastName"))));
+                predicates.add(cb.like(fullName, "%" + name.toLowerCase() + "%"));
             }
 
-            return predicates;
-        }, pageable);
+            // Nationalities filter (intersection)
+            if (nationalities != null && !nationalities.isEmpty()) {
+                for (String nat : nationalities) {
+                    predicates.add(cb.isMember(new NationalityEntity(null, nat), root.get("nationalities")));
+                }
+            }
 
-        log.info("Fetched {} players", result.getTotalElements());
-        return result.map(PlayerDTO::fromEntity);
+            // Age filter
+            if (minAge != null || maxAge != null) {
+                Expression<LocalDate> dob = root.get("dateOfBirth");
+                LocalDate today = LocalDate.now();
+                if (minAge != null) {
+                    LocalDate maxDob = today.minusYears(minAge);
+                    predicates.add(cb.lessThanOrEqualTo(dob, maxDob));
+                }
+                if (maxAge != null) {
+                    LocalDate minDob = today.minusYears(maxAge + 1).plusDays(1);
+                    predicates.add(cb.greaterThanOrEqualTo(dob, minDob));
+                }
+            }
+
+            // Positions filter (intersection)
+            if (positions != null && !positions.isEmpty()) {
+                for (String pos : positions) {
+                    predicates
+                            .add(cb.isMember(new PositionEntity(null, null, pos.toUpperCase()), root.get("positions")));
+                }
+            }
+
+            // Height filter
+            if (minHeight != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("height"), minHeight));
+            }
+            if (maxHeight != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("height"), maxHeight));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        }, getPageableWithSort(sortBy, order, page, size)).map(PlayerDTO::fromEntity);
     }
 
     @Override
@@ -257,6 +288,31 @@ public class PlayerServiceImpl implements PlayerService {
         }
     }
 
+    private Pageable getPageableWithSort(org.example.utils.enums.SortBy sortBy, String order, int page, int size) {
+        Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        String sortField;
+        switch (sortBy) {
+            case NAME:
+                sortField = "firstName"; // You may need a custom sort for full name
+                break;
+            case NATIONALITY:
+                sortField = "nationalities"; // May require custom logic
+                break;
+            case AGE:
+                sortField = "dateOfBirth";
+                direction = direction.isAscending() ? Sort.Direction.DESC : Sort.Direction.ASC; // Younger = later date
+                break;
+            case POSITIONS:
+                sortField = "positions"; // May require custom logic
+                break;
+            case HEIGHT:
+                sortField = "height";
+                break;
+            default:
+                sortField = "id";
+        }
+        return PageRequest.of(page, size, Sort.by(direction, sortField));
+    }
 
     private void validateCSVHeader(String[] columns) {
         List<String> expected = List.of("firstName", "lastName", "dateOfBirth", "height", "nationalities", "positions");
@@ -295,7 +351,6 @@ public class PlayerServiceImpl implements PlayerService {
 
         return dto;
     }
-
 
     private boolean validateDtoOrThrow(PlayerDTO dto, int rowIndex) {
         Set<ConstraintViolation<PlayerDTO>> violations = validator.validate(dto);

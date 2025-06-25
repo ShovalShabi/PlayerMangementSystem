@@ -34,7 +34,8 @@ public class PlayerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PlayerDTO> updatePlayer(@PathVariable Long id, @Valid @RequestBody UpdatePlayerDTO playerDTO) {
+    public ResponseEntity<PlayerDTO> updatePlayer(@PathVariable Long id,
+            @Valid @RequestBody UpdatePlayerDTO playerDTO) {
         PlayerDTO updated = playerService.updatePlayer(id, playerDTO);
         return ResponseEntity.ok(updated);
     }
@@ -53,18 +54,19 @@ public class PlayerController {
 
     @GetMapping
     public ResponseEntity<Page<PlayerDTO>> getPlayers(
-            @RequestParam(required = false) String firstName,
-            @RequestParam(required = false) String lastName,
-            @RequestParam(required = false) String nationality,
-            @RequestParam(required = false) String position,
-            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) List<String> nationalities,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) List<String> positions,
+            @RequestParam(required = false) Double minHeight,
+            @RequestParam(required = false) Double maxHeight,
+            @RequestParam(required = false, defaultValue = "NAME") org.example.utils.enums.SortBy sortBy,
             @RequestParam(required = false, defaultValue = "asc") String order,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
         Page<PlayerDTO> players = playerService.getPlayers(
-                firstName, lastName, nationality, position, sortBy, order, page, size);
-
+                name, nationalities, minAge, maxAge, positions, minHeight, maxHeight, sortBy, order, page, size);
         return ResponseEntity.ok(players);
     }
 
@@ -74,13 +76,13 @@ public class PlayerController {
     }
 
     @GetMapping("/all")
-    @Profile({"dev", "test"})
+    @Profile({ "dev", "test" })
     public ResponseEntity<List<PlayerDTO>> getAll() {
         return ResponseEntity.ok(playerService.getAll());
     }
 
     @DeleteMapping("/all")
-    @Profile({"dev", "test"})
+    @Profile({ "dev", "test" })
     public ResponseEntity<Void> deleteAll() {
         playerService.deleteAll();
         return ResponseEntity.ok().build();

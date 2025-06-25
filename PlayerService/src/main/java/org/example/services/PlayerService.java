@@ -17,8 +17,18 @@ public interface PlayerService {
 
     PlayerDTO getPlayerById(Long id);
 
-    Page<PlayerDTO> getPlayers(String firstName, String lastName, String nationality, String position,
-                               String sortBy, String order, int page, int size);
+    Page<PlayerDTO> getPlayers(
+            String name,
+            List<String> nationalities,
+            Integer minAge,
+            Integer maxAge,
+            List<String> positions,
+            Double minHeight,
+            Double maxHeight,
+            org.example.utils.enums.SortBy sortBy,
+            String order,
+            int page,
+            int size);
 
     Map<String, Object> bulkUploadPlayers(MultipartFile file);
 
