@@ -1,6 +1,7 @@
 package org.example.services;
 
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.example.dtos.PlayerDTO;
 import org.example.dtos.UpdatePlayerDTO;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import jakarta.validation.Validator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,13 +64,13 @@ public class PlayerServiceImpl implements PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal height has been provided");
         }
 
-        if (dto.getNationalities() == null){
+        if (dto.getNationalities() == null) {
             log.warn("Rejected player due to null nationalities value: {} {}",
                     dto.getFirstName(), dto.getLastName());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal nationalities list has been provided");
         }
 
-        if (dto.getPositions() == null){
+        if (dto.getPositions() == null) {
             log.warn("Rejected player due to null positions value: {} {}",
                     dto.getFirstName(), dto.getLastName());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal positions list has been provided");
@@ -108,7 +108,7 @@ public class PlayerServiceImpl implements PlayerService {
             existing.setHeight(dto.getHeight());
 
         // Rebuild and link Nationalities on Set existence
-        if (dto.getNationalities() != null){
+        if (dto.getNationalities() != null) {
             Set<NationalityEntity> newNationalities = dto.getNationalities().stream()
                     .map(name -> {
                         NationalityEntity entity = new NationalityEntity();
@@ -121,7 +121,7 @@ public class PlayerServiceImpl implements PlayerService {
         }
 
         // Rebuild and link Positions on Set existence
-        if (dto.getPositions() != null){
+        if (dto.getPositions() != null) {
             Set<PositionEntity> newPositions = dto.getPositions().stream()
                     .map(pos -> {
                         PositionEntity entity = new PositionEntity();
@@ -234,12 +234,11 @@ public class PlayerServiceImpl implements PlayerService {
 
                 try {
                     PlayerDTO dto = parseCSVRow(line, columns);
-                    boolean res = validateDtoOrThrow(dto,lineNumber);
-                    if (res){
+                    boolean res = validateDtoOrThrow(dto, lineNumber);
+                    if (res) {
                         createPlayer(dto);
                         successful.add(lineNumber);
-                    }
-                    else
+                    } else
                         failed.add(lineNumber);// validation failure
                 } catch (Exception e) {
                     log.warn("Failed to process line {}: {}", lineNumber, e.getMessage());
@@ -306,9 +305,9 @@ public class PlayerServiceImpl implements PlayerService {
                     .collect(Collectors.joining("; "));
             System.err.println(violations);
             System.err.println(dto.getHeight());
-            log.error("Invalid Player structure has been occurred on bulk player add on row {}",rowIndex);
+            log.error("Invalid Player structure has been occurred on bulk player add on row {}", rowIndex);
             return false;
-         }
+        }
         return true;// valid DTO
     }
 }

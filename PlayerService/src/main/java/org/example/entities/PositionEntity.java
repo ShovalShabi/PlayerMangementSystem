@@ -1,7 +1,9 @@
 package org.example.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.example.utils.Positions;
 
 @Entity

@@ -9,6 +9,7 @@ import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.utils.PositionUtils;
 import org.example.utils.Positions;
+
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
@@ -53,14 +54,14 @@ public class PlayerDTO {
     public static PlayerDTO fromEntity(PlayerEntity player) {
         Set<String> nationalities = player.getNationalities() != null
                 ? player.getNationalities().stream()
-                        .map(NationalityEntity::getName)
-                        .collect(Collectors.toSet())
+                .map(NationalityEntity::getName)
+                .collect(Collectors.toSet())
                 : null;
 
         Set<String> positions = player.getPositions() != null
                 ? player.getPositions().stream()
-                        .map(PositionEntity::getName)
-                        .collect(Collectors.toSet())
+                .map(PositionEntity::getName)
+                .collect(Collectors.toSet())
                 : null;
 
         return new PlayerDTO(
@@ -78,17 +79,17 @@ public class PlayerDTO {
     public static PlayerEntity toEntity(PlayerDTO dto) {
         Set<NationalityEntity> nationalityEntities = dto.getNationalities() != null
                 ? dto.getNationalities().stream()
-                        .map(name -> new NationalityEntity(null, name))
-                        .collect(Collectors.toSet())
+                .map(name -> new NationalityEntity(null, name))
+                .collect(Collectors.toSet())
                 : null;
 
         Set<PositionEntity> positionEntities = dto.getPositions() != null
                 ? dto.getPositions().stream()
-                        .map(code -> {
-                            Positions group = PositionUtils.resolvePositionGroup(code);
-                            return new PositionEntity(null, group, code.toUpperCase());
-                        })
-                        .collect(Collectors.toSet())
+                .map(code -> {
+                    Positions group = PositionUtils.resolvePositionGroup(code);
+                    return new PositionEntity(null, group, code.toUpperCase());
+                })
+                .collect(Collectors.toSet())
                 : null;
 
         return new PlayerEntity(

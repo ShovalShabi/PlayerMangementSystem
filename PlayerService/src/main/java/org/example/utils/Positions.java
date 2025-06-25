@@ -4,8 +4,7 @@ package org.example.utils;
 import lombok.Getter;
 
 @Getter
-public enum Positions
-{
+public enum Positions {
     Defenders(Defenders.class),
     Midfielders(Midfielders.class),
     Forwards(Forwards.class);
