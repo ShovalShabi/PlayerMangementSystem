@@ -21,9 +21,10 @@ services:
     container_name: player-service-prod
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-prod:3306/player_management_db_prod?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-prod:3306/player_management_db_prod?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      LOGGING_FILE_NAME: /app/logs/app.log
     ports:
       - "8080:8080"
     depends_on:
