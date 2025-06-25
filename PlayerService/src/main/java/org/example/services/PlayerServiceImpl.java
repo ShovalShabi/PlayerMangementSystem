@@ -10,6 +10,7 @@ import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.repositories.PlayerRepository;
 import org.example.utils.classes.PositionUtils;
+import org.example.utils.enums.SortBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Join;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -288,7 +288,7 @@ public class PlayerServiceImpl implements PlayerService {
         }
     }
 
-    private Pageable getPageableWithSort(org.example.utils.enums.SortBy sortBy, String order, int page, int size) {
+    private Pageable getPageableWithSort(SortBy sortBy, String order, int page, int size) {
         Sort.Direction direction = "desc".equalsIgnoreCase(order) ? Sort.Direction.DESC : Sort.Direction.ASC;
         String sortField;
         switch (sortBy) {

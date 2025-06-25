@@ -2,6 +2,7 @@ package org.example.services;
 
 import org.example.dtos.PlayerDTO;
 import org.example.dtos.UpdatePlayerDTO;
+import org.example.utils.enums.SortBy;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +26,7 @@ public interface PlayerService {
             List<String> positions,
             Double minHeight,
             Double maxHeight,
-            org.example.utils.enums.SortBy sortBy,
+            SortBy sortBy,
             String order,
             int page,
             int size);
