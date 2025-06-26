@@ -23,6 +23,9 @@ import { handleGetPlayer } from "../utils/handlers/getPlayerHandler";
 import { handleCreatePlayer } from "../utils/handlers/createPlayerHandler";
 import { handleUpdatePlayer } from "../utils/handlers/updatePlayerHandler";
 import Autocomplete from "@mui/material/Autocomplete";
+import { handleDeletePlayer } from "../utils/handlers/deletePlayerHandler";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 type Mode = "preview" | "update" | "create";
 
@@ -57,6 +60,12 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
     mode === "create" || mode === "update"
   );
   const { setAlert } = useAlert();
+  const [deleteMode, setDeleteMode] = useState(false);
+
+  // Reset deleteMode when modal opens/closes or mode changes
+  useEffect(() => {
+    setDeleteMode(false);
+  }, [open, mode]);
 
   // Fetch player for preview/update
   useEffect(() => {
@@ -108,6 +117,18 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
       onSuccess?.(result);
       onClose();
     }
+  };
+
+  // Handle delete
+  const handleDelete = async () => {
+    if (!playerId) return;
+    setLoading(true);
+    await handleDeletePlayer(playerId, setAlert, () => {
+      setLoading(false);
+      onSuccess?.(form);
+      onClose();
+    });
+    setLoading(false);
   };
 
   // Render form fields
@@ -238,8 +259,22 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
           : "Create Player"
       }
       handleClose={onClose}
-      handleSubmit={editMode ? handleSubmit : undefined}
-      submitLabel={mode === "create" ? "Create" : "Save"}
+      handleSubmit={
+        mode === "update" && deleteMode
+          ? handleDelete
+          : editMode
+          ? handleSubmit
+          : undefined
+      }
+      submitLabel={
+        mode === "update" && deleteMode
+          ? loading
+            ? "Deleting..."
+            : "Delete"
+          : mode === "create"
+          ? "Create"
+          : "Save"
+      }
     >
       {loading ? (
         <Box
@@ -255,6 +290,20 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
       ) : (
         <>
           {renderFields()}
+          {mode === "update" && (
+            <Box sx={{ mt: 2 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={deleteMode}
+                    onChange={(_, checked) => setDeleteMode(checked)}
+                    color="error"
+                  />
+                }
+                label="Delete this player"
+              />
+            </Box>
+          )}
           {mode === "preview" && (
             <Box sx={{ mt: 2, textAlign: "center" }}>
               <Button variant="contained" onClick={() => setEditMode(true)}>
