@@ -134,9 +134,30 @@ const MainPage: React.FC = () => {
     setPage(0); // Reset to first page on filter change
   };
 
-  const handlePageChange = (model: GridPaginationModel) => {
+  const handlePageChange = async (model: GridPaginationModel) => {
     setPage(model.page);
     updateFilter("rowsPerPage", model.pageSize);
+
+    // Directly trigger API call for pagination changes
+    setApiLoading(true);
+    try {
+      const params = getApiParams({ ...filters, rowsPerPage: model.pageSize });
+      params.page = model.page; // Use the new page number
+      const result = await handleGetPlayersBySortAndFilter(params, setAlert);
+      if (result) {
+        setPlayers(result.content || []);
+        setTotalPlayers(result.totalElements || 0);
+      } else {
+        setPlayers([]);
+        setTotalPlayers(0);
+      }
+    } catch (error) {
+      setPlayers([]);
+      setTotalPlayers(0);
+      console.error("Error fetching players:", error);
+    } finally {
+      setApiLoading(false);
+    }
   };
 
   return (
