@@ -239,7 +239,7 @@ public class PlayerServiceImpl implements PlayerService {
             // Nationalities filter (intersection)
             if (nationalities != null && !nationalities.isEmpty()) {
                 for (String nat : nationalities) {
-                    predicates.add(cb.isMember(new NationalityEntity(null, nat), root.get("nationalities")));
+                    predicates.add(cb.equal(root.join("nationalities").get("name"), nat));
                 }
             }
 
@@ -260,8 +260,7 @@ public class PlayerServiceImpl implements PlayerService {
             // Positions filter (intersection)
             if (positions != null && !positions.isEmpty()) {
                 for (String pos : positions) {
-                    predicates
-                            .add(cb.isMember(new PositionEntity(null, null, pos.toUpperCase()), root.get("positions")));
+                    predicates.add(cb.equal(root.join("positions").get("name"), pos.toUpperCase()));
                 }
             }
 
