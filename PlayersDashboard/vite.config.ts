@@ -12,7 +12,12 @@ export default ({ mode }: { mode: string }) => {
     },
     define: {
       // expose ALL loaded env vars under process.env...
-      "process.env": env,
+      "process.env": {
+        VITE_BACKEND_HOST: env.VITE_BACKEND_HOST,
+        VITE_BACKEND_PORT: env.VITE_BACKEND_PORT,
+        VITE_PORT: env.VITE_PORT,
+        VITE_ENV: env.VITE_ENV,
+      },
     },
   });
 };
