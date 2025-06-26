@@ -25,7 +25,6 @@ const getEnvVariables = (): EnvVariables => {
     VITE_BACKEND_HOST, // Backend server host
     VITE_BACKEND_PORT, // Backend server port
   } = process.env;
-
   // Determine the current environment (defaults to 'dev' if undefined)
   const env = VITE_ENV || "dev";
 
@@ -43,9 +42,14 @@ const getEnvVariables = (): EnvVariables => {
     port = 0;
   }
 
-  // Construct URLs for services based on environment variables
-  const playerServiceURL = `http://${VITE_BACKEND_HOST}:${VITE_BACKEND_PORT}/api/players`;
+  //validation for backend host and port environment variables
+  const backendHost = VITE_BACKEND_HOST || "localhost";
+  const backendPort = VITE_BACKEND_PORT || "8081";
 
+  // Construct URLs for services based on environment variables
+  const playerServiceURL = `http://${backendHost}:${backendPort}/api/players`;
+
+  console.log(playerServiceURL);
   // Cache and return the gathered and constructed environment variables
   cachedEnv = {
     port,
