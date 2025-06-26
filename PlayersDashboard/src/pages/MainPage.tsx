@@ -95,6 +95,7 @@ const MainPage: React.FC = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
+          width: "100%",
           transition: "margin 0.3s",
           ml: drawerOpen ? "100px" : 0,
         }}
@@ -118,77 +119,79 @@ const MainPage: React.FC = () => {
             <ThemeModeSwitcher />
           </Box>
         </Box>
-        <CustomDataGrid
-          rows={filteredRows}
-          columns={columns}
-          paginationModel={{ page, pageSize: filters.rowsPerPage }}
-          pageSizeOptions={[5, 10, 15, 20, 25]}
-          pagination
-          rowCount={filteredRows.length}
-          paginationMode="client"
-          onPaginationModelChange={handlePageChange}
-          sx={{ bgcolor: "background.paper" }}
-          slots={
-            {
-              noRowsOverlay: CustomNoRowsOverlay,
-              noResultsOverlay: CustomNoRowsOverlay,
-            } as Partial<GridSlotsComponent>
-          }
-        />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            mt: 2,
-            gap: 2,
-          }}
-        >
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<AddIcon />}
+        <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%" }}>
+          <CustomDataGrid
+            rows={filteredRows}
+            columns={columns}
+            paginationModel={{ page, pageSize: filters.rowsPerPage }}
+            pageSizeOptions={[5, 10, 15, 20, 25]}
+            pagination
+            rowCount={filteredRows.length}
+            paginationMode="client"
+            onPaginationModelChange={handlePageChange}
+            sx={{ bgcolor: "background.paper" }}
+            slots={
+              {
+                noRowsOverlay: CustomNoRowsOverlay,
+                noResultsOverlay: CustomNoRowsOverlay,
+              } as Partial<GridSlotsComponent>
+            }
+          />
+          <Box
             sx={{
-              fontWeight: 500,
-              fontSize: 15,
-              borderRadius: 2,
-              boxShadow: "none",
-              height: 48,
-              minWidth: 180,
-              width: "100%",
-            }}
-            onClick={() => setPlayerModalOpen(true)}
-          >
-            Add Player
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<DownloadIcon />}
-            component="label"
-            sx={{
-              fontWeight: 500,
-              fontSize: 15,
-              borderRadius: 2,
-              boxShadow: "none",
-              height: 48,
-              width: "100%",
-              minWidth: 180,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mt: 2,
+              gap: 2,
             }}
           >
-            Upload CSV
-            <input
-              type="file"
-              accept=".csv"
-              hidden
-              onChange={async (e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  await handleUploadCsv(e.target.files[0], setAlert);
-                  e.target.value = "";
-                }
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<AddIcon />}
+              sx={{
+                fontWeight: 500,
+                fontSize: 15,
+                borderRadius: 2,
+                boxShadow: "none",
+                height: 48,
+                minWidth: 180,
+                width: "100%",
               }}
-            />
-          </Button>
+              onClick={() => setPlayerModalOpen(true)}
+            >
+              Add Player
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<DownloadIcon />}
+              component="label"
+              sx={{
+                fontWeight: 500,
+                fontSize: 15,
+                borderRadius: 2,
+                boxShadow: "none",
+                height: 48,
+                minWidth: 180,
+                width: "100%",
+              }}
+            >
+              Upload CSV
+              <input
+                type="file"
+                accept=".csv"
+                hidden
+                onChange={async (e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    await handleUploadCsv(e.target.files[0], setAlert);
+                    e.target.value = "";
+                  }
+                }}
+              />
+            </Button>
+          </Box>
         </Box>
         <PlayerModal
           open={playerModalOpen}
