@@ -20,5 +20,8 @@ WORKDIR /app
 # Copy the built JAR file from the builder stage
 COPY --from=builder /home/gradle/src/build/libs/*.jar /app/app.jar
 
+# Install curl
+RUN apk add --no-cache curl
+
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
