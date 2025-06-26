@@ -2,19 +2,28 @@ import React, { useRef, useState } from "react";
 import GenericModalComponent from "./GenericModalComponent";
 import { Box, Button, Typography, Input } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 
 interface UploadCSVModalProps {
   open: boolean;
   handleClose: () => void;
-  handleSubmit: (file: File | null) => void;
+  setAlert: (
+    alert: {
+      message: React.ReactNode;
+      severity: "error" | "warning" | "info" | "success";
+    } | null
+  ) => void;
+  onSuccess?: () => void;
 }
 
 const UploadCSVModal: React.FC<UploadCSVModalProps> = ({
   open,
   handleClose,
-  handleSubmit,
+  setAlert,
+  onSuccess,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,8 +32,12 @@ const UploadCSVModal: React.FC<UploadCSVModalProps> = ({
     }
   };
 
-  const onSubmit = () => {
-    handleSubmit(selectedFile);
+  const onSubmit = async () => {
+    setLoading(true);
+    await handleUploadCsv(selectedFile, setAlert, onSuccess);
+    setLoading(false);
+    handleClose();
+    setSelectedFile(null);
   };
 
   return (
@@ -33,13 +46,14 @@ const UploadCSVModal: React.FC<UploadCSVModalProps> = ({
       handleClose={handleClose}
       handleSubmit={onSubmit}
       title="Upload CSV File"
-      submitLabel="Upload"
+      submitLabel={loading ? "Uploading..." : "Upload"}
     >
       <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
         <Button
           variant="outlined"
           startIcon={<UploadFileIcon />}
           onClick={() => fileInputRef.current?.click()}
+          disabled={loading}
         >
           Choose CSV File
         </Button>
@@ -49,6 +63,7 @@ const UploadCSVModal: React.FC<UploadCSVModalProps> = ({
           inputProps={{ accept: ".csv" }}
           sx={{ display: "none" }}
           onChange={onFileChange}
+          disabled={loading}
         />
         {selectedFile && (
           <Typography variant="body2" color="text.secondary">
