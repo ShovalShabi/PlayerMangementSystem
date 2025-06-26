@@ -1,8 +1,7 @@
 import type { GridColDef, GridValueGetter } from "@mui/x-data-grid";
 import PlayerDTO from "../dtos/PlayerDTO";
-
-const getNationalities: GridValueGetter<PlayerDTO, unknown> = (value, row) =>
-  Array.isArray(row.nationalities) ? row.nationalities.join(", ") : "";
+import * as FlagIcons from "country-flag-icons/react/3x2";
+import countryLabelToCodeMap from "../utils/objects/country-label-to-code-map";
 
 const getPositions: GridValueGetter<PlayerDTO, unknown> = (value, row) =>
   Array.isArray(row.positions) ? row.positions.join(", ") : "";
@@ -38,7 +37,50 @@ export function getPlayerColumns(heightUnit: "m" | "ft"): GridColDef[] {
       field: "nationalities",
       headerName: "Nationality",
       flex: 1,
-      valueGetter: getNationalities,
+      renderCell: (params) => {
+        const { row } = params;
+        if (!Array.isArray(row.nationalities)) return "";
+        return (
+          <span>
+            {row.nationalities.map((nat: string, idx: number) => {
+              const code = countryLabelToCodeMap.get(nat) || "";
+              const FlagComponent = code
+                ? (
+                    FlagIcons as Record<
+                      string,
+                      React.ComponentType<React.SVGProps<SVGSVGElement>>
+                    >
+                  )[code]
+                : null;
+              return (
+                <span
+                  key={nat}
+                  style={{
+                    marginRight: 8,
+                    display: "inline-flex",
+                    alignItems: "center",
+                  }}
+                >
+                  {nat}
+                  {FlagComponent && (
+                    <FlagComponent
+                      aria-label={nat}
+                      style={{
+                        marginLeft: 4,
+                        width: 18,
+                        height: 12,
+                        display: "inline-block",
+                        verticalAlign: "middle",
+                      }}
+                    />
+                  )}
+                  {idx < row.nationalities.length - 1 ? "," : ""}
+                </span>
+              );
+            })}
+          </span>
+        );
+      },
     },
     {
       field: "positions",
