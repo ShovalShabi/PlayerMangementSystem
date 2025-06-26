@@ -10,6 +10,11 @@ import ThemeModeSwitcher from "../components/ThemeModeSwitcher";
 import UploadCSVModal from "../components/UploadCSVModal";
 import FilterComponentDrawer from "../components/FilterComponentDrawer";
 import CustomDataGrid from "../components/CustomDataGrid";
+import useAlert from "../hooks/use-alert";
+// import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
+import PlayerModal from "../components/PlayerModal";
+import AddIcon from "@mui/icons-material/Add";
+import Fab from "@mui/material/Fab";
 
 const columns: GridColDef[] = [
   { field: "firstName", headerName: "First Name", flex: 1 },
@@ -52,6 +57,8 @@ const MainPage: React.FC = () => {
   const [page, setPage] = useState(0);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(true);
+  const { setAlert } = useAlert(); // Custom hook for displaying alerts
+  const [playerModalOpen, setPlayerModalOpen] = useState(false);
 
   const filteredRows = dummyRows;
 
@@ -62,10 +69,6 @@ const MainPage: React.FC = () => {
   const handlePageChange = (model: GridPaginationModel) => {
     setPage(model.page);
     handleFilterChange("rowsPerPage", model.pageSize);
-  };
-
-  const handleUploadSubmit = (file: File | null) => {
-    setUploadModalOpen(false);
   };
 
   const handleSearch = () => {
@@ -138,7 +141,28 @@ const MainPage: React.FC = () => {
         <UploadCSVModal
           open={uploadModalOpen}
           handleClose={() => setUploadModalOpen(false)}
-          handleSubmit={handleUploadSubmit}
+          setAlert={setAlert}
+          onSuccess={() => {
+            // Optionally refresh player list here
+          }}
+        />
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Fab
+            color="primary"
+            aria-label="add"
+            onClick={() => setPlayerModalOpen(true)}
+          >
+            <AddIcon />
+          </Fab>
+        </Box>
+        <PlayerModal
+          open={playerModalOpen}
+          mode="create"
+          onClose={() => setPlayerModalOpen(false)}
+          onSuccess={() => {
+            setPlayerModalOpen(false);
+            // Optionally refresh player list here
+          }}
         />
       </Box>
     </Box>
