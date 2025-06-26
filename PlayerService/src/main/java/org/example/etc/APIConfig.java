@@ -5,21 +5,18 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Spring configuration for CORS (Cross-Origin Resource Sharing) settings.
+ * Global CORS configuration.
  */
 @Configuration
 public class APIConfig implements WebMvcConfigurer {
-    /**
-     * Configure CORS mappings for the application.
-     *
-     * @param registry the CORS registry
-     */
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+        registry
+                .addMapping("/**")
+                .allowedOriginPatterns("*")   // allow any origin
+                .allowedMethods("*")          // allow GET, POST, PUT, DELETE, OPTIONS, etc.
+                .allowedHeaders("*")          // allow any header
+                .allowCredentials(false);     // must be false if you use "*" origin
     }
 }
