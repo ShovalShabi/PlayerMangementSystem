@@ -4,13 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build --mode prod",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev": "cross-env VITE_ENV=dev vite",
-    "prod": "cross-env VITE_ENV=prod vite",
-    "docker-dev": "cross-env VITE_ENV=dev VITE_BACKEND_HOST=player-service-dev vite --host",
-    "docker-prod": "cross-env VITE_ENV=prod VITE_BACKEND_HOST=player-service-prod vite --host"
+    "dev": "vite --mode dev",
+    "prod": "vite --mode prod"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
