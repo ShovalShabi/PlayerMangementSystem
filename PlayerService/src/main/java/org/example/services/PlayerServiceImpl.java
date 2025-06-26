@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,9 +44,9 @@ public class PlayerServiceImpl implements PlayerService {
     private final Validator validator;
 
     @Autowired
-    public PlayerServiceImpl(PlayerRepository playerRepository, Validator validtor) {
+    public PlayerServiceImpl(PlayerRepository playerRepository, Validator validator) {
         this.playerRepository = playerRepository;
-        this.validator = validtor;
+        this.validator = validator;
     }
 
     /**
@@ -154,6 +155,13 @@ public class PlayerServiceImpl implements PlayerService {
             existing.getPositions().addAll(newPositions);
         }
 
+        PlayerDTO tempDTO = PlayerDTO.fromEntity(existing);
+        // Checking that the player is valid after changes
+        if (!validateDtoOrThrow(tempDTO, -1)) {
+            log.warn("Player is not valid after changes: {}", existing);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Player is not valid after changes");
+        }
+
         log.debug("Saving player entity: {}", existing);
         PlayerEntity saved = playerRepository.saveAndFlush(existing);
 
@@ -218,7 +226,7 @@ public class PlayerServiceImpl implements PlayerService {
             int page,
             int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return playerRepository.findAll((root, query, cb) -> {
+        return playerRepository.findAll((Specification<PlayerEntity>) (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             // Name filter
@@ -286,7 +294,6 @@ public class PlayerServiceImpl implements PlayerService {
 
     /**
      * Delete all players.
-     *
      */
     @Override
     public void deleteAll() {
@@ -443,8 +450,6 @@ public class PlayerServiceImpl implements PlayerService {
             String errorMsg = violations.stream()
                     .map(ConstraintViolation::getMessage)
                     .collect(Collectors.joining("; "));
-            System.err.println(violations);
-            System.err.println(dto.getHeight());
             log.error("Invalid Player structure has been occurred on bulk player add on row {}", rowIndex);
             return false;
         }
