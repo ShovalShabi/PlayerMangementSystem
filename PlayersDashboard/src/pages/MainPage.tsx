@@ -145,7 +145,7 @@ const MainPage: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%" }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Box>
               <Typography
                 variant="subtitle1"
