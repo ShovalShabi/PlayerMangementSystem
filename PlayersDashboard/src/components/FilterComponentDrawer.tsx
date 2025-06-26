@@ -13,22 +13,18 @@ import {
   OutlinedInput,
   Chip,
   Tooltip,
-  Button,
-  useTheme,
-  styled,
   Drawer as MuiDrawer,
+  styled,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import DownloadIcon from "@mui/icons-material/Download";
-import SearchIcon from "@mui/icons-material/Search";
 import { Positions } from "../dtos/Positions";
 import { colorTokens } from "../theme";
 
 const drawerWidth = 300;
 
 const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
+  shouldForwardProp: (prop: string) => prop !== "open",
 })<{ open?: boolean }>(({ theme, open }) => ({
   width: open ? drawerWidth : 56,
   flexShrink: 0,
@@ -69,7 +65,6 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-const ages = Array.from({ length: 100 }, (_, i) => i);
 const positionOptions = Object.values(Positions);
 
 interface FilterComponentDrawerProps {
@@ -80,12 +75,13 @@ interface FilterComponentDrawerProps {
     firstName: string;
     lastName: string;
     nationality: string;
-    age: string;
+    minAge: string;
+    maxAge: string;
+    minHeight: string;
+    maxHeight: string;
     positions: string[];
   };
   onFilterChange: (field: string, value: unknown) => void;
-  onUploadClick: () => void;
-  onSearch: () => void;
 }
 
 const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
@@ -94,11 +90,7 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   onOpen,
   filters,
   onFilterChange,
-  onUploadClick,
-  onSearch,
 }) => {
-  const theme = useTheme();
-
   useEffect(() => {
     if (!open) return;
     const handleEsc = (e: KeyboardEvent) => {
@@ -173,23 +165,82 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                 />
               </Grid>
               <Grid item>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Age</InputLabel>
-                  <Select
-                    label="Age"
-                    value={filters.age}
-                    onChange={(e) => onFilterChange("age", e.target.value)}
-                  >
-                    <MenuItem value="">
-                      <em>Any</em>
-                    </MenuItem>
-                    {ages.map((age) => (
-                      <MenuItem key={age} value={age}>
-                        {age}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <TextField
+                    label="Min Age"
+                    type="number"
+                    value={filters.minAge}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const maxAge = filters.maxAge;
+                      if (maxAge && parseInt(value) > parseInt(maxAge)) {
+                        onFilterChange("maxAge", value);
+                      }
+                      onFilterChange("minAge", value);
+                    }}
+                    fullWidth
+                    size="small"
+                    inputProps={{ min: 0, max: 100 }}
+                  />
+                  <TextField
+                    label="Max Age"
+                    type="number"
+                    value={filters.maxAge}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const minAge = filters.minAge;
+                      if (minAge && parseInt(value) < parseInt(minAge)) {
+                        onFilterChange("minAge", value);
+                      }
+                      onFilterChange("maxAge", value);
+                    }}
+                    fullWidth
+                    size="small"
+                    inputProps={{ min: 0, max: 100 }}
+                  />
+                </Box>
+              </Grid>
+              <Grid item>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <TextField
+                    label="Min Height (m)"
+                    type="number"
+                    value={filters.minHeight}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const maxHeight = filters.maxHeight;
+                      if (
+                        maxHeight &&
+                        parseFloat(value) > parseFloat(maxHeight)
+                      ) {
+                        onFilterChange("maxHeight", value);
+                      }
+                      onFilterChange("minHeight", value);
+                    }}
+                    fullWidth
+                    size="small"
+                    inputProps={{ min: 1.0, max: 2.5, step: 0.01 }}
+                  />
+                  <TextField
+                    label="Max Height (m)"
+                    type="number"
+                    value={filters.maxHeight}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const minHeight = filters.minHeight;
+                      if (
+                        minHeight &&
+                        parseFloat(value) < parseFloat(minHeight)
+                      ) {
+                        onFilterChange("minHeight", value);
+                      }
+                      onFilterChange("maxHeight", value);
+                    }}
+                    fullWidth
+                    size="small"
+                    inputProps={{ min: 1.0, max: 2.5, step: 0.01 }}
+                  />
+                </Box>
               </Grid>
               <Grid item>
                 <FormControl fullWidth size="small">
@@ -225,62 +276,6 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item>
-                <Tooltip title="Upload CSV">
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<DownloadIcon />}
-                    onClick={onUploadClick}
-                    fullWidth
-                    sx={{
-                      bgcolor:
-                        theme.palette.mode === "dark"
-                          ? colorTokens.primary[800]
-                          : colorTokens.primary[100],
-                      color: theme.palette.primary.contrastText,
-                      "&:hover": {
-                        bgcolor: colorTokens.primary[300],
-                      },
-                      mt: 2,
-                      fontWeight: 500,
-                      fontSize: 15,
-                      borderRadius: 2,
-                      boxShadow: "none",
-                    }}
-                  >
-                    Upload CSV
-                  </Button>
-                </Tooltip>
-              </Grid>
-              <Grid item>
-                <Tooltip title="Search">
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<SearchIcon />}
-                    onClick={onSearch}
-                    fullWidth
-                    sx={{
-                      bgcolor:
-                        theme.palette.mode === "dark"
-                          ? colorTokens.primary[800]
-                          : colorTokens.primary[100],
-                      color: theme.palette.secondary.main,
-                      "&:hover": {
-                        bgcolor: colorTokens.primary[300],
-                      },
-                      mt: 1,
-                      fontWeight: 500,
-                      fontSize: 15,
-                      borderRadius: 2,
-                      boxShadow: "none",
-                    }}
-                  >
-                    Search
-                  </Button>
-                </Tooltip>
               </Grid>
             </Grid>
           </Box>

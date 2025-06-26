@@ -25,7 +25,10 @@ const MainPage: React.FC = () => {
     firstName: "",
     lastName: "",
     nationality: "",
-    age: "",
+    minAge: "",
+    maxAge: "",
+    minHeight: "",
+    maxHeight: "",
     positions: [] as string[],
     rowsPerPage: 10,
   });
@@ -48,8 +51,10 @@ const MainPage: React.FC = () => {
           ? `${filters.firstName} ${filters.lastName}`.trim()
           : undefined,
       nationalities: filters.nationality ? [filters.nationality] : undefined,
-      minAge: filters.age ? Number(filters.age) : undefined,
-      maxAge: filters.age ? Number(filters.age) : undefined,
+      minAge: filters.minAge ? Number(filters.minAge) : undefined,
+      maxAge: filters.maxAge ? Number(filters.maxAge) : undefined,
+      minHeight: filters.minHeight ? Number(filters.minHeight) : undefined,
+      maxHeight: filters.maxHeight ? Number(filters.maxHeight) : undefined,
       positions: filters.positions.length > 0 ? filters.positions : undefined,
       page,
       size: filters.rowsPerPage,
@@ -78,7 +83,10 @@ const MainPage: React.FC = () => {
     filters.firstName,
     filters.lastName,
     filters.nationality,
-    filters.age,
+    filters.minAge,
+    filters.maxAge,
+    filters.minHeight,
+    filters.maxHeight,
     filters.positions,
     page,
     filters.rowsPerPage,
@@ -92,11 +100,6 @@ const MainPage: React.FC = () => {
   const handlePageChange = (model: GridPaginationModel) => {
     setPage(model.page);
     setFilters((prev) => ({ ...prev, rowsPerPage: model.pageSize }));
-  };
-
-  const handleSearch = () => {
-    // Triggers useEffect by changing filters
-    setPage(0);
   };
 
   return (
@@ -113,8 +116,6 @@ const MainPage: React.FC = () => {
         onOpen={() => setDrawerOpen(true)}
         filters={filters}
         onFilterChange={handleFilterChange}
-        onUploadClick={() => {}}
-        onSearch={handleSearch}
       />
       <Box
         sx={{
