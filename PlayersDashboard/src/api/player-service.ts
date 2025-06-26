@@ -7,6 +7,31 @@ import getEnvVariables from "../etc/load-env-variables";
 
 const { playerServiceURL } = getEnvVariables();
 
+// Custom params serializer for Spring Boot compatibility
+const paramsSerializer = (params: Record<string, unknown>): string => {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) {
+      return; // Skip undefined/null values
+    }
+
+    if (Array.isArray(value)) {
+      // For arrays, add each value as a separate parameter with the same name
+      value.forEach((item) => {
+        if (item !== undefined && item !== null) {
+          searchParams.append(key, String(item));
+        }
+      });
+    } else {
+      // For non-arrays, add as single parameter
+      searchParams.append(key, String(value));
+    }
+  });
+
+  return searchParams.toString();
+};
+
 async function requestWrapper<T>(request: () => Promise<T>): Promise<T> {
   try {
     return await request();
@@ -64,7 +89,10 @@ const playerService = {
     size?: number;
   }): Promise<PaginatedResponse<PlayerDTO>> => {
     return requestWrapper(async () => {
-      const response = await axios.get(`${playerServiceURL}`, { params });
+      const response = await axios.get(`${playerServiceURL}`, {
+        params,
+        paramsSerializer,
+      });
       return response.data;
     });
   },
