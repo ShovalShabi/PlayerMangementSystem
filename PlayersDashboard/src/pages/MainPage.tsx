@@ -25,7 +25,7 @@ import { useDebouncedFilters } from "../hooks/useDebouncedFilters";
 const MainPage: React.FC = () => {
   const initialFilters = {
     name: "",
-    nationality: "",
+    nationality: [] as string[],
     minAge: "",
     maxAge: "",
     minHeight: "",
@@ -107,9 +107,10 @@ const MainPage: React.FC = () => {
   const getApiParams = (currentFilters = filters) => {
     return {
       name: currentFilters.name || undefined,
-      nationalities: currentFilters.nationality
-        ? [currentFilters.nationality]
-        : undefined,
+      nationalities:
+        currentFilters.nationality.length > 0
+          ? currentFilters.nationality
+          : undefined,
       minAge: currentFilters.minAge ? Number(currentFilters.minAge) : undefined,
       maxAge: currentFilters.maxAge ? Number(currentFilters.maxAge) : undefined,
       minHeight: currentFilters.minHeight

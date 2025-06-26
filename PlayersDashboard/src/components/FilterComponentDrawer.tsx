@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -15,11 +15,14 @@ import {
   Tooltip,
   Drawer as MuiDrawer,
   styled,
+  SelectChangeEvent,
+  Collapse,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Positions } from "../dtos/Positions";
 import { colorTokens } from "../theme";
+import listOfCountries from "../utils/objects/countries-object";
 
 const drawerWidth = 300;
 
@@ -73,7 +76,7 @@ interface FilterComponentDrawerProps {
   onOpen: () => void;
   filters: {
     name: string;
-    nationality: string;
+    nationality: string[];
     minAge: string;
     maxAge: string;
     minHeight: string;
@@ -90,6 +93,9 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   filters,
   onFilterChange,
 }) => {
+  const [nationalityOpen, setNationalityOpen] = useState(false);
+  const [positionsOpen, setPositionsOpen] = useState(false);
+
   useEffect(() => {
     if (!open) return;
     const handleEsc = (e: KeyboardEvent) => {
@@ -98,6 +104,34 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [open, onClose]);
+
+  const handleNationalityChange = (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    onFilterChange("nationality", value);
+    // Close dropdown after selection
+    setNationalityOpen(false);
+  };
+
+  const handlePositionChange = (event: SelectChangeEvent<string[]>) => {
+    const value = event.target.value;
+    onFilterChange("positions", value);
+    // Close dropdown after selection
+    setPositionsOpen(false);
+  };
+
+  const handlePositionDelete = (positionToDelete: string) => {
+    const newPositions = filters.positions.filter(
+      (pos) => pos !== positionToDelete
+    );
+    onFilterChange("positions", newPositions);
+  };
+
+  const handleNationalityDelete = (nationalityToDelete: string) => {
+    const newNationalities = filters.nationality.filter(
+      (nat) => nat !== nationalityToDelete
+    );
+    onFilterChange("nationality", newNationalities);
+  };
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -145,15 +179,58 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                 />
               </Grid>
               <Grid item>
-                <TextField
-                  label="Nationality"
-                  value={filters.nationality}
-                  onChange={(e) =>
-                    onFilterChange("nationality", e.target.value)
-                  }
-                  fullWidth
-                  size="small"
-                />
+                <FormControl fullWidth size="small">
+                  <InputLabel>Nationalities</InputLabel>
+                  <Select
+                    multiple
+                    open={nationalityOpen}
+                    onOpen={() => setNationalityOpen(true)}
+                    onClose={() => setNationalityOpen(false)}
+                    value={filters.nationality}
+                    onChange={handleNationalityChange}
+                    input={<OutlinedInput label="Nationalities" />}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                        {(selected as string[]).map((value) => (
+                          <Chip
+                            key={value}
+                            label={value}
+                            onDelete={() => handleNationalityDelete(value)}
+                            size="small"
+                          />
+                        ))}
+                      </Box>
+                    )}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                        },
+                      },
+                      TransitionComponent: Collapse,
+                      transitionDuration: 200,
+                    }}
+                  >
+                    {listOfCountries.map((country) => (
+                      <MenuItem key={country.code} value={country.label}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <img
+                            src={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
+                            alt={`${country.label} flag`}
+                            style={{
+                              width: 20,
+                              height: 15,
+                              objectFit: "cover",
+                            }}
+                          />
+                          <Typography>{country.label}</Typography>
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item>
                 <Box sx={{ display: "flex", gap: 1 }}>
@@ -238,10 +315,11 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                   <InputLabel>Positions</InputLabel>
                   <Select
                     multiple
+                    open={positionsOpen}
+                    onOpen={() => setPositionsOpen(true)}
+                    onClose={() => setPositionsOpen(false)}
                     value={filters.positions}
-                    onChange={(e) =>
-                      onFilterChange("positions", e.target.value as string[])
-                    }
+                    onChange={handlePositionChange}
                     input={<OutlinedInput label="Positions" />}
                     renderValue={(selected) => (
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
@@ -249,16 +327,21 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                           <Chip
                             key={value}
                             label={value}
-                            onDelete={() =>
-                              onFilterChange(
-                                "positions",
-                                filters.positions.filter((pos) => pos !== value)
-                              )
-                            }
+                            onDelete={() => handlePositionDelete(value)}
+                            size="small"
                           />
                         ))}
                       </Box>
                     )}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 300,
+                        },
+                      },
+                      TransitionComponent: Collapse,
+                      transitionDuration: 200,
+                    }}
                   >
                     {positionOptions.map((pos) => (
                       <MenuItem key={pos} value={pos}>

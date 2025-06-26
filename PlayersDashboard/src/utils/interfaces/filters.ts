@@ -1,6 +1,6 @@
 interface Filters {
   name: string;
-  nationality: string;
+  nationality: string[];
   minAge: string;
   maxAge: string;
   minHeight: string;
