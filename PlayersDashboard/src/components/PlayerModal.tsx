@@ -270,10 +270,10 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
         mode === "update" && deleteMode
           ? loading
             ? "Deleting..."
-            : "Delete"
+            : "Delete Player"
           : mode === "create"
-          ? "Create"
-          : "Save"
+          ? "Create Player"
+          : "Update Player"
       }
     >
       {loading ? (
