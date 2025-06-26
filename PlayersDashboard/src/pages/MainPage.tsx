@@ -31,6 +31,8 @@ const MainPage: React.FC = () => {
   const [players, setPlayers] = useState<PlayerDTO[]>([]);
   const [totalPlayers, setTotalPlayers] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
+  const [modalMode, setModalMode] = useState<"create" | "update">("create");
 
   // Map filters to API params
   const getApiParams = () => {
@@ -154,6 +156,11 @@ const MainPage: React.FC = () => {
                 noResultsOverlay: CustomNoRowsOverlay,
               } as Partial<GridSlotsComponent>
             }
+            onRowClick={(params) => {
+              setSelectedPlayerId(params.row.id);
+              setModalMode("update");
+              setPlayerModalOpen(true);
+            }}
           />
           <Box
             sx={{
@@ -213,7 +220,10 @@ const MainPage: React.FC = () => {
         </Box>
         <PlayerModal
           open={playerModalOpen}
-          mode="create"
+          mode={modalMode}
+          playerId={
+            modalMode === "update" ? selectedPlayerId ?? undefined : undefined
+          }
           onClose={() => setPlayerModalOpen(false)}
           onSuccess={() => {
             setPlayerModalOpen(false);
