@@ -3,10 +3,10 @@ import PlayerDTO from "../dtos/PlayerDTO";
 import * as FlagIcons from "country-flag-icons/react/3x2";
 import countryLabelToCodeMap from "../utils/objects/country-label-to-code-map";
 
-const getPositions: GridValueGetter<PlayerDTO, unknown> = (value, row) =>
+const getPositions: GridValueGetter<PlayerDTO, unknown> = (_, row) =>
   Array.isArray(row.positions) ? row.positions.join(", ") : "";
 
-const getAge: GridValueGetter<PlayerDTO, unknown> = (value, row) => {
+const getAge: GridValueGetter<PlayerDTO, unknown> = (_, row) => {
   if (!row.dateOfBirth) return "";
   const ageMs = Date.now() - new Date(row.dateOfBirth).getTime();
   const ageDate = new Date(ageMs);
@@ -22,7 +22,7 @@ export function getPlayerColumns(heightUnit: "m" | "ft"): GridColDef[] {
       field: "height",
       headerName: "Height",
       flex: 0.5,
-      valueGetter: (value, row) => {
+      valueGetter: (_, row) => {
         if (typeof row.height !== "number") return "";
         if (heightUnit === "m") {
           return `${row.height.toFixed(2)} m`;
