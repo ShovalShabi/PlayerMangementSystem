@@ -20,8 +20,8 @@ import {
 } from "@mui/material";
 import useAlert from "../hooks/use-alert";
 import { handleGetPlayer } from "../utils/handlers/getPlayerHandler";
-import { handleCreatePlayer } from "../utils/handlers/handleCreatePlayer";
-import { handleUpdatePlayer } from "../utils/handlers/handleUpdatePlayer";
+import { handleCreatePlayer } from "../utils/handlers/createPlayerHandler";
+import { handleUpdatePlayer } from "../utils/handlers/updatePlayerHandler";
 import Autocomplete from "@mui/material/Autocomplete";
 
 type Mode = "preview" | "update" | "create";
