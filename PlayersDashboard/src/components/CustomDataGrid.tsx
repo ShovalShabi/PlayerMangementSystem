@@ -16,7 +16,6 @@ const CustomDataGrid: React.FC<DataGridProps> = (props) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-start",
-        minHeight: "60vh",
         width: "100%",
         mt: 8,
       }}
