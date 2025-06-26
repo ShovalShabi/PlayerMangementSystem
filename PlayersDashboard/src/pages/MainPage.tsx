@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -19,9 +19,11 @@ import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 import { handleGetPlayersBySortAndFilter } from "../utils/handlers/getPlayerBySorAndFilterHandler";
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
 import { getPlayerColumns } from "../components/playerColumns";
+import LoadingModal from "../components/LoadingModal";
+import { useDebouncedFilters } from "../hooks/useDebouncedFilters";
 
 const MainPage: React.FC = () => {
-  const [filters, setFilters] = useState({
+  const initialFilters = {
     firstName: "",
     lastName: "",
     nationality: "",
@@ -31,75 +33,113 @@ const MainPage: React.FC = () => {
     maxHeight: "",
     positions: [] as string[],
     rowsPerPage: 10,
-  });
+  };
+
+  const [apiLoading, setApiLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(true);
   const { setAlert } = useAlert(); // Custom hook for displaying alerts
   const [playerModalOpen, setPlayerModalOpen] = useState(false);
   const [players, setPlayers] = useState<PlayerDTO[]>([]);
   const [totalPlayers, setTotalPlayers] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "update">("create");
   const [heightUnit, setHeightUnit] = useState<"m" | "ft">("m");
 
+  // Initial load of players on mount
+  useEffect(() => {
+    const loadInitialPlayers = async () => {
+      setApiLoading(true);
+      try {
+        const params = {
+          page,
+          size: initialFilters.rowsPerPage,
+        };
+        const result = await handleGetPlayersBySortAndFilter(params, setAlert);
+        if (result) {
+          setPlayers(result.content || []);
+          setTotalPlayers(result.totalElements || 0);
+        } else {
+          setPlayers([]);
+          setTotalPlayers(0);
+        }
+      } catch (error) {
+        console.error("Error fetching initial players:", error);
+      } finally {
+        setApiLoading(false);
+      }
+    };
+    loadInitialPlayers();
+  }, []); // Only run on mount
+
+  // Debounced filters hook
+  const {
+    filters,
+    isLoading: debouncedLoading,
+    updateFilter,
+    setLoading,
+  } = useDebouncedFilters({
+    initialFilters,
+    delay: 500,
+    onFiltersChange: async (debouncedFilters) => {
+      setApiLoading(true);
+      try {
+        const params = getApiParams(debouncedFilters);
+        const result = await handleGetPlayersBySortAndFilter(params, setAlert);
+        if (result) {
+          setPlayers(result.content || []);
+          setTotalPlayers(result.totalElements || 0);
+        } else {
+          setPlayers([]);
+          setTotalPlayers(0);
+        }
+      } catch (error) {
+        setPlayers([]);
+        setTotalPlayers(0);
+        console.error("Error fetching players:", error);
+      } finally {
+        setApiLoading(false);
+        setLoading(false);
+      }
+    },
+  });
+
   // Map filters to API params
-  const getApiParams = () => {
+  const getApiParams = (currentFilters = filters) => {
     return {
       name:
-        filters.firstName || filters.lastName
-          ? `${filters.firstName} ${filters.lastName}`.trim()
+        currentFilters.firstName || currentFilters.lastName
+          ? `${currentFilters.firstName} ${currentFilters.lastName}`.trim()
           : undefined,
-      nationalities: filters.nationality ? [filters.nationality] : undefined,
-      minAge: filters.minAge ? Number(filters.minAge) : undefined,
-      maxAge: filters.maxAge ? Number(filters.maxAge) : undefined,
-      minHeight: filters.minHeight ? Number(filters.minHeight) : undefined,
-      maxHeight: filters.maxHeight ? Number(filters.maxHeight) : undefined,
-      positions: filters.positions.length > 0 ? filters.positions : undefined,
+      nationalities: currentFilters.nationality
+        ? [currentFilters.nationality]
+        : undefined,
+      minAge: currentFilters.minAge ? Number(currentFilters.minAge) : undefined,
+      maxAge: currentFilters.maxAge ? Number(currentFilters.maxAge) : undefined,
+      minHeight: currentFilters.minHeight
+        ? Number(currentFilters.minHeight)
+        : undefined,
+      maxHeight: currentFilters.maxHeight
+        ? Number(currentFilters.maxHeight)
+        : undefined,
+      positions:
+        currentFilters.positions.length > 0
+          ? currentFilters.positions
+          : undefined,
       page,
-      size: filters.rowsPerPage,
+      size: currentFilters.rowsPerPage,
       // Add sortBy/order if you have sort state
     };
   };
 
-  // Fetch players when filters, page, or rowsPerPage change
-  React.useEffect(() => {
-    const fetchPlayers = async () => {
-      setLoading(true);
-      const params = getApiParams();
-      const result = await handleGetPlayersBySortAndFilter(params, setAlert);
-      if (result) {
-        setPlayers(result.content || []);
-        setTotalPlayers(result.totalElements || 0);
-      } else {
-        setPlayers([]);
-        setTotalPlayers(0);
-      }
-      setLoading(false);
-    };
-    fetchPlayers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    filters.firstName,
-    filters.lastName,
-    filters.nationality,
-    filters.minAge,
-    filters.maxAge,
-    filters.minHeight,
-    filters.maxHeight,
-    filters.positions,
-    page,
-    filters.rowsPerPage,
-  ]);
-
   const handleFilterChange = (field: string, value: unknown) => {
-    setFilters((prev) => ({ ...prev, [field]: value }));
+    updateFilter(field as keyof typeof filters, value);
     setPage(0); // Reset to first page on filter change
   };
 
   const handlePageChange = (model: GridPaginationModel) => {
     setPage(model.page);
-    setFilters((prev) => ({ ...prev, rowsPerPage: model.pageSize }));
+    updateFilter("rowsPerPage", model.pageSize);
   };
 
   return (
@@ -170,6 +210,10 @@ const MainPage: React.FC = () => {
               </ToggleButtonGroup>
             </Box>
           </Box>
+          <LoadingModal
+            open={apiLoading || debouncedLoading}
+            message="Loading players..."
+          />
           <CustomDataGrid
             rows={players}
             columns={getPlayerColumns(heightUnit)}
@@ -180,7 +224,7 @@ const MainPage: React.FC = () => {
             paginationMode="server"
             onPaginationModelChange={handlePageChange}
             sx={{ bgcolor: "background.paper" }}
-            loading={loading}
+            loading={apiLoading || debouncedLoading}
             slots={
               {
                 noRowsOverlay: CustomNoRowsOverlay,
@@ -265,7 +309,6 @@ const MainPage: React.FC = () => {
             setPlayerModalOpen(false);
             setModalMode("create");
             setSelectedPlayerId(null);
-            // Optionally refresh player list here
           }}
         />
       </Box>
