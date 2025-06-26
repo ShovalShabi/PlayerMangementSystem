@@ -15,6 +15,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
 import DownloadIcon from "@mui/icons-material/Download";
 import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
+import { handleGetPlayersBySortAndFilter } from "../utils/handlers/getPlayerBySorAndFilterHandler";
 
 const columns: GridColDef[] = [
   { field: "firstName", headerName: "First Name", flex: 1 },
@@ -25,19 +26,21 @@ const columns: GridColDef[] = [
     field: "nationalities",
     headerName: "Nationality",
     flex: 1,
-    valueGetter: (params: { row: PlayerDTO }) =>
-      params.row.nationalities?.join(", "),
+    valueGetter: (params) =>
+      params && params.row && Array.isArray(params.row.nationalities)
+        ? params.row.nationalities.join(", ")
+        : "",
   },
   {
     field: "positions",
     headerName: "Positions",
     flex: 1,
-    valueGetter: (params: { row: PlayerDTO }) =>
-      params.row.positions?.join(", "),
+    valueGetter: (params) =>
+      params && params.row && Array.isArray(params.row.positions)
+        ? params.row.positions.join(", ")
+        : "",
   },
 ];
-
-const dummyRows: PlayerDTO[] = [];
 
 const CustomNoRowsOverlay = () => (
   <Box sx={{ p: 3, textAlign: "center", color: "text.secondary" }}>
@@ -58,20 +61,67 @@ const MainPage: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(true);
   const { setAlert } = useAlert(); // Custom hook for displaying alerts
   const [playerModalOpen, setPlayerModalOpen] = useState(false);
+  const [players, setPlayers] = useState<PlayerDTO[]>([]);
+  const [totalPlayers, setTotalPlayers] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const filteredRows = dummyRows;
+  // Map filters to API params
+  const getApiParams = () => {
+    return {
+      name:
+        filters.firstName || filters.lastName
+          ? `${filters.firstName} ${filters.lastName}`.trim()
+          : undefined,
+      nationalities: filters.nationality ? [filters.nationality] : undefined,
+      minAge: filters.age ? Number(filters.age) : undefined,
+      maxAge: filters.age ? Number(filters.age) : undefined,
+      positions: filters.positions.length > 0 ? filters.positions : undefined,
+      page,
+      size: filters.rowsPerPage,
+      // Add sortBy/order if you have sort state
+    };
+  };
+
+  // Fetch players when filters, page, or rowsPerPage change
+  React.useEffect(() => {
+    const fetchPlayers = async () => {
+      setLoading(true);
+      const params = getApiParams();
+      const result = await handleGetPlayersBySortAndFilter(params, setAlert);
+      if (result) {
+        setPlayers(result.content || []);
+        setTotalPlayers(result.totalElements || 0);
+      } else {
+        setPlayers([]);
+        setTotalPlayers(0);
+      }
+      setLoading(false);
+    };
+    fetchPlayers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    filters.firstName,
+    filters.lastName,
+    filters.nationality,
+    filters.age,
+    filters.positions,
+    page,
+    filters.rowsPerPage,
+  ]);
 
   const handleFilterChange = (field: string, value: unknown) => {
     setFilters((prev) => ({ ...prev, [field]: value }));
+    setPage(0); // Reset to first page on filter change
   };
 
   const handlePageChange = (model: GridPaginationModel) => {
     setPage(model.page);
-    handleFilterChange("rowsPerPage", model.pageSize);
+    setFilters((prev) => ({ ...prev, rowsPerPage: model.pageSize }));
   };
 
   const handleSearch = () => {
-    // TODO: Implement search/filter logic
+    // Triggers useEffect by changing filters
+    setPage(0);
   };
 
   return (
@@ -121,15 +171,16 @@ const MainPage: React.FC = () => {
         </Box>
         <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%" }}>
           <CustomDataGrid
-            rows={filteredRows}
+            rows={players}
             columns={columns}
             paginationModel={{ page, pageSize: filters.rowsPerPage }}
             pageSizeOptions={[5, 10, 15, 20, 25]}
             pagination
-            rowCount={filteredRows.length}
-            paginationMode="client"
+            rowCount={totalPlayers}
+            paginationMode="server"
             onPaginationModelChange={handlePageChange}
             sx={{ bgcolor: "background.paper" }}
+            loading={loading}
             slots={
               {
                 noRowsOverlay: CustomNoRowsOverlay,
