@@ -11,7 +11,6 @@ import {
   Select,
   MenuItem,
   OutlinedInput,
-  Chip,
   Tooltip,
   Drawer as MuiDrawer,
   styled,
@@ -20,6 +19,7 @@ import {
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import CloseIcon from "@mui/icons-material/Close";
 import { Positions } from "../dtos/Positions";
 import { colorTokens } from "../theme";
 import listOfCountries from "../utils/objects/countries-object";
@@ -119,20 +119,6 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
     setPositionsOpen(false);
   };
 
-  const handlePositionDelete = (positionToDelete: string) => {
-    const newPositions = filters.positions.filter(
-      (pos) => pos !== positionToDelete
-    );
-    onFilterChange("positions", newPositions);
-  };
-
-  const handleNationalityDelete = (nationalityToDelete: string) => {
-    const newNationalities = filters.nationality.filter(
-      (nat) => nat !== nationalityToDelete
-    );
-    onFilterChange("nationality", newNationalities);
-  };
-
   return (
     <Drawer variant="permanent" open={open}>
       {open ? (
@@ -192,12 +178,43 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                     renderValue={(selected) => (
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                         {(selected as string[]).map((value) => (
-                          <Chip
+                          <Box
                             key={value}
-                            label={value}
-                            onDelete={() => handleNationalityDelete(value)}
-                            size="small"
-                          />
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              backgroundColor: "primary.main",
+                              color: "primary.contrastText",
+                              borderRadius: 1,
+                              px: 1,
+                              py: 0.5,
+                              fontSize: "0.75rem",
+                              gap: 0.5,
+                            }}
+                          >
+                            <Typography variant="caption">{value}</Typography>
+                            <IconButton
+                              size="small"
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                const newNationalities =
+                                  filters.nationality.filter(
+                                    (nat) => nat !== value
+                                  );
+                                onFilterChange("nationality", newNationalities);
+                              }}
+                              sx={{
+                                color: "inherit",
+                                p: 0.25,
+                                "&:hover": {
+                                  backgroundColor: "rgba(255,255,255,0.1)",
+                                },
+                              }}
+                            >
+                              <CloseIcon sx={{ fontSize: "0.875rem" }} />
+                            </IconButton>
+                          </Box>
                         ))}
                       </Box>
                     )}
@@ -324,12 +341,42 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                     renderValue={(selected) => (
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                         {(selected as string[]).map((value) => (
-                          <Chip
+                          <Box
                             key={value}
-                            label={value}
-                            onDelete={() => handlePositionDelete(value)}
-                            size="small"
-                          />
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              backgroundColor: "primary.main",
+                              color: "primary.contrastText",
+                              borderRadius: 1,
+                              px: 1,
+                              py: 0.5,
+                              fontSize: "0.75rem",
+                              gap: 0.5,
+                            }}
+                          >
+                            <Typography variant="caption">{value}</Typography>
+                            <IconButton
+                              size="small"
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                const newPositions = filters.positions.filter(
+                                  (pos) => pos !== value
+                                );
+                                onFilterChange("positions", newPositions);
+                              }}
+                              sx={{
+                                color: "inherit",
+                                p: 0.25,
+                                "&:hover": {
+                                  backgroundColor: "rgba(255,255,255,0.1)",
+                                },
+                              }}
+                            >
+                              <CloseIcon sx={{ fontSize: "0.875rem" }} />
+                            </IconButton>
+                          </Box>
                         ))}
                       </Box>
                     )}
