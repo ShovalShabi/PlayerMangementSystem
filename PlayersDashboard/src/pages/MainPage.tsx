@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import type {
-  GridColDef,
-  GridPaginationModel,
-  GridSlotsComponent,
-} from "@mui/x-data-grid";
+import type { GridPaginationModel, GridSlotsComponent } from "@mui/x-data-grid";
 import PlayerDTO from "../dtos/PlayerDTO";
 import ThemeModeSwitcher from "../components/ThemeModeSwitcher";
 import FilterComponentDrawer from "../components/FilterComponentDrawer";
@@ -16,37 +12,8 @@ import Button from "@mui/material/Button";
 import DownloadIcon from "@mui/icons-material/Download";
 import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 import { handleGetPlayersBySortAndFilter } from "../utils/handlers/getPlayerBySorAndFilterHandler";
-
-const columns: GridColDef[] = [
-  { field: "firstName", headerName: "First Name", flex: 1 },
-  { field: "lastName", headerName: "Last Name", flex: 1 },
-  { field: "age", headerName: "Age", flex: 0.5 },
-  { field: "height", headerName: "Height", flex: 0.5 },
-  {
-    field: "nationalities",
-    headerName: "Nationality",
-    flex: 1,
-    valueGetter: (params) =>
-      params && params.row && Array.isArray(params.row.nationalities)
-        ? params.row.nationalities.join(", ")
-        : "",
-  },
-  {
-    field: "positions",
-    headerName: "Positions",
-    flex: 1,
-    valueGetter: (params) =>
-      params && params.row && Array.isArray(params.row.positions)
-        ? params.row.positions.join(", ")
-        : "",
-  },
-];
-
-const CustomNoRowsOverlay = () => (
-  <Box sx={{ p: 3, textAlign: "center", color: "text.secondary" }}>
-    No matching players
-  </Box>
-);
+import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
+import PlayerColumns from "../components/playerColumns";
 
 const MainPage: React.FC = () => {
   const [filters, setFilters] = useState({
@@ -172,7 +139,7 @@ const MainPage: React.FC = () => {
         <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%" }}>
           <CustomDataGrid
             rows={players}
-            columns={columns}
+            columns={PlayerColumns}
             paginationModel={{ page, pageSize: filters.rowsPerPage }}
             pageSizeOptions={[5, 10, 15, 20, 25]}
             pagination
