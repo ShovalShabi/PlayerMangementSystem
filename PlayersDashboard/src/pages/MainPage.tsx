@@ -24,8 +24,7 @@ import { useDebouncedFilters } from "../hooks/useDebouncedFilters";
 
 const MainPage: React.FC = () => {
   const initialFilters = {
-    firstName: "",
-    lastName: "",
+    name: "",
     nationality: "",
     minAge: "",
     maxAge: "",
@@ -107,10 +106,7 @@ const MainPage: React.FC = () => {
   // Map filters to API params
   const getApiParams = (currentFilters = filters) => {
     return {
-      name:
-        currentFilters.firstName || currentFilters.lastName
-          ? `${currentFilters.firstName} ${currentFilters.lastName}`.trim()
-          : undefined,
+      name: currentFilters.name || undefined,
       nationalities: currentFilters.nationality
         ? [currentFilters.nationality]
         : undefined,

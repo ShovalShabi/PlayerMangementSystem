@@ -72,8 +72,7 @@ interface FilterComponentDrawerProps {
   onClose: () => void;
   onOpen: () => void;
   filters: {
-    firstName: string;
-    lastName: string;
+    name: string;
     nationality: string;
     minAge: string;
     maxAge: string;
@@ -137,20 +136,12 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
             <Grid container spacing={2} direction="column" flex={1}>
               <Grid item>
                 <TextField
-                  label="First Name"
-                  value={filters.firstName}
-                  onChange={(e) => onFilterChange("firstName", e.target.value)}
+                  label="Name"
+                  value={filters.name}
+                  onChange={(e) => onFilterChange("name", e.target.value)}
                   fullWidth
                   size="small"
-                />
-              </Grid>
-              <Grid item>
-                <TextField
-                  label="Last Name"
-                  value={filters.lastName}
-                  onChange={(e) => onFilterChange("lastName", e.target.value)}
-                  fullWidth
-                  size="small"
+                  placeholder="Search by first or last name"
                 />
               </Grid>
               <Grid item>
