@@ -15,7 +15,7 @@ services:
       timeout: 5s
       retries: 10
     restart: on-failure
-  app:
+  backend:
     build:
       context: ./PlayerService
     container_name: player-service-dev
@@ -30,6 +30,30 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     restart: on-failure
+  frontend:
+    container_name: frontend-dev
+    build:
+      context: ./PlayersDashboard
+      target: prod
+    ports:
+      - "3001:3001"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      VITE_BACKEND_HOST: localhost
+      VITE_BACKEND_PORT: 8081
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://0.0.0.0:3001"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
 volumes:
   mysql_data_dev: 
