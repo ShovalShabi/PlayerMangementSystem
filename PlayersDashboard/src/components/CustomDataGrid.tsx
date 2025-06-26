@@ -6,7 +6,11 @@ import { DataGrid, DataGridProps, GridColDef } from "@mui/x-data-grid";
 const adjustColumnFlex = (columns: GridColDef[]) =>
   columns.map((col) => ({ ...col, flex: col.flex ? col.flex * 0.7 : 0.7 }));
 
-const CustomDataGrid: React.FC<DataGridProps> = (props) => {
+interface CustomDataGridProps extends DataGridProps {
+  heightUnit?: "m" | "ft";
+}
+
+const CustomDataGrid: React.FC<CustomDataGridProps> = (props) => {
   const columns = props.columns
     ? adjustColumnFlex(props.columns as GridColDef[])
     : (props.columns as GridColDef[]);

@@ -14,23 +14,37 @@ const getAge: GridValueGetter<PlayerDTO, unknown> = (value, row) => {
   return Math.abs(ageDate.getUTCFullYear() - 1970); // Years since epoch
 };
 
-const PlayerColumns: GridColDef[] = [
-  { field: "firstName", headerName: "First Name", flex: 1 },
-  { field: "lastName", headerName: "Last Name", flex: 1 },
-  { field: "age", headerName: "Age", flex: 0.5, valueGetter: getAge },
-  { field: "height", headerName: "Height", flex: 0.5 },
-  {
-    field: "nationalities",
-    headerName: "Nationality",
-    flex: 1,
-    valueGetter: getNationalities,
-  },
-  {
-    field: "positions",
-    headerName: "Positions",
-    flex: 1,
-    valueGetter: getPositions,
-  },
-];
-
-export default PlayerColumns;
+export function getPlayerColumns(heightUnit: "m" | "ft"): GridColDef[] {
+  return [
+    { field: "firstName", headerName: "First Name", flex: 1 },
+    { field: "lastName", headerName: "Last Name", flex: 1 },
+    { field: "age", headerName: "Age", flex: 0.5, valueGetter: getAge },
+    {
+      field: "height",
+      headerName: "Height",
+      flex: 0.5,
+      valueGetter: (value, row) => {
+        if (typeof row.height !== "number") return "";
+        if (heightUnit === "m") {
+          return `${row.height.toFixed(2)} m`;
+        } else {
+          // 1 meter = 3.28084 feet
+          const feet = row.height * 3.28084;
+          return `${feet.toFixed(2)} ft`;
+        }
+      },
+    },
+    {
+      field: "nationalities",
+      headerName: "Nationality",
+      flex: 1,
+      valueGetter: getNationalities,
+    },
+    {
+      field: "positions",
+      headerName: "Positions",
+      flex: 1,
+      valueGetter: getPositions,
+    },
+  ];
+}

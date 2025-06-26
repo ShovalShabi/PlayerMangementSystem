@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import {
+  Box,
+  Typography,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 import type { GridPaginationModel, GridSlotsComponent } from "@mui/x-data-grid";
 import PlayerDTO from "../dtos/PlayerDTO";
 import ThemeModeSwitcher from "../components/ThemeModeSwitcher";
@@ -13,7 +18,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 import { handleGetPlayersBySortAndFilter } from "../utils/handlers/getPlayerBySorAndFilterHandler";
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
-import PlayerColumns from "../components/playerColumns";
+import { getPlayerColumns } from "../components/playerColumns";
 
 const MainPage: React.FC = () => {
   const [filters, setFilters] = useState({
@@ -33,6 +38,7 @@ const MainPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "update">("create");
+  const [heightUnit, setHeightUnit] = useState<"m" | "ft">("m");
 
   // Map filters to API params
   const getApiParams = () => {
@@ -139,9 +145,33 @@ const MainPage: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%" }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <Box>
+              <Typography
+                variant="subtitle1"
+                sx={{ mr: 1, fontWeight: 500, display: "inline" }}
+              >
+                Height in:
+              </Typography>
+              <ToggleButtonGroup
+                value={heightUnit}
+                exclusive
+                onChange={(_e, val) => val && setHeightUnit(val)}
+                size="small"
+                aria-label="height unit toggle"
+              >
+                <ToggleButton value="m" aria-label="meters">
+                  m
+                </ToggleButton>
+                <ToggleButton value="ft" aria-label="feet">
+                  ft
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+          </Box>
           <CustomDataGrid
             rows={players}
-            columns={PlayerColumns}
+            columns={getPlayerColumns(heightUnit)}
             paginationModel={{ page, pageSize: filters.rowsPerPage }}
             pageSizeOptions={[5, 10, 15, 20, 25]}
             pagination
@@ -161,6 +191,7 @@ const MainPage: React.FC = () => {
               setModalMode("update");
               setPlayerModalOpen(true);
             }}
+            heightUnit={heightUnit}
           />
           <Box
             sx={{
