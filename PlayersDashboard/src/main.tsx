@@ -5,6 +5,7 @@ import { ThemeProvider, CssBaseline, createTheme } from "@mui/material";
 import { themeSettings } from "./theme";
 import { Provider, useSelector } from "react-redux";
 import store, { RootState } from "./store";
+import { AlertProvider } from "./components/AlertProvider";
 
 const ThemedApp = () => {
   const mode = useSelector((state: RootState) => state.theme.mode);
@@ -12,7 +13,9 @@ const ThemedApp = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <App />
+      <AlertProvider>
+        <App />
+      </AlertProvider>
     </ThemeProvider>
   );
 };
