@@ -28,11 +28,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -110,8 +112,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(inputPlayer)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(inputPlayer)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.firstName").value("Lionel"))
@@ -131,8 +133,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidPlayer)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidPlayer)))
                 .andExpect(status().isBadRequest());
 
         verify(playerService, never()).createPlayer(any());
@@ -153,8 +155,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(put("/api/players/{id}", playerId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Cristiano"))
                 .andExpect(jsonPath("$.lastName").value("Ronaldo"));
@@ -176,8 +178,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(put("/api/players/{id}", playerId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidUpdate)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidUpdate)))
                 .andExpect(status().isBadRequest());
 
         verify(playerService, times(1)).updatePlayer(eq(playerId), any(UpdatePlayerDTO.class));
@@ -231,17 +233,17 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/api/players")
-                .param("name", "Messi")
-                .param("nationalities", "Argentina")
-                .param("minAge", "20")
-                .param("maxAge", "40")
-                .param("positions", Forwards.ST.name())
-                .param("minHeight", "1.60")
-                .param("maxHeight", "1.80")
-                .param("sortBy", "NAME")
-                .param("order", "asc")
-                .param("page", "0")
-                .param("size", "10"))
+                        .param("name", "Messi")
+                        .param("nationalities", "Argentina")
+                        .param("minAge", "20")
+                        .param("maxAge", "40")
+                        .param("positions", Forwards.ST.name())
+                        .param("minHeight", "1.60")
+                        .param("maxHeight", "1.80")
+                        .param("sortBy", "NAME")
+                        .param("order", "asc")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.totalElements").value(1))
@@ -317,7 +319,7 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(multipart("/api/players/bulk-upload")
-                .file(emptyFile))
+                        .file(emptyFile))
                 .andExpect(status().isOk()); // Service handles empty file
 
         verify(playerService, times(1)).bulkUploadPlayers(any());
@@ -380,8 +382,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidPlayer)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidPlayer)))
                 .andExpect(status().isBadRequest());
 
         verify(playerService, never()).createPlayer(any());
@@ -402,8 +404,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(playerWithMultiple)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(playerWithMultiple)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.nationalities").isArray())
                 .andExpect(jsonPath("$.positions").isArray());
@@ -425,11 +427,11 @@ class PlayerControllerTest {
                 .thenReturn(playerPage);
 
         // Test different sort options
-        SortBy[] sortOptions = { SortBy.NAME, SortBy.NATIONALITY, SortBy.AGE, SortBy.POSITIONS, SortBy.HEIGHT };
+        SortBy[] sortOptions = {SortBy.NAME, SortBy.NATIONALITY, SortBy.AGE, SortBy.POSITIONS, SortBy.HEIGHT};
 
         for (SortBy sortBy : sortOptions) {
             mockMvc.perform(get("/api/players")
-                    .param("sortBy", sortBy.name()))
+                            .param("sortBy", sortBy.name()))
                     .andExpect(status().isOk());
 
             verify(playerService, times(1)).getPlayers(
@@ -454,8 +456,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/api/players")
-                .param("page", "2")
-                .param("size", "5"))
+                        .param("page", "2")
+                        .param("size", "5"))
                 .andExpect(status().isOk());
 
         verify(playerService, times(1)).getPlayers(
@@ -517,7 +519,7 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(multipart("/api/players/bulk-upload")
-                .file(invalidFile))
+                        .file(invalidFile))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false));
 
@@ -532,8 +534,8 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidJson))
                 .andExpect(status().isBadRequest());
 
         verify(playerService, never()).createPlayer(any());
@@ -560,7 +562,7 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(multipart("/api/players/bulk-upload")
-                .file(file))
+                        .file(file))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.processed").value(502))
@@ -605,7 +607,7 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/api/players")
-                .param("size", "100"))
+                        .param("size", "100"))
                 .andExpect(status().isOk());
 
         verify(playerService, times(1)).getPlayers(
@@ -629,7 +631,7 @@ class PlayerControllerTest {
 
         // Act & Assert
         mockMvc.perform(get("/api/players")
-                .param("name", "José María"))
+                        .param("name", "José María"))
                 .andExpect(status().isOk());
 
         verify(playerService, times(1)).getPlayers(
@@ -653,10 +655,10 @@ class PlayerControllerTest {
 
         // Act & Assert - Test boundary values
         mockMvc.perform(get("/api/players")
-                .param("minAge", "16")
-                .param("maxAge", "40")
-                .param("minHeight", "1.50")
-                .param("maxHeight", "2.20"))
+                        .param("minAge", "16")
+                        .param("maxAge", "40")
+                        .param("minHeight", "1.50")
+                        .param("maxHeight", "2.20"))
                 .andExpect(status().isOk());
 
         verify(playerService, times(1)).getPlayers(
@@ -685,20 +687,20 @@ class PlayerControllerTest {
 
         // Act & Assert - Test defender positions
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(defenderPlayer)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(defenderPlayer)))
                 .andExpect(status().isCreated());
 
         // Act & Assert - Test midfielder positions
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(midfielderPlayer)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(midfielderPlayer)))
                 .andExpect(status().isCreated());
 
         // Act & Assert - Test forward positions
         mockMvc.perform(post("/api/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(forwardPlayer)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(forwardPlayer)))
                 .andExpect(status().isCreated());
 
         verify(playerService, times(3)).createPlayer(any(PlayerDTO.class));

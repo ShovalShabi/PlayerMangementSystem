@@ -1,6 +1,7 @@
 # PlayerService
 
-A Spring Boot RESTful service for managing football (soccer) players, supporting advanced filtering, sorting, and bulk operations. This service is part of the Player Management System.
+A Spring Boot RESTful service for managing football (soccer) players, supporting advanced filtering, sorting, and bulk
+operations. This service is part of the Player Management System.
 
 ---
 
@@ -19,7 +20,7 @@ A Spring Boot RESTful service for managing football (soccer) players, supporting
 ### Player Management
 
 | Method | Route           | Description                           |
-| ------ | --------------- | ------------------------------------- |
+|--------|-----------------|---------------------------------------|
 | GET    | `/players`      | List players with filters and sorting |
 | GET    | `/players/{id}` | Get player by ID                      |
 | POST   | `/players`      | Create a new player                   |
@@ -32,14 +33,14 @@ A Spring Boot RESTful service for managing football (soccer) players, supporting
 ### Filtering & Sorting (GET `/players`)
 
 - **Query Parameters:**
-  - `name` (string): Filter by full name (contains, case-insensitive)
-  - `nationalities` (list): Filter by one or more nationalities (exact match)
-  - `minAge`, `maxAge` (int): Filter by age range (inclusive)
-  - `positions` (list): Filter by one or more positions (must have all)
-  - `minHeight`, `maxHeight` (double): Filter by height range (inclusive)
-  - `sortBy` (enum): Sort by `NAME`, `NATIONALITY`, `AGE`, `POSITIONS`, `HEIGHT`
-  - `order` (string): `asc` or `desc`
-  - `page`, `size` (int): Pagination controls
+    - `name` (string): Filter by full name (contains, case-insensitive)
+    - `nationalities` (list): Filter by one or more nationalities (exact match)
+    - `minAge`, `maxAge` (int): Filter by age range (inclusive)
+    - `positions` (list): Filter by one or more positions (must have all)
+    - `minHeight`, `maxHeight` (double): Filter by height range (inclusive)
+    - `sortBy` (enum): Sort by `NAME`, `NATIONALITY`, `AGE`, `POSITIONS`, `HEIGHT`
+    - `order` (string): `asc` or `desc`
+    - `page`, `size` (int): Pagination controls
 
 ### Bulk Upload (POST `/players/bulk`)
 
@@ -52,9 +53,9 @@ A Spring Boot RESTful service for managing football (soccer) players, supporting
 
 - Uses MySQL 8.x
 - Connection details are configured via `application.properties` or environment variables:
-  - `SPRING_DATASOURCE_URL`
-  - `SPRING_DATASOURCE_USERNAME`
-  - `SPRING_DATASOURCE_PASSWORD`
+    - `SPRING_DATASOURCE_URL`
+    - `SPRING_DATASOURCE_USERNAME`
+    - `SPRING_DATASOURCE_PASSWORD`
 - Example JDBC URL:
   ```
   jdbc:mysql://localhost:3306/player_management_db_dev?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -86,11 +87,11 @@ A Spring Boot RESTful service for managing football (soccer) players, supporting
 ## API Documentation (Swagger-UI)
 
 - Swagger-UI is available in `dev` and `test` profiles at:
-  - [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
+    - [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
 - Use Swagger-UI to:
-  - Explore all endpoints
-  - Try out requests and see responses
-  - View request/response schemas
+    - Explore all endpoints
+    - Try out requests and see responses
+    - View request/response schemas
 
 ---
 
@@ -114,4 +115,5 @@ Content-Type: multipart/form-data
 
 ## Contact
 
-For questions or issues, please open an issue in the repository or contact [shovalshabi\@gmail.com](mailto:shovalshabi@gmail.com?subject=I%Have%20a%20Question%20About%the%Server-Side).
+For questions or issues, please open an issue in the repository or
+contact [shovalshabi\@gmail.com](mailto:shovalshabi@gmail.com?subject=I%Have%20a%20Question%20About%the%Server-Side).
