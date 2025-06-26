@@ -140,7 +140,7 @@ const MainPage: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            mt: 1,
+            mt: 2,
             gap: 2,
           }}
         >
@@ -155,6 +155,7 @@ const MainPage: React.FC = () => {
               boxShadow: "none",
               height: 48,
               minWidth: 180,
+              width: "100%",
             }}
             onClick={() => setPlayerModalOpen(true)}
           >
@@ -171,6 +172,7 @@ const MainPage: React.FC = () => {
               borderRadius: 2,
               boxShadow: "none",
               height: 48,
+              width: "100%",
               minWidth: 180,
             }}
           >
