@@ -224,9 +224,15 @@ const MainPage: React.FC = () => {
           playerId={
             modalMode === "update" ? selectedPlayerId ?? undefined : undefined
           }
-          onClose={() => setPlayerModalOpen(false)}
+          onClose={() => {
+            setPlayerModalOpen(false);
+            setModalMode("create");
+            setSelectedPlayerId(null);
+          }}
           onSuccess={() => {
             setPlayerModalOpen(false);
+            setModalMode("create");
+            setSelectedPlayerId(null);
             // Optionally refresh player list here
           }}
         />

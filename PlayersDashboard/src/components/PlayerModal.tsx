@@ -16,7 +16,6 @@ import {
   FormControl,
   OutlinedInput,
   CircularProgress,
-  Button,
 } from "@mui/material";
 import useAlert from "../hooks/use-alert";
 import { handleGetPlayer } from "../utils/handlers/getPlayerHandler";
@@ -27,7 +26,7 @@ import { handleDeletePlayer } from "../utils/handlers/deletePlayerHandler";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-type Mode = "preview" | "update" | "create";
+type Mode = "update" | "create";
 
 interface PlayerModalProps {
   open: boolean;
@@ -56,11 +55,18 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
   const [, setPlayer] = useState<PlayerDTO | null>(null);
   const [form, setForm] = useState<PlayerDTO>(emptyPlayer);
   const [loading, setLoading] = useState(false);
-  const [editMode, setEditMode] = useState(
-    mode === "create" || mode === "update"
-  );
+  const [editMode, setEditMode] = useState(true);
   const { setAlert } = useAlert();
   const [deleteMode, setDeleteMode] = useState(false);
+
+  // Custom handleClose to reset all state
+  const handleClose = () => {
+    setForm(emptyPlayer);
+    setEditMode(true);
+    setDeleteMode(false);
+    setPlayer(null);
+    onClose();
+  };
 
   // Reset deleteMode when modal opens/closes or mode changes
   useEffect(() => {
@@ -69,7 +75,7 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
 
   // Fetch player for preview/update
   useEffect(() => {
-    if ((mode === "preview" || mode === "update") && playerId && open) {
+    if (mode === "update" && playerId && open) {
       setLoading(true);
       handleGetPlayer(playerId, setAlert)
         .then((data) => {
@@ -251,20 +257,10 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
   return (
     <GenericModalComponent
       open={open}
-      title={
-        mode === "preview"
-          ? "Player Preview"
-          : mode === "update"
-          ? "Edit Player"
-          : "Create Player"
-      }
-      handleClose={onClose}
+      title={mode === "update" ? "Edit Player" : "Create Player"}
+      handleClose={handleClose}
       handleSubmit={
-        mode === "update" && deleteMode
-          ? handleDelete
-          : editMode
-          ? handleSubmit
-          : undefined
+        mode === "update" && deleteMode ? handleDelete : handleSubmit
       }
       submitLabel={
         mode === "update" && deleteMode
@@ -302,13 +298,6 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
                 }
                 label="Delete this player"
               />
-            </Box>
-          )}
-          {mode === "preview" && (
-            <Box sx={{ mt: 2, textAlign: "center" }}>
-              <Button variant="contained" onClick={() => setEditMode(true)}>
-                Edit
-              </Button>
             </Box>
           )}
         </>
