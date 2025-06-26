@@ -7,14 +7,14 @@ import type {
 } from "@mui/x-data-grid";
 import PlayerDTO from "../dtos/PlayerDTO";
 import ThemeModeSwitcher from "../components/ThemeModeSwitcher";
-import UploadCSVModal from "../components/UploadCSVModal";
 import FilterComponentDrawer from "../components/FilterComponentDrawer";
 import CustomDataGrid from "../components/CustomDataGrid";
 import useAlert from "../hooks/use-alert";
-// import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 import PlayerModal from "../components/PlayerModal";
 import AddIcon from "@mui/icons-material/Add";
-import Fab from "@mui/material/Fab";
+import Button from "@mui/material/Button";
+import DownloadIcon from "@mui/icons-material/Download";
+import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 
 const columns: GridColDef[] = [
   { field: "firstName", headerName: "First Name", flex: 1 },
@@ -55,7 +55,6 @@ const MainPage: React.FC = () => {
     rowsPerPage: 10,
   });
   const [page, setPage] = useState(0);
-  const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(true);
   const { setAlert } = useAlert(); // Custom hook for displaying alerts
   const [playerModalOpen, setPlayerModalOpen] = useState(false);
@@ -89,19 +88,18 @@ const MainPage: React.FC = () => {
         onOpen={() => setDrawerOpen(true)}
         filters={filters}
         onFilterChange={handleFilterChange}
-        onUploadClick={() => setUploadModalOpen(true)}
+        onUploadClick={() => {}}
         onSearch={handleSearch}
       />
       <Box
         sx={{
-          flex: 1,
           display: "flex",
           flexDirection: "column",
           transition: "margin 0.3s",
           ml: drawerOpen ? "100px" : 0,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2, p: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Typography
             variant="h2"
             gutterBottom
@@ -121,7 +119,6 @@ const MainPage: React.FC = () => {
           </Box>
         </Box>
         <CustomDataGrid
-          autoHeight
           rows={filteredRows}
           columns={columns}
           paginationModel={{ page, pageSize: filters.rowsPerPage }}
@@ -138,22 +135,58 @@ const MainPage: React.FC = () => {
             } as Partial<GridSlotsComponent>
           }
         />
-        <UploadCSVModal
-          open={uploadModalOpen}
-          handleClose={() => setUploadModalOpen(false)}
-          setAlert={setAlert}
-          onSuccess={() => {
-            // Optionally refresh player list here
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            mt: 1,
+            gap: 2,
           }}
-        />
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Fab
+        >
+          <Button
+            variant="outlined"
             color="primary"
-            aria-label="add"
+            startIcon={<AddIcon />}
+            sx={{
+              fontWeight: 500,
+              fontSize: 15,
+              borderRadius: 2,
+              boxShadow: "none",
+              height: 48,
+              minWidth: 180,
+            }}
             onClick={() => setPlayerModalOpen(true)}
           >
-            <AddIcon />
-          </Fab>
+            Add Player
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<DownloadIcon />}
+            component="label"
+            sx={{
+              fontWeight: 500,
+              fontSize: 15,
+              borderRadius: 2,
+              boxShadow: "none",
+              height: 48,
+              minWidth: 180,
+            }}
+          >
+            Upload CSV
+            <input
+              type="file"
+              accept=".csv"
+              hidden
+              onChange={async (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  await handleUploadCsv(e.target.files[0], setAlert);
+                  e.target.value = "";
+                }
+              }}
+            />
+          </Button>
         </Box>
         <PlayerModal
           open={playerModalOpen}
