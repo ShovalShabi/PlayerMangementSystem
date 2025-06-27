@@ -22,8 +22,18 @@ export async function handleUpdatePlayer(
     return result;
   } catch (e: unknown) {
     if (isAxiosError(e)) {
+      let errorMessage = "Failed to submit player.";
+      if (e.response?.data) {
+        if (typeof e.response.data === "object") {
+          // Handle validation error object
+          const errorObj = e.response.data as Record<string, string>;
+          errorMessage = Object.values(errorObj).join(", ");
+        } else {
+          errorMessage = e.response.data as string;
+        }
+      }
       setAlert({
-        message: e.response?.data || "Failed to submit player.",
+        message: errorMessage,
         severity: "error",
       });
     } else {
