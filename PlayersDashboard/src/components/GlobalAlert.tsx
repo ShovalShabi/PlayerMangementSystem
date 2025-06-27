@@ -20,26 +20,23 @@ const GlobalAlert: React.FC = () => {
     setAlert(null);
   };
 
+  if (!alert) return <></>;
   return (
     <Snackbar
       open={open}
-      autoHideDuration={4000}
+      autoHideDuration={2000}
       onClose={handleClose}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      message={
-        alert ? (
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            onClose={handleClose}
-            severity={alert.severity}
-            sx={{ width: "100%" }}
-          >
-            {alert.message}
-          </MuiAlert>
-        ) : undefined
-      }
-    />
+    >
+      <MuiAlert
+        elevation={6}
+        variant="filled"
+        onClose={handleClose}
+        severity={alert.severity}
+      >
+        {alert.message}
+      </MuiAlert>
+    </Snackbar>
   );
 };
 
