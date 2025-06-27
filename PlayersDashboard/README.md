@@ -312,12 +312,12 @@ npx tsc --noEmit
 ```typescript
 interface Player {
   id: number;
-  name: string;
-  age: number;
+  firstName: string;
+  lastName: string;
+  birthDate: string;
   height: number;
-  nationality: string;
-  position: string;
-  imageUrl?: string;
+  nationality: string[];
+  position: string[];
   createdAt: string;
   updatedAt: string;
 }
