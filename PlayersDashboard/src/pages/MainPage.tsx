@@ -24,6 +24,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { State } from "../utils/interfaces/state";
 import { setFiltersStore } from "../store/filters-reducer";
 import { setMeasurement } from "../store/measurement-reducer";
+import SoccerBallComponent from "../components/SoccerBallComponent";
+import Footer from "../components/Footer";
 
 const MainPage: React.FC = () => {
   const storedFilters = useSelector((state: State) => state.filters);
@@ -141,8 +143,12 @@ const MainPage: React.FC = () => {
         display: "flex",
         bgcolor: "background.default",
         minHeight: "100vh",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      {/* Soccer Ball SVG above background but below content */}
+      <SoccerBallComponent />
       <FilterComponentDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
@@ -158,6 +164,8 @@ const MainPage: React.FC = () => {
           width: "100%",
           transition: "margin 0.3s",
           ml: drawerOpen ? "100px" : 0,
+          position: "relative",
+          zIndex: 1,
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -311,6 +319,8 @@ const MainPage: React.FC = () => {
             fetchPlayers();
           }}
         />
+        {/* Trademark Footer */}
+        <Footer />
       </Box>
     </Box>
   );
