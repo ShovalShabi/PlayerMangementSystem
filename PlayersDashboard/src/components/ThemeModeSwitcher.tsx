@@ -1,13 +1,13 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../store";
-import { setMode } from "../store/themeSlice";
 import { Box, Tooltip, IconButton } from "@mui/material";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { State } from "../utils/interfaces/state";
+import { setTheme } from "../store/theme-reducer";
 
 const ThemeModeSwitcher: React.FC = () => {
-  const mode = useSelector((state: RootState) => state.theme.mode);
+  const mode = useSelector((state: State) => state.theme);
   const dispatch = useDispatch();
 
   return (
@@ -19,7 +19,9 @@ const ThemeModeSwitcher: React.FC = () => {
       >
         <IconButton
           color="primary"
-          onClick={() => dispatch(setMode(mode === "light" ? "dark" : "light"))}
+          onClick={() =>
+            dispatch(setTheme(mode === "light" ? "dark" : "light"))
+          }
           aria-label="toggle theme mode"
         >
           {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
