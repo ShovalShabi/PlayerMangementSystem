@@ -88,7 +88,7 @@ npm install
 npm run dev
 ```
 
-- Runs React frontend on [http://localhost:3001](http://localhost:3001) (default Vite port)
+- Runs React frontend on [http://localhost:3001](http://localhost:3001) (default applicaton port)
 
 #### Database
 
