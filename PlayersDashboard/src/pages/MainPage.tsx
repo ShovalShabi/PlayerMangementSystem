@@ -37,6 +37,7 @@ const MainPage: React.FC = () => {
   const [heightUnit, setHeightUnit] = useState(
     storedMeasurement ? storedMeasurement.toLowerCase() : "m"
   );
+  const [csvUploadLoading, setCsvUploadLoading] = useState(false);
 
   // Filters state
   const [filters, setFilters] = useState(storedFilters);
@@ -232,9 +233,14 @@ const MainPage: React.FC = () => {
             </Button>
             <UploadCSVButton
               onUpload={async (file) => {
-                await handleUploadCsv(file, setAlert, fetchPlayers);
+                setCsvUploadLoading(true);
+                try {
+                  await handleUploadCsv(file, setAlert, fetchPlayers);
+                } finally {
+                  setCsvUploadLoading(false);
+                }
               }}
-              loading={apiLoading}
+              loading={csvUploadLoading}
             />
           </Box>
         </Box>

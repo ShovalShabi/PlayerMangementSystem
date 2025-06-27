@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import DownloadIcon from "@mui/icons-material/Download";
 
 interface UploadCSVButtonProps {
@@ -17,7 +18,13 @@ const UploadCSVButton: React.FC<UploadCSVButtonProps> = ({
     <Button
       variant="outlined"
       color="primary"
-      startIcon={<DownloadIcon />}
+      startIcon={
+        loading ? (
+          <CircularProgress size={20} color="inherit" />
+        ) : (
+          <DownloadIcon />
+        )
+      }
       component="label"
       sx={{
         fontWeight: 500,
@@ -30,7 +37,7 @@ const UploadCSVButton: React.FC<UploadCSVButtonProps> = ({
       }}
       disabled={loading}
     >
-      Upload CSV
+      {loading ? "Uploading..." : "Upload CSV"}
       <input
         type="file"
         accept=".csv"

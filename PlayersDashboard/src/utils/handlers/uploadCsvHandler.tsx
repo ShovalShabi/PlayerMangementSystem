@@ -9,8 +9,9 @@ export async function handleUploadCsv(
     } | null
   ) => void,
   onSuccess?: () => void
-) {
+): Promise<void> {
   if (!file) return;
+
   try {
     const result = await playerService.bulkUpload(file);
     setAlert({
@@ -24,8 +25,9 @@ export async function handleUploadCsv(
       severity: "success",
     });
     if (onSuccess) onSuccess();
-  } catch {
+  } catch (error) {
     const message = "Failed to upload CSV.";
     setAlert({ message, severity: "error" });
+    throw error; // Re-throw to ensure the promise rejects
   }
 }
