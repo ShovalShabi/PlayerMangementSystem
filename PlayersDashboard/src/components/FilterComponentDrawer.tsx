@@ -25,6 +25,7 @@ import { colorTokens } from "../theme";
 import listOfCountries from "../utils/objects/countries-object";
 import { Filters } from "../utils/interfaces/filters";
 import useDebounce from "../hooks/useDebounce";
+import NationalityWithFlag from "./NationalityWithFlag";
 
 const drawerWidth = 300;
 
@@ -287,7 +288,7 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                               gap: 0.5,
                             }}
                           >
-                            <Typography variant="caption">{value}</Typography>
+                            <NationalityWithFlag nationality={value} />
                             <IconButton
                               size="small"
                               onMouseDown={(e) => {
@@ -327,16 +328,7 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                         <Box
                           sx={{ display: "flex", alignItems: "center", gap: 1 }}
                         >
-                          <img
-                            src={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
-                            alt={`${country.label} flag`}
-                            style={{
-                              width: 20,
-                              height: 15,
-                              objectFit: "cover",
-                            }}
-                          />
-                          <Typography>{country.label}</Typography>
+                          <NationalityWithFlag nationality={country.label} />
                         </Box>
                       </MenuItem>
                     ))}
