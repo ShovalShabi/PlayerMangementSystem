@@ -1,31 +1,25 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
-import type { GridPaginationModel, GridSlotsComponent } from "@mui/x-data-grid";
+import { Box, Typography } from "@mui/material";
+import type { GridPaginationModel, GridRowParams } from "@mui/x-data-grid";
 import PlayerDTO from "../dtos/PlayerDTO";
 import ThemeModeSwitcher from "../components/ThemeModeSwitcher";
 import FilterComponentDrawer from "../components/FilterComponentDrawer";
-import CustomDataGrid from "../components/CustomDataGrid";
 import useAlert from "../hooks/useAlert";
 import PlayerModal from "../components/PlayerModal";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
-import DownloadIcon from "@mui/icons-material/Download";
 import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 import { handleGetPlayersBySortAndFilter } from "../utils/handlers/getPlayerBySorAndFilterHandler";
-import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
-import { getPlayerColumns } from "../components/playerColumns";
 import LoadingModal from "../components/LoadingModal";
 import { useSelector, useDispatch } from "react-redux";
 import { State } from "../utils/interfaces/state";
 import { setFiltersStore } from "../store/filters-reducer";
-import { setMeasurement } from "../store/measurement-reducer";
 import SoccerBallComponent from "../components/SoccerBallComponent";
 import Footer from "../components/Footer";
+import PlayerTable from "../components/player/PlayerTable";
+import UploadCSVButton from "../components/player/UploadCSVButton";
+import DashboardHeader from "../components/player/DashboardHeader";
+import { getPlayerColumns } from "../components/playerColumns";
 
 const MainPage: React.FC = () => {
   const storedFilters = useSelector((state: State) => state.filters);
@@ -188,54 +182,23 @@ const MainPage: React.FC = () => {
           </Box>
         </Box>
         <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%" }}>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                sx={{ mr: 1, fontWeight: 500, display: "inline" }}
-              >
-                Height in:
-              </Typography>
-              <ToggleButtonGroup
-                value={heightUnit}
-                exclusive
-                onChange={(_e, val) => {
-                  if (val) {
-                    setHeightUnit(val);
-                    dispatch(setMeasurement(val));
-                  }
-                }}
-                size="small"
-                aria-label="height unit toggle"
-              >
-                <ToggleButton value="m" aria-label="meters">
-                  m
-                </ToggleButton>
-                <ToggleButton value="ft" aria-label="feet">
-                  ft
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
+          <Box sx={{ mb: 2 }}>
+            <DashboardHeader
+              heightUnit={heightUnit}
+              setHeightUnit={setHeightUnit}
+              dispatch={dispatch}
+            />
           </Box>
           <LoadingModal open={apiLoading} message="Loading players..." />
-          <CustomDataGrid
+          <PlayerTable
             rows={players}
             columns={getPlayerColumns(heightUnit === "m" ? "M" : "FT")}
+            loading={apiLoading}
             paginationModel={{ page, pageSize: filters.rowsPerPage }}
             pageSizeOptions={[5, 10, 15, 20, 25]}
-            pagination
             rowCount={totalPlayers}
-            paginationMode="server"
             onPaginationModelChange={handlePageChange}
-            sx={{ bgcolor: "background.paper" }}
-            loading={apiLoading}
-            slots={
-              {
-                noRowsOverlay: CustomNoRowsOverlay,
-                noResultsOverlay: CustomNoRowsOverlay,
-              } as Partial<GridSlotsComponent>
-            }
-            onRowClick={(params) => {
+            onRowClick={(params: GridRowParams) => {
               setSelectedPlayerId(params.row.id);
               setModalMode("update");
               setPlayerModalOpen(true);
@@ -267,38 +230,12 @@ const MainPage: React.FC = () => {
             >
               Add Player
             </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<DownloadIcon />}
-              component="label"
-              sx={{
-                fontWeight: 500,
-                fontSize: 15,
-                borderRadius: 2,
-                boxShadow: "none",
-                height: 48,
-                minWidth: 180,
-                width: "100%",
+            <UploadCSVButton
+              onUpload={async (file) => {
+                await handleUploadCsv(file, setAlert, fetchPlayers);
               }}
-            >
-              Upload CSV
-              <input
-                type="file"
-                accept=".csv"
-                hidden
-                onChange={async (e) => {
-                  if (e.target.files && e.target.files.length > 0) {
-                    await handleUploadCsv(
-                      e.target.files[0],
-                      setAlert,
-                      fetchPlayers
-                    );
-                    e.target.value = "";
-                  }
-                }}
-              />
-            </Button>
+              loading={apiLoading}
+            />
           </Box>
         </Box>
         <PlayerModal
