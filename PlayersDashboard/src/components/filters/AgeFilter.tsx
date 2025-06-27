@@ -34,19 +34,33 @@ const AgeFilter: React.FC<AgeFilterProps> = ({
       label="Min Age"
       type="number"
       value={min}
-      onChange={(e) => onMinChange(e.target.value)}
+      onChange={(e) => {
+        const val = e.target.value;
+        // Only allow positive integers or empty string
+        if (val === "" || (/^\d+$/.test(val) && Number(val) > 0)) {
+          onMinChange(val);
+        }
+      }}
       size="small"
       disabled={disabled}
       fullWidth
+      inputProps={{ min: 1, step: 1, pattern: "\\d*" }}
     />
     <TextField
       label="Max Age"
       type="number"
       value={max}
-      onChange={(e) => onMaxChange(e.target.value)}
+      onChange={(e) => {
+        const val = e.target.value;
+        // Only allow positive integers or empty string
+        if (val === "" || (/^\d+$/.test(val) && Number(val) > 0)) {
+          onMaxChange(val);
+        }
+      }}
       size="small"
       disabled={disabled}
       fullWidth
+      inputProps={{ min: 1, step: 1, pattern: "\\d*" }}
     />
   </Box>
 );
