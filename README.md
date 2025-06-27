@@ -98,8 +98,10 @@ npm run dev
 
 ### 2. **Production/Full Stack Mode (Docker Compose)**
 
+_You can add -d after the up command to run containers on detached mode_
+
 ```bash
-docker compose -f docker-compose.prod.yml up --build
+docker compose -f docker-compose.prod.yml up
 ```
 
 - Brings up MySQL, backend, and frontend containers
@@ -117,7 +119,7 @@ docker compose -f docker-compose.prod.yml down
 ### 3. **Development Mode (Docker Compose)**
 
 ```bash
-docker compose -f docker-compose.dev.yml up --build
+docker compose -f docker-compose.dev.yml up
 ```
 
 - Hot-reloads frontend and backend for local development
