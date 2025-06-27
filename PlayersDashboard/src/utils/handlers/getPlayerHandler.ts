@@ -18,7 +18,7 @@ export async function handleGetPlayer(
   } catch (e: unknown) {
     if (isAxiosError(e)) {
       setAlert({
-        message: e.response?.data?.message || "Failed to retrieve player.",
+        message: e.response?.data || "Failed to retrieve player.",
         severity: "error",
       });
     } else {

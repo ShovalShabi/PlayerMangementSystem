@@ -23,7 +23,7 @@ export async function handleUpdatePlayer(
   } catch (e: unknown) {
     if (isAxiosError(e)) {
       setAlert({
-        message: e.response?.data?.message || "Failed to submit player.",
+        message: e.response?.data || "Failed to submit player.",
         severity: "error",
       });
     } else {
