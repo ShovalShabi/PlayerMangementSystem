@@ -68,6 +68,15 @@ jobs:
           username: ${{ secrets.DOCKERHUBUSERNAME }}
           password: ${{ secrets.DOCKERHUBPASSWORD }}
 
+      # Step 7.5: Create .env.prod for frontend
+      - name: Create .env.prod for frontend
+        run: |
+          cat <<EOF > PlayersDashboard/.env.prod
+          VITE_PORT=${{ secrets.VITEPORT }}
+          VITE_BACKEND_HOST=${{ secrets.VITEBACKENDHOST }}
+          VITE_BACKEND_PORT=${{ secrets.VITEBACKENDPORT }}
+          EOF
+
       # Step 8: Build and Start Docker Compose Services
       - name: Build and Start Docker Compose Services
         run: |
@@ -79,13 +88,13 @@ jobs:
 
           # Tag and push backend image
           BACKEND_IMAGE=playermangementsystem_backend:latest
-          docker tag $BACKEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/player-service:main
-          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/player-service:main
+          docker tag $BACKEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/player-service:main
+          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/player-service:main
 
           # Tag and push frontend image
           FRONTEND_IMAGE=playermangementsystem_frontend:latest
-          docker tag $FRONTEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/players-dashboard:main
-          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/players-dashboard:main
+          docker tag $FRONTEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/players-dashboard:main
+          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/players-dashboard:main
 
           docker compose -f docker-compose.prod.yml up -d | tee -a ci_cd_log.txt
 
