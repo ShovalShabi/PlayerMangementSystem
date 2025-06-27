@@ -1,14 +1,12 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
-import { State } from "../utils/interfaces/state";
+import Units from "../utils/types/units";
 
-const initialMeasurement: State["units"] = "M";
+const initialMeasurement: Units = "M";
 
-const setMeasurement = createAction<State["units"]>("setMeasurement");
+const setMeasurement = createAction<Units>("setMeasurement");
 
-const reducer = createReducer(initialMeasurement, (builder) => {
-  builder.addCase(setMeasurement, (state: State["units"], action) => {
-    state = action.payload;
-  });
+const reducer = createReducer<Units>(initialMeasurement, (builder) => {
+  builder.addCase(setMeasurement, (_state, action) => action.payload);
 });
 
 export { setMeasurement };
