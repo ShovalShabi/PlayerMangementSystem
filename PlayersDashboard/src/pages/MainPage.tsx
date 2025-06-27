@@ -10,7 +10,7 @@ import PlayerDTO from "../dtos/PlayerDTO";
 import ThemeModeSwitcher from "../components/ThemeModeSwitcher";
 import FilterComponentDrawer from "../components/FilterComponentDrawer";
 import CustomDataGrid from "../components/CustomDataGrid";
-import useAlert from "../hooks/use-alert";
+import useAlert from "../hooks/useAlert";
 import PlayerModal from "../components/PlayerModal";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";

@@ -17,7 +17,7 @@ import {
   OutlinedInput,
   CircularProgress,
 } from "@mui/material";
-import useAlert from "../hooks/use-alert";
+import useAlert from "../hooks/useAlert";
 import { handleGetPlayer } from "../utils/handlers/getPlayerHandler";
 import { handleCreatePlayer } from "../utils/handlers/createPlayerHandler";
 import { handleUpdatePlayer } from "../utils/handlers/updatePlayerHandler";
