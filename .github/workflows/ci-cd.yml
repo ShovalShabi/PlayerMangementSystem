@@ -13,9 +13,9 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME_BACKEND: ${{ secrets.DOCKERHUBUSERNAME }}/player-service
-  IMAGE_NAME_FRONTEND: ${{ secrets.DOCKERHUBUSERNAME }}/players-dashboard
-  IMAGE_NAME_DB: ${{ secrets.DOCKERHUBUSERNAME }}/mysql
+  IMAGE_NAME_BACKEND: ${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/player-service
+  IMAGE_NAME_FRONTEND: ${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/players-dashboard
+  IMAGE_NAME_DB: ${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/mysql
 
 jobs:
   test-backend:
@@ -163,18 +163,20 @@ jobs:
       - name: Test Docker Compose
         run: |
           echo "$(date): Step 11 - Testing Docker Compose setup..." | tee -a ci_cd_log.txt
+          # Install Docker Compose using pip (more reliable)
           sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
-          docker compose -f docker-compose.prod.yml up --build -d
+          sudo apt-get install -y python3-pip
+          sudo pip3 install docker-compose
+          docker-compose -f docker-compose.prod.yml up --build -d
           echo "$(date): Step 12 - Docker Compose services started" | tee -a ci_cd_log.txt
 
           # Wait for services to be healthy
           echo "$(date): Step 13 - Waiting for services to be healthy..." | tee -a ci_cd_log.txt
-          timeout 300 bash -c 'until docker compose -f docker-compose.prod.yml ps | grep -q "healthy"; do sleep 10; done' || true
+          timeout 300 bash -c 'until docker-compose -f docker-compose.prod.yml ps | grep -q "healthy"; do sleep 10; done' || true
 
           # Check service status
           echo "$(date): Step 14 - Checking service status..." | tee -a ci_cd_log.txt
-          docker compose -f docker-compose.prod.yml ps | tee -a ci_cd_log.txt
+          docker-compose -f docker-compose.prod.yml ps | tee -a ci_cd_log.txt
 
           # Test backend health endpoint
           echo "$(date): Step 15 - Testing backend health endpoint..." | tee -a ci_cd_log.txt
@@ -189,14 +191,14 @@ jobs:
         if: always()
         run: |
           echo "$(date): Step 17 - Tearing down Docker Compose services..." | tee -a ci_cd_log.txt
-          docker compose -f docker-compose.prod.yml down -v
+          docker-compose -f docker-compose.prod.yml down -v
           echo "$(date): Step 18 - Docker Compose services stopped" | tee -a ci_cd_log.txt
 
       - name: Output service logs
         if: always()
         run: |
           echo "$(date): Step 19 - Service logs:" | tee -a ci_cd_log.txt
-          docker compose -f docker-compose.prod.yml logs || echo "No logs available" | tee -a ci_cd_log.txt
+          docker-compose -f docker-compose.prod.yml logs || echo "No logs available" | tee -a ci_cd_log.txt
 
       - name: Upload build logs
         uses: actions/upload-artifact@v4
