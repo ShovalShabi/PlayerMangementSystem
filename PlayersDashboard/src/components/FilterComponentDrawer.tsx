@@ -5,27 +5,22 @@ import {
   IconButton,
   Divider,
   Grid,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  OutlinedInput,
   Tooltip,
   Drawer as MuiDrawer,
   styled,
-  SelectChangeEvent,
-  Collapse,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import CloseIcon from "@mui/icons-material/Close";
 import { Positions } from "../dtos/Positions";
 import { colorTokens } from "../theme";
 import listOfCountries from "../utils/objects/countries-object";
 import { Filters } from "../utils/interfaces/filters";
 import useDebounce from "../hooks/useDebounce";
-import NationalityWithFlag from "./NationalityWithFlag";
+import NameFilter from "./filters/NameFilter";
+import NationalityFilter from "./filters/NationalityFilter";
+import HeightFilter from "./filters/HeightFilter";
+import PositionFilter from "./filters/PositionFilter";
+import AgeFilter from "./filters/AgeFilter";
 
 const drawerWidth = 300;
 
@@ -90,9 +85,6 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   updateAPIRequest: onFilterChange,
   heightUnit,
 }) => {
-  const [nationalityOpen, setNationalityOpen] = useState(false);
-  const [positionsOpen, setPositionsOpen] = useState(false);
-
   // Local state for each filter
   const [name, setName] = useState(filters.name);
   const [nationality, setNationality] = useState(filters.nationality);
@@ -203,18 +195,6 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
     return () => window.removeEventListener("keydown", handleEsc);
   }, [open, onClose]);
 
-  const handleNationalityChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value as string[];
-    setNationality(value);
-    setNationalityOpen(false);
-  };
-
-  const handlePositionChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value as string[];
-    setPositions(value);
-    setPositionsOpen(false);
-  };
-
   return (
     <Drawer variant="permanent" open={open}>
       {open ? (
@@ -251,226 +231,46 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
           >
             <Grid container spacing={2} direction="column" flex={1}>
               <Grid item>
-                <TextField
-                  label="Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  fullWidth
-                  size="small"
-                  placeholder="Search by first or last name"
+                <NameFilter value={name} onChange={setName} disabled={!open} />
+              </Grid>
+              <Grid item>
+                <NationalityFilter
+                  value={nationality}
+                  onChange={setNationality}
+                  options={listOfCountries}
+                  disabled={!open}
                 />
               </Grid>
               <Grid item>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Nationalities</InputLabel>
-                  <Select
-                    multiple
-                    open={nationalityOpen}
-                    onOpen={() => setNationalityOpen(true)}
-                    onClose={() => setNationalityOpen(false)}
-                    value={nationality}
-                    onChange={handleNationalityChange}
-                    input={<OutlinedInput label="Nationalities" />}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                        {(selected as string[]).map((value) => (
-                          <Box
-                            key={value}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              backgroundColor: "primary.main",
-                              color: "primary.contrastText",
-                              borderRadius: 1,
-                              px: 1,
-                              py: 0.5,
-                              fontSize: "0.75rem",
-                              gap: 0.5,
-                            }}
-                          >
-                            <NationalityWithFlag nationality={value} />
-                            <IconButton
-                              size="small"
-                              onMouseDown={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                const newNationalities = nationality.filter(
-                                  (nat) => nat !== value
-                                );
-                                setNationality(newNationalities);
-                              }}
-                              sx={{
-                                color: "inherit",
-                                p: 0.25,
-                                "&:hover": {
-                                  backgroundColor: "rgba(255,255,255,0.1)",
-                                },
-                              }}
-                            >
-                              <CloseIcon sx={{ fontSize: "0.875rem" }} />
-                            </IconButton>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300,
-                        },
-                      },
-                      TransitionComponent: Collapse,
-                      transitionDuration: 200,
-                    }}
-                  >
-                    {listOfCountries.map((country) => (
-                      <MenuItem key={country.code} value={country.label}>
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <NationalityWithFlag nationality={country.label} />
-                        </Box>
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <AgeFilter
+                  min={minAge}
+                  max={maxAge}
+                  onMinChange={setMinAge}
+                  onMaxChange={setMaxAge}
+                  disabled={!open}
+                />
               </Grid>
               <Grid item>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <TextField
-                    label="Min Age"
-                    type="number"
-                    value={minAge}
-                    onChange={(e) => setMinAge(e.target.value)}
-                    fullWidth
-                    size="small"
-                    inputProps={{ min: 0, max: 100 }}
-                  />
-                  <TextField
-                    label="Max Age"
-                    type="number"
-                    value={maxAge}
-                    onChange={(e) => setMaxAge(e.target.value)}
-                    fullWidth
-                    size="small"
-                    inputProps={{ min: 0, max: 100 }}
-                  />
-                </Box>
+                <HeightFilter
+                  min={heightUnit === "ft" ? minHeightFt : minHeight}
+                  max={heightUnit === "ft" ? maxHeightFt : maxHeight}
+                  onMinChange={
+                    heightUnit === "ft" ? setMinHeightFt : setMinHeight
+                  }
+                  onMaxChange={
+                    heightUnit === "ft" ? setMaxHeightFt : setMaxHeight
+                  }
+                  unit={heightUnit}
+                  disabled={!open}
+                />
               </Grid>
               <Grid item>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                  <TextField
-                    label={`Min Height (${heightUnit})`}
-                    type="number"
-                    value={heightUnit === "ft" ? minHeightFt : minHeight}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (heightUnit === "ft") {
-                        setMinHeightFt(val);
-                      } else {
-                        setMinHeight(val);
-                      }
-                    }}
-                    fullWidth
-                    size="small"
-                    inputProps={{
-                      min: heightUnit === "ft" ? 3.28 : 1.0,
-                      max: heightUnit === "ft" ? 8.2 : 2.5,
-                      step: 0.01,
-                    }}
-                  />
-                  <TextField
-                    label={`Max Height (${heightUnit})`}
-                    type="number"
-                    value={heightUnit === "ft" ? maxHeightFt : maxHeight}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (heightUnit === "ft") {
-                        setMaxHeightFt(val);
-                      } else {
-                        setMaxHeight(val);
-                      }
-                    }}
-                    fullWidth
-                    size="small"
-                    inputProps={{
-                      min: heightUnit === "ft" ? 3.28 : 1.0,
-                      max: heightUnit === "ft" ? 8.2 : 2.5,
-                      step: 0.01,
-                    }}
-                  />
-                </Box>
-              </Grid>
-              <Grid item>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Positions</InputLabel>
-                  <Select
-                    multiple
-                    open={positionsOpen}
-                    onOpen={() => setPositionsOpen(true)}
-                    onClose={() => setPositionsOpen(false)}
-                    value={positions}
-                    onChange={handlePositionChange}
-                    input={<OutlinedInput label="Positions" />}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                        {(selected as string[]).map((value) => (
-                          <Box
-                            key={value}
-                            sx={{
-                              display: "flex",
-                              alignItems: "center",
-                              backgroundColor: "primary.main",
-                              color: "primary.contrastText",
-                              borderRadius: 1,
-                              px: 1,
-                              py: 0.5,
-                              fontSize: "0.75rem",
-                              gap: 0.5,
-                            }}
-                          >
-                            <Typography variant="caption">{value}</Typography>
-                            <IconButton
-                              size="small"
-                              onMouseDown={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                const newPositions = positions.filter(
-                                  (pos) => pos !== value
-                                );
-                                setPositions(newPositions);
-                              }}
-                              sx={{
-                                color: "inherit",
-                                p: 0.25,
-                                "&:hover": {
-                                  backgroundColor: "rgba(255,255,255,0.1)",
-                                },
-                              }}
-                            >
-                              <CloseIcon sx={{ fontSize: "0.875rem" }} />
-                            </IconButton>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300,
-                        },
-                      },
-                      TransitionComponent: Collapse,
-                      transitionDuration: 200,
-                    }}
-                  >
-                    {positionOptions.map((pos) => (
-                      <MenuItem key={pos} value={pos}>
-                        {pos}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <PositionFilter
+                  value={positions}
+                  onChange={setPositions}
+                  options={positionOptions}
+                  disabled={!open}
+                />
               </Grid>
             </Grid>
           </Box>
