@@ -68,21 +68,20 @@ jobs:
           username: ${{ secrets.DOCKERHUBUSERNAME }}
           password: ${{ secrets.DOCKERHUBPASSWORD }}
 
-      # 7.5 Create frontend env
+      # 7.5 Create .env.prod for frontend
       - name: Create .env.prod for frontend
         run: |
           cat <<EOF > PlayersDashboard/.env.prod
           VITE_PORT=${{ secrets.VITEPORT }}
           VITE_BACKEND_HOST=${{ secrets.VITEBACKENDHOST }}
-          VITE_BACKEND_PORT${{secrets.VITEBACKENDPORT}}
+          VITE_BACKEND_PORT=${{ secrets.VITEBACKENDPORT }}
           EOF
+          echo "Created PlayersDashboard/.env.prod" | tee -a ci_cd_log.txt
 
-      # 8. Build & Push (now including mysql)
+      # 8. Build & Push
       - name: Build Docker Compose Images and Push to Docker Hub
         run: |
           echo "Step 3: Build images" | tee -a ci_cd_log.txt
-          sudo apt-get update | tee -a ci_cd_log.txt
-          sudo apt-get install -y docker-compose-plugin | tee -a ci_cd_log.txt
           docker compose version | tee -a ci_cd_log.txt
 
           docker compose -f docker-compose.prod.yml build | tee -a ci_cd_log.txt
@@ -90,8 +89,8 @@ jobs:
           echo "=== Docker images after build ===" | tee -a ci_cd_log.txt
           docker images --format '{{.Repository}}:{{.Tag}}' | tee -a ci_cd_log.txt
 
-          # Retag & push mysql, backend and frontend
-          for SERVICE in mysql backend frontend; do
+          # Retag & push only backend and frontend
+          for SERVICE in backend frontend; do
             IMAGE=$(docker images \
               --filter "label=com.docker.compose.service=$SERVICE" \
               --format '{{.Repository}}:{{.Tag}}' | head -n1)
@@ -101,10 +100,9 @@ jobs:
               continue
             fi
 
-            # extract original tag (after the last ':')
             TAG="${IMAGE##*:}"
-
             TARGET="players-dashboard-system/$SERVICE:$TAG"
+
             echo "Tagging $IMAGE → $TARGET" | tee -a ci_cd_log.txt
             docker tag "$IMAGE" "$TARGET" | tee -a ci_cd_log.txt
 
