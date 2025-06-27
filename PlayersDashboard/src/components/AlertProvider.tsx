@@ -1,4 +1,5 @@
 import { createContext, useState, ReactNode } from "react";
+import GlobalAlert from "./GlobalAlert";
 
 /**
  * @interface AlertContextType
@@ -54,6 +55,7 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AlertContext.Provider value={{ alert, setAlert }}>
       {children}
+      <GlobalAlert />
     </AlertContext.Provider>
   );
 };
