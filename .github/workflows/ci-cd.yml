@@ -108,96 +108,79 @@ jobs:
         run: |
           echo "$(date): Step 8 - Docker Hub login completed" | tee -a ci_cd_log.txt
 
-      - name: Extract metadata for Backend
-        id: meta-backend
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-
-      - name: Extract metadata for Frontend
-        id: meta-frontend
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
-
-      - name: Build and push Backend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./PlayerService
-          push: true
-          tags: ${{ steps.meta-backend.outputs.tags }}
-          labels: ${{ steps.meta-backend.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Log Step - Backend Build
+      - name: Install Docker Compose
         run: |
-          echo "$(date): Step 9 - Backend image built and pushed successfully" | tee -a ci_cd_log.txt
-
-      - name: Build and push Frontend image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./PlayersDashboard
-          push: true
-          tags: ${{ steps.meta-frontend.outputs.tags }}
-          labels: ${{ steps.meta-frontend.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Log Step - Frontend Build
-        run: |
-          echo "$(date): Step 10 - Frontend image built and pushed successfully" | tee -a ci_cd_log.txt
-
-      - name: Test Docker Compose
-        run: |
-          echo "$(date): Step 11 - Testing Docker Compose setup..." | tee -a ci_cd_log.txt
-          # Install Docker Compose using pip (more reliable)
+          echo "$(date): Step 9 - Installing Docker Compose..." | tee -a ci_cd_log.txt
           sudo apt-get update
           sudo apt-get install -y python3-pip
           sudo pip3 install docker-compose
-          docker-compose -f docker-compose.prod.yml up --build -d
-          echo "$(date): Step 12 - Docker Compose services started" | tee -a ci_cd_log.txt
+          docker-compose --version | tee -a ci_cd_log.txt
+
+      - name: Build images with Docker Compose
+        run: |
+          echo "$(date): Step 10 - Building images with Docker Compose..." | tee -a ci_cd_log.txt
+          docker-compose -f docker-compose.prod.yml build
+          echo "$(date): Step 11 - Docker Compose build completed" | tee -a ci_cd_log.txt
+
+      - name: List built images
+        run: |
+          echo "$(date): Step 12 - Listing built images..." | tee -a ci_cd_log.txt
+          docker images | tee -a ci_cd_log.txt
+
+      - name: Tag and push Backend image
+        run: |
+          echo "$(date): Step 13 - Tagging and pushing backend image..." | tee -a ci_cd_log.txt
+          # Get the actual image name from Docker Compose
+          BACKEND_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep "playermangementsystem_backend" | head -1 | awk '{print $1}')
+          echo "Backend image found: $BACKEND_IMAGE" | tee -a ci_cd_log.txt
+          docker tag $BACKEND_IMAGE ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:main
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_BACKEND }}:main
+          echo "$(date): Step 14 - Backend image pushed successfully" | tee -a ci_cd_log.txt
+
+      - name: Tag and push Frontend image
+        run: |
+          echo "$(date): Step 15 - Tagging and pushing frontend image..." | tee -a ci_cd_log.txt
+          # Get the actual image name from Docker Compose
+          FRONTEND_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep "playermangementsystem_frontend" | head -1 | awk '{print $1}')
+          echo "Frontend image found: $FRONTEND_IMAGE" | tee -a ci_cd_log.txt
+          docker tag $FRONTEND_IMAGE ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:main
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_FRONTEND }}:main
+          echo "$(date): Step 16 - Frontend image pushed successfully" | tee -a ci_cd_log.txt
+
+      - name: Test Docker Compose
+        run: |
+          echo "$(date): Step 17 - Testing Docker Compose setup..." | tee -a ci_cd_log.txt
+          docker-compose -f docker-compose.prod.yml up -d
+          echo "$(date): Step 18 - Docker Compose services started" | tee -a ci_cd_log.txt
 
           # Wait for services to be healthy
-          echo "$(date): Step 13 - Waiting for services to be healthy..." | tee -a ci_cd_log.txt
+          echo "$(date): Step 19 - Waiting for services to be healthy..." | tee -a ci_cd_log.txt
           timeout 300 bash -c 'until docker-compose -f docker-compose.prod.yml ps | grep -q "healthy"; do sleep 10; done' || true
 
           # Check service status
-          echo "$(date): Step 14 - Checking service status..." | tee -a ci_cd_log.txt
+          echo "$(date): Step 20 - Checking service status..." | tee -a ci_cd_log.txt
           docker-compose -f docker-compose.prod.yml ps | tee -a ci_cd_log.txt
 
           # Test backend health endpoint
-          echo "$(date): Step 15 - Testing backend health endpoint..." | tee -a ci_cd_log.txt
+          echo "$(date): Step 21 - Testing backend health endpoint..." | tee -a ci_cd_log.txt
           sleep 30
           curl -f http://localhost:8080/actuator/health || echo "Backend health check failed" | tee -a ci_cd_log.txt
 
           # Test frontend
-          echo "$(date): Step 16 - Testing frontend..." | tee -a ci_cd_log.txt
+          echo "$(date): Step 22 - Testing frontend..." | tee -a ci_cd_log.txt
           curl -f http://localhost:80/ || echo "Frontend check failed" | tee -a ci_cd_log.txt
 
       - name: Tear down Docker Compose
         if: always()
         run: |
-          echo "$(date): Step 17 - Tearing down Docker Compose services..." | tee -a ci_cd_log.txt
+          echo "$(date): Step 23 - Tearing down Docker Compose services..." | tee -a ci_cd_log.txt
           docker-compose -f docker-compose.prod.yml down -v
-          echo "$(date): Step 18 - Docker Compose services stopped" | tee -a ci_cd_log.txt
+          echo "$(date): Step 24 - Docker Compose services stopped" | tee -a ci_cd_log.txt
 
       - name: Output service logs
         if: always()
         run: |
-          echo "$(date): Step 19 - Service logs:" | tee -a ci_cd_log.txt
+          echo "$(date): Step 25 - Service logs:" | tee -a ci_cd_log.txt
           docker-compose -f docker-compose.prod.yml logs || echo "No logs available" | tee -a ci_cd_log.txt
 
       - name: Upload build logs
