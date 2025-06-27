@@ -185,23 +185,27 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
             </li>
           )}
           renderTags={(selected, getTagProps) =>
-            selected.map((option, index) => (
-              <Chip
-                label={
-                  <span>
-                    <span style={{ marginRight: 6, fontSize: 16 }}>
-                      {String.fromCodePoint(
-                        ...[...option.code.toUpperCase()].map(
-                          (c) => 0x1f1e6 + c.charCodeAt(0) - 65
-                        )
-                      )}
+            selected.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index });
+              return (
+                <Chip
+                  key={key}
+                  label={
+                    <span>
+                      <span style={{ marginRight: 6, fontSize: 16 }}>
+                        {String.fromCodePoint(
+                          ...[...option.code.toUpperCase()].map(
+                            (c) => 0x1f1e6 + c.charCodeAt(0) - 65
+                          )
+                        )}
+                      </span>
+                      {option.label}
                     </span>
-                    {option.label}
-                  </span>
-                }
-                {...getTagProps({ index })}
-              />
-            ))
+                  }
+                  {...tagProps}
+                />
+              );
+            })
           }
           renderInput={(params) => (
             <TextField {...params} label="Nationalities" />
