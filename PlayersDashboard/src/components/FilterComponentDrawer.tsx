@@ -23,6 +23,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Positions } from "../dtos/Positions";
 import { colorTokens } from "../theme";
 import listOfCountries from "../utils/objects/countries-object";
+import { Filters } from "../utils/interfaces/filters";
+import useDebounce from "../hooks/useDebounce";
 
 const drawerWidth = 300;
 
@@ -74,16 +76,8 @@ interface FilterComponentDrawerProps {
   open: boolean;
   onClose: () => void;
   onOpen: () => void;
-  filters: {
-    name: string;
-    nationality: string[];
-    minAge: string;
-    maxAge: string;
-    minHeight: string;
-    maxHeight: string;
-    positions: string[];
-  };
-  onFilterChange: (field: string, value: unknown) => void;
+  filters: Filters;
+  updateAPIRequest: (field: string, value: unknown) => void;
 }
 
 const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
@@ -91,10 +85,71 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   onClose,
   onOpen,
   filters,
-  onFilterChange,
+  updateAPIRequest: onFilterChange,
 }) => {
   const [nationalityOpen, setNationalityOpen] = useState(false);
   const [positionsOpen, setPositionsOpen] = useState(false);
+
+  // Local state for each filter
+  const [name, setName] = useState(filters.name);
+  const [nationality, setNationality] = useState(filters.nationality);
+  const [minAge, setMinAge] = useState(filters.minAge);
+  const [maxAge, setMaxAge] = useState(filters.maxAge);
+  const [minHeight, setMinHeight] = useState(filters.minHeight);
+  const [maxHeight, setMaxHeight] = useState(filters.maxHeight);
+  const [positions, setPositions] = useState(filters.positions);
+
+  // Debounced values
+  const debouncedName = useDebounce(name, 500);
+  const debouncedNationality = useDebounce(nationality, 500);
+  const debouncedMinAge = useDebounce(minAge, 500);
+  const debouncedMaxAge = useDebounce(maxAge, 500);
+  const debouncedMinHeight = useDebounce(minHeight, 500);
+  const debouncedMaxHeight = useDebounce(maxHeight, 500);
+  const debouncedPositions = useDebounce(positions, 500);
+
+  // Effects to update API after debounce
+  useEffect(() => {
+    if (debouncedName !== filters.name) {
+      onFilterChange("name", debouncedName);
+    }
+  }, [debouncedName, filters.name, onFilterChange]);
+
+  useEffect(() => {
+    if (debouncedNationality !== filters.nationality) {
+      onFilterChange("nationality", debouncedNationality);
+    }
+  }, [debouncedNationality, filters.nationality, onFilterChange]);
+
+  useEffect(() => {
+    if (debouncedMinAge !== filters.minAge) {
+      onFilterChange("minAge", debouncedMinAge);
+    }
+  }, [debouncedMinAge, filters.minAge, onFilterChange]);
+
+  useEffect(() => {
+    if (debouncedMaxAge !== filters.maxAge) {
+      onFilterChange("maxAge", debouncedMaxAge);
+    }
+  }, [debouncedMaxAge, filters.maxAge, onFilterChange]);
+
+  useEffect(() => {
+    if (debouncedMinHeight !== filters.minHeight) {
+      onFilterChange("minHeight", debouncedMinHeight);
+    }
+  }, [debouncedMinHeight, filters.minHeight, onFilterChange]);
+
+  useEffect(() => {
+    if (debouncedMaxHeight !== filters.maxHeight) {
+      onFilterChange("maxHeight", debouncedMaxHeight);
+    }
+  }, [debouncedMaxHeight, filters.maxHeight, onFilterChange]);
+
+  useEffect(() => {
+    if (debouncedPositions !== filters.positions) {
+      onFilterChange("positions", debouncedPositions);
+    }
+  }, [debouncedPositions, filters.positions, onFilterChange]);
 
   useEffect(() => {
     if (!open) return;
@@ -106,16 +161,14 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   }, [open, onClose]);
 
   const handleNationalityChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value;
-    onFilterChange("nationality", value);
-    // Close dropdown after selection
+    const value = event.target.value as string[];
+    setNationality(value);
     setNationalityOpen(false);
   };
 
   const handlePositionChange = (event: SelectChangeEvent<string[]>) => {
-    const value = event.target.value;
-    onFilterChange("positions", value);
-    // Close dropdown after selection
+    const value = event.target.value as string[];
+    setPositions(value);
     setPositionsOpen(false);
   };
 
@@ -157,8 +210,8 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
               <Grid item>
                 <TextField
                   label="Name"
-                  value={filters.name}
-                  onChange={(e) => onFilterChange("name", e.target.value)}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   fullWidth
                   size="small"
                   placeholder="Search by first or last name"
@@ -172,7 +225,7 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                     open={nationalityOpen}
                     onOpen={() => setNationalityOpen(true)}
                     onClose={() => setNationalityOpen(false)}
-                    value={filters.nationality}
+                    value={nationality}
                     onChange={handleNationalityChange}
                     input={<OutlinedInput label="Nationalities" />}
                     renderValue={(selected) => (
@@ -198,11 +251,10 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                               onMouseDown={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                const newNationalities =
-                                  filters.nationality.filter(
-                                    (nat) => nat !== value
-                                  );
-                                onFilterChange("nationality", newNationalities);
+                                const newNationalities = nationality.filter(
+                                  (nat) => nat !== value
+                                );
+                                setNationality(newNationalities);
                               }}
                               sx={{
                                 color: "inherit",
@@ -254,15 +306,8 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                   <TextField
                     label="Min Age"
                     type="number"
-                    value={filters.minAge}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const maxAge = filters.maxAge;
-                      if (maxAge && parseInt(value) > parseInt(maxAge)) {
-                        onFilterChange("maxAge", value);
-                      }
-                      onFilterChange("minAge", value);
-                    }}
+                    value={minAge}
+                    onChange={(e) => setMinAge(e.target.value)}
                     fullWidth
                     size="small"
                     inputProps={{ min: 0, max: 100 }}
@@ -270,15 +315,8 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                   <TextField
                     label="Max Age"
                     type="number"
-                    value={filters.maxAge}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const minAge = filters.minAge;
-                      if (minAge && parseInt(value) < parseInt(minAge)) {
-                        onFilterChange("minAge", value);
-                      }
-                      onFilterChange("maxAge", value);
-                    }}
+                    value={maxAge}
+                    onChange={(e) => setMaxAge(e.target.value)}
                     fullWidth
                     size="small"
                     inputProps={{ min: 0, max: 100 }}
@@ -290,18 +328,8 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                   <TextField
                     label="Min Height (m)"
                     type="number"
-                    value={filters.minHeight}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const maxHeight = filters.maxHeight;
-                      if (
-                        maxHeight &&
-                        parseFloat(value) > parseFloat(maxHeight)
-                      ) {
-                        onFilterChange("maxHeight", value);
-                      }
-                      onFilterChange("minHeight", value);
-                    }}
+                    value={minHeight}
+                    onChange={(e) => setMinHeight(e.target.value)}
                     fullWidth
                     size="small"
                     inputProps={{ min: 1.0, max: 2.5, step: 0.01 }}
@@ -309,18 +337,8 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                   <TextField
                     label="Max Height (m)"
                     type="number"
-                    value={filters.maxHeight}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const minHeight = filters.minHeight;
-                      if (
-                        minHeight &&
-                        parseFloat(value) < parseFloat(minHeight)
-                      ) {
-                        onFilterChange("minHeight", value);
-                      }
-                      onFilterChange("maxHeight", value);
-                    }}
+                    value={maxHeight}
+                    onChange={(e) => setMaxHeight(e.target.value)}
                     fullWidth
                     size="small"
                     inputProps={{ min: 1.0, max: 2.5, step: 0.01 }}
@@ -335,7 +353,7 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                     open={positionsOpen}
                     onOpen={() => setPositionsOpen(true)}
                     onClose={() => setPositionsOpen(false)}
-                    value={filters.positions}
+                    value={positions}
                     onChange={handlePositionChange}
                     input={<OutlinedInput label="Positions" />}
                     renderValue={(selected) => (
@@ -361,10 +379,10 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                               onMouseDown={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                const newPositions = filters.positions.filter(
+                                const newPositions = positions.filter(
                                   (pos) => pos !== value
                                 );
-                                onFilterChange("positions", newPositions);
+                                setPositions(newPositions);
                               }}
                               sx={{
                                 color: "inherit",
