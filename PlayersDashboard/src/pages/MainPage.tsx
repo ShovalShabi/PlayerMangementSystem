@@ -20,7 +20,6 @@ import { handleGetPlayersBySortAndFilter } from "../utils/handlers/getPlayerBySo
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
 import { getPlayerColumns } from "../components/playerColumns";
 import LoadingModal from "../components/LoadingModal";
-import { useDebouncedFilters } from "../hooks/useDebouncedFilters";
 
 const MainPage: React.FC = () => {
   const initialFilters = {
@@ -45,63 +44,8 @@ const MainPage: React.FC = () => {
   const [modalMode, setModalMode] = useState<"create" | "update">("create");
   const [heightUnit, setHeightUnit] = useState<"m" | "ft">("m");
 
-  // Initial load of players on mount
-  useEffect(() => {
-    const loadInitialPlayers = async () => {
-      setApiLoading(true);
-      try {
-        const params = {
-          page,
-          size: initialFilters.rowsPerPage,
-        };
-        const result = await handleGetPlayersBySortAndFilter(params, setAlert);
-        if (result) {
-          setPlayers(result.content || []);
-          setTotalPlayers(result.totalElements || 0);
-        } else {
-          setPlayers([]);
-          setTotalPlayers(0);
-        }
-      } catch (error) {
-        console.error("Error fetching initial players:", error);
-      } finally {
-        setApiLoading(false);
-      }
-    };
-    loadInitialPlayers();
-  }, []); // Only run on mount
-
-  // Debounced filters hook
-  const {
-    filters,
-    isLoading: debouncedLoading,
-    updateFilter,
-    setLoading,
-  } = useDebouncedFilters({
-    initialFilters,
-    delay: 500,
-    onFiltersChange: async (debouncedFilters) => {
-      setApiLoading(true);
-      try {
-        const params = getApiParams(debouncedFilters);
-        const result = await handleGetPlayersBySortAndFilter(params, setAlert);
-        if (result) {
-          setPlayers(result.content || []);
-          setTotalPlayers(result.totalElements || 0);
-        } else {
-          setPlayers([]);
-          setTotalPlayers(0);
-        }
-      } catch (error) {
-        setPlayers([]);
-        setTotalPlayers(0);
-        console.error("Error fetching players:", error);
-      } finally {
-        setApiLoading(false);
-        setLoading(false);
-      }
-    },
-  });
+  // Filters state
+  const [filters, setFilters] = useState(initialFilters);
 
   // Map filters to API params
   const getApiParams = (currentFilters = filters) => {
@@ -125,24 +69,54 @@ const MainPage: React.FC = () => {
           : undefined,
       page,
       size: currentFilters.rowsPerPage,
-      // Add sortBy/order if you have sort state
     };
   };
 
-  const handleFilterChange = (field: string, value: unknown) => {
-    updateFilter(field as keyof typeof filters, value);
-    setPage(0); // Reset to first page on filter change
+  // Update filters and fetch players
+  const updateAPIRequest = (field: string, value: unknown) => {
+    setFilters((prev) => {
+      const updated = { ...prev, [field]: value };
+      fetchPlayers(updated);
+      return updated;
+    });
+    setPage(0);
   };
+
+  // Fetch players function
+  const fetchPlayers = async (currentFilters = filters) => {
+    setApiLoading(true);
+    try {
+      const params = getApiParams(currentFilters);
+      const result = await handleGetPlayersBySortAndFilter(params, setAlert);
+      if (result) {
+        setPlayers(result.content || []);
+        setTotalPlayers(result.totalElements || 0);
+      } else {
+        setPlayers([]);
+        setTotalPlayers(0);
+      }
+    } catch (error) {
+      setPlayers([]);
+      setTotalPlayers(0);
+      console.error("Error fetching players:", error);
+    } finally {
+      setApiLoading(false);
+    }
+  };
+
+  // Initial load of players on mount
+  useEffect(() => {
+    fetchPlayers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePageChange = async (model: GridPaginationModel) => {
     setPage(model.page);
-    updateFilter("rowsPerPage", model.pageSize);
-
-    // Directly trigger API call for pagination changes
+    setFilters((prev) => ({ ...prev, rowsPerPage: model.pageSize }));
     setApiLoading(true);
     try {
       const params = getApiParams({ ...filters, rowsPerPage: model.pageSize });
-      params.page = model.page; // Use the new page number
+      params.page = model.page;
       const result = await handleGetPlayersBySortAndFilter(params, setAlert);
       if (result) {
         setPlayers(result.content || []);
@@ -173,7 +147,7 @@ const MainPage: React.FC = () => {
         onClose={() => setDrawerOpen(false)}
         onOpen={() => setDrawerOpen(true)}
         filters={filters}
-        onFilterChange={handleFilterChange}
+        updateAPIRequest={updateAPIRequest}
       />
       <Box
         sx={{
@@ -228,10 +202,7 @@ const MainPage: React.FC = () => {
               </ToggleButtonGroup>
             </Box>
           </Box>
-          <LoadingModal
-            open={apiLoading || debouncedLoading}
-            message="Loading players..."
-          />
+          <LoadingModal open={apiLoading} message="Loading players..." />
           <CustomDataGrid
             rows={players}
             columns={getPlayerColumns(heightUnit)}
@@ -242,7 +213,7 @@ const MainPage: React.FC = () => {
             paginationMode="server"
             onPaginationModelChange={handlePageChange}
             sx={{ bgcolor: "background.paper" }}
-            loading={apiLoading || debouncedLoading}
+            loading={apiLoading}
             slots={
               {
                 noRowsOverlay: CustomNoRowsOverlay,
