@@ -25,6 +25,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { handleDeletePlayer } from "../utils/handlers/deletePlayerHandler";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import NationalityWithFlag from "./NationalityWithFlag";
 
 type Mode = "update" | "create";
 
@@ -174,14 +175,7 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
           disabled={!editMode}
           renderOption={(props, option) => (
             <li {...props} key={option.code}>
-              <span style={{ marginRight: 8, fontSize: 18 }}>
-                {String.fromCodePoint(
-                  ...[...option.code.toUpperCase()].map(
-                    (c) => 0x1f1e6 + c.charCodeAt(0) - 65
-                  )
-                )}
-              </span>
-              {option.label}
+              <NationalityWithFlag nationality={option.label} />
             </li>
           )}
           renderTags={(selected, getTagProps) =>
@@ -190,18 +184,7 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
               return (
                 <Chip
                   key={key}
-                  label={
-                    <span>
-                      <span style={{ marginRight: 6, fontSize: 16 }}>
-                        {String.fromCodePoint(
-                          ...[...option.code.toUpperCase()].map(
-                            (c) => 0x1f1e6 + c.charCodeAt(0) - 65
-                          )
-                        )}
-                      </span>
-                      {option.label}
-                    </span>
-                  }
+                  label={<NationalityWithFlag nationality={option.label} />}
                   {...tagProps}
                 />
               );
