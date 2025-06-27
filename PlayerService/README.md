@@ -20,7 +20,7 @@ operations. This service is part of the Player Management System.
 ### Player Management
 
 | Method | Route           | Description                           |
-|--------|-----------------|---------------------------------------|
+| ------ | --------------- | ------------------------------------- |
 | GET    | `/players`      | List players with filters and sorting |
 | GET    | `/players/{id}` | Get player by ID                      |
 | POST   | `/players`      | Create a new player                   |
@@ -33,14 +33,14 @@ operations. This service is part of the Player Management System.
 ### Filtering & Sorting (GET `/players`)
 
 - **Query Parameters:**
-    - `name` (string): Filter by full name (contains, case-insensitive)
-    - `nationalities` (list): Filter by one or more nationalities (exact match)
-    - `minAge`, `maxAge` (int): Filter by age range (inclusive)
-    - `positions` (list): Filter by one or more positions (must have all)
-    - `minHeight`, `maxHeight` (double): Filter by height range (inclusive)
-    - `sortBy` (enum): Sort by `NAME`, `NATIONALITY`, `AGE`, `POSITIONS`, `HEIGHT`
-    - `order` (string): `asc` or `desc`
-    - `page`, `size` (int): Pagination controls
+  - `name` (string): Filter by full name (contains, case-insensitive)
+  - `nationalities` (list): Filter by one or more nationalities (exact match)
+  - `minAge`, `maxAge` (int): Filter by age range (inclusive)
+  - `positions` (list): Filter by one or more positions (must have all)
+  - `minHeight`, `maxHeight` (double): Filter by height range (inclusive)
+  - `sortBy` (enum): Sort by `NAME`, `NATIONALITY`, `AGE`, `POSITIONS`, `HEIGHT`
+  - `order` (string): `asc` or `desc`
+  - `page`, `size` (int): Pagination controls
 
 ### Bulk Upload (POST `/players/bulk`)
 
@@ -53,9 +53,9 @@ operations. This service is part of the Player Management System.
 
 - Uses MySQL 8.x
 - Connection details are configured via `application.properties` or environment variables:
-    - `SPRING_DATASOURCE_URL`
-    - `SPRING_DATASOURCE_USERNAME`
-    - `SPRING_DATASOURCE_PASSWORD`
+  - `SPRING_DATASOURCE_URL`
+  - `SPRING_DATASOURCE_USERNAME`
+  - `SPRING_DATASOURCE_PASSWORD`
 - Example JDBC URL:
   ```
   jdbc:mysql://localhost:3306/player_management_db_dev?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -78,7 +78,7 @@ operations. This service is part of the Player Management System.
 
 1. From the project root, run:
    ```sh
-   docker-compose -f docker-compose.dev.yml up --build
+   docker-compose -f docker-compose.dev.yml up
    ```
 2. The service will be available at `http://localhost:8081` (default).
 
@@ -87,11 +87,11 @@ operations. This service is part of the Player Management System.
 ## API Documentation (Swagger-UI)
 
 - Swagger-UI is available in `dev` and `test` profiles at:
-    - [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
+  - [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)
 - Use Swagger-UI to:
-    - Explore all endpoints
-    - Try out requests and see responses
-    - View request/response schemas
+  - Explore all endpoints
+  - Try out requests and see responses
+  - View request/response schemas
 
 ---
 
