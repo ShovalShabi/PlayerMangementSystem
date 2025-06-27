@@ -86,6 +86,7 @@ jobs:
           docker compose -f docker-compose.prod.yml build | tee -a ci_cd_log.txt
 
           # Tag and push backend image
+          echo docker images
           BACKEND_IMAGE=playermangementsystem_backend:latest
           docker tag $BACKEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
           docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
