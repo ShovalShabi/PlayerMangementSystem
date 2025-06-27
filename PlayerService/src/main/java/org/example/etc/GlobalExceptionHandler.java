@@ -6,6 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.FieldError;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Global exception handler for REST controllers.
@@ -26,6 +30,21 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex) {
         // Let Spring handle it as usual
         return ResponseEntity.status(ex.getStatusCode()).body(ex.getReason());
+    }
+
+    /**
+     * Handle validation errors and return HTTP 400 Bad Request with details.
+     *
+     * @param ex the MethodArgumentNotValidException
+     * @return the response entity with status 400 and error details
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     /**
