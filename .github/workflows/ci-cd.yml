@@ -76,10 +76,10 @@ jobs:
           VITE_SOME_KEY=${{ secrets.VITE_SOME_KEY }}
           EOF
 
-      # Step 8: Build and Start Docker Compose Services
-      - name: Build and Start Docker Compose Services
+      # Step 8: Build Docker Compose Images
+      - name: Build Docker Compose Images
         run: |
-          echo "Step 7: Build and Start Docker Compose Services" | tee -a ci_cd_log.txt
+          echo "Step 7: Build Docker Compose Images" | tee -a ci_cd_log.txt
           sudo apt-get update | tee -a ci_cd_log.txt
           sudo apt-get install -y docker-compose-plugin | tee -a ci_cd_log.txt
           docker compose version | tee -a ci_cd_log.txt
@@ -88,20 +88,11 @@ jobs:
           echo "=== Docker images after build ===" | tee -a ci_cd_log.txt
           docker images | tee -a ci_cd_log.txt
 
-          # Find the actual backend and frontend image names
-          BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E 'backend:latest$' | head -n1)
-          FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E 'frontend:latest$' | head -n1)
-
-          echo "Detected backend image: $BACKEND_IMAGE" | tee -a ci_cd_log.txt
-          echo "Detected frontend image: $FRONTEND_IMAGE" | tee -a ci_cd_log.txt
-
-          # Tag and push backend image
-          docker tag $BACKEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
-          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
-
-          # Tag and push frontend image
-          docker tag $FRONTEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main
-          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main
+          # Push all images with :latest tag built by docker compose
+          for IMAGE in $(docker images --format '{{.Repository}}:{{.Tag}}' | grep ':latest$'); do
+            echo "Pushing image: $IMAGE" | tee -a ci_cd_log.txt
+            docker push $IMAGE | tee -a ci_cd_log.txt
+          done
 
       # Step 9: Start Docker Compose with built images
       - name: Start Docker Compose with built images
