@@ -327,11 +327,12 @@ interface Player {
 
 The application accepts CSV files with the following columns:
 
-- `name` (required): Player's full name
-- `age` (required): Player's age (number)
-- `height` (required): Player's height in cm
-- `nationality` (required): Player's nationality (country name)
-- `position` (required): Player's position (Forward, Midfielder, Defender)
+- `firstName` (required): Player's personal name
+- `lastName` (required): Player's last name
+- `birdare` (required): Player's birth date seperated with _|_
+- `height` (required): Player's height in m
+- `nationality` (required): Player's nationalities (country name) also sepereated with _|_
+- `position` (required): Player's position (CB, RB, LB etc.) also sepereated with _|_
 
 ## 🆘 Support
 
