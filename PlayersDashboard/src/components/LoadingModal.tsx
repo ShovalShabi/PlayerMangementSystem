@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Box, CircularProgress, Typography } from "@mui/material";
 
+/**
+ * Props for LoadingModal component.
+ * @property open Whether the modal is open.
+ * @property message Optional loading message (defaults to "Loading...").
+ */
 interface LoadingModalProps {
   open: boolean;
   message?: string;
 }
 
+/**
+ * Modal dialog that displays a loading spinner with optional timeout message.
+ * Shows a warning message after 5 seconds if loading takes too long.
+ *
+ * @param props LoadingModalProps
+ */
 const LoadingModal: React.FC<LoadingModalProps> = ({
   open,
   message = "Loading...",

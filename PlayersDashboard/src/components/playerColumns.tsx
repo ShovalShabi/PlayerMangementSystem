@@ -1,11 +1,23 @@
 import type { GridColDef, GridValueGetter } from "@mui/x-data-grid";
 import PlayerDTO from "../dtos/PlayerDTO";
 import NationalityWithFlag from "./NationalityWithFlag";
-import { Positions } from "../dtos/Positions";
+import { Positions } from "../utils/enums/Positions";
 
+/**
+ * Value getter for positions field - joins array into comma-separated string.
+ * @param _ Unused field parameter.
+ * @param row The player data row.
+ * @returns Comma-separated string of positions.
+ */
 const getPositions: GridValueGetter<PlayerDTO, unknown> = (_, row) =>
   Array.isArray(row.positions) ? row.positions.join(", ") : "";
 
+/**
+ * Value getter for age field - calculates age from date of birth.
+ * @param _ Unused field parameter.
+ * @param row The player data row.
+ * @returns Calculated age in years.
+ */
 const getAge: GridValueGetter<PlayerDTO, unknown> = (_, row) => {
   if (!row.dateOfBirth) return "";
   const ageMs = Date.now() - new Date(row.dateOfBirth).getTime();
@@ -13,6 +25,11 @@ const getAge: GridValueGetter<PlayerDTO, unknown> = (_, row) => {
   return Math.abs(ageDate.getUTCFullYear() - 1970); // Years since epoch
 };
 
+/**
+ * Generates column definitions for the player data grid.
+ * @param heightUnit The unit to display height in ("M" for meters, "FT" for feet).
+ * @returns Array of column definitions for the data grid.
+ */
 export function getPlayerColumns(heightUnit: "M" | "FT"): GridColDef[] {
   return [
     { field: "firstName", headerName: "First Name", flex: 1 },

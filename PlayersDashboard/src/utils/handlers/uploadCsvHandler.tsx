@@ -1,5 +1,13 @@
 import playerService from "../../api/player-service";
 
+/**
+ * Handles CSV file upload for bulk player creation.
+ *
+ * @param file The CSV file to upload (null if no file selected).
+ * @param setAlert Function to display alert messages to the user.
+ * @param onSuccess Optional callback to execute on successful upload.
+ * @returns Promise that resolves when upload is complete.
+ */
 export async function handleUploadCsv(
   file: File | null,
   setAlert: (

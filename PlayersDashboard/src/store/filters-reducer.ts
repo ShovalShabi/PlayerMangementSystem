@@ -1,6 +1,9 @@
 import { createAction, createReducer } from "@reduxjs/toolkit";
 import { Filters } from "../utils/interfaces/filters";
 
+/**
+ * Initial filter state with default values for all filter fields.
+ */
 const initialFilters: Filters = {
   name: "",
   nationality: [],
@@ -12,10 +15,20 @@ const initialFilters: Filters = {
   rowsPerPage: 10,
 };
 
+/**
+ * Action to set the complete filter state.
+ */
 const setFilters = createAction<Filters>("setFilters");
 
+/**
+ * Action to reset all filters to their initial values.
+ */
 const resetFilters = createAction<void>("resetFilters");
 
+/**
+ * Reducer for managing player filter state.
+ * Handles setting and resetting filters for player search and pagination.
+ */
 const reducer = createReducer(initialFilters, (builder) => {
   builder.addCase(setFilters, (state: Filters, action) => {
     state.name = action.payload.name;

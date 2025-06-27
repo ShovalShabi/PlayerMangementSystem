@@ -1,5 +1,8 @@
 import { Box, Typography } from "@mui/material";
 
+/**
+ * Footer component displaying copyright information.
+ */
 const Footer = () => {
   return (
     <>

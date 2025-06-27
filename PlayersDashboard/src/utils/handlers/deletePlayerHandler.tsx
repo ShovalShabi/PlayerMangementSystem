@@ -1,5 +1,13 @@
 import playerService from "../../api/player-service";
 
+/**
+ * Handles player deletion operations with error handling and user feedback.
+ *
+ * @param id The player ID to delete.
+ * @param setAlert Function to display alert messages to the user.
+ * @param onSuccess Optional callback to execute on successful deletion.
+ * @returns Promise that resolves when deletion is complete.
+ */
 export async function handleDeletePlayer(
   id: number,
   setAlert: (

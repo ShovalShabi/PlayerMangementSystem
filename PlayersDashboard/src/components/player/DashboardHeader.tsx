@@ -9,12 +9,23 @@ import {
 import { Dispatch } from "@reduxjs/toolkit";
 import { setMeasurement } from "../../store/measurement-reducer";
 
+/**
+ * Props for DashboardHeader component.
+ * @property heightUnit The current height unit ("m" or "ft").
+ * @property setHeightUnit Callback to change the height unit.
+ * @property dispatch Redux dispatch function for updating measurement state.
+ */
 interface DashboardHeaderProps {
   heightUnit: string;
   setHeightUnit: (unit: string) => void;
   dispatch: Dispatch;
 }
 
+/**
+ * Header section for the dashboard, allowing users to toggle between height units (meters/feet).
+ *
+ * @param props DashboardHeaderProps
+ */
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   heightUnit,
   setHeightUnit,

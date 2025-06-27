@@ -4,6 +4,13 @@ import { Box, Button, Typography, Input } from "@mui/material";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { handleUploadCsv } from "../utils/handlers/uploadCsvHandler";
 
+/**
+ * Props for UploadCSVModal component.
+ * @property open Whether the modal is open.
+ * @property handleClose Callback when the modal is closed.
+ * @property setAlert Function to display alert messages.
+ * @property onSuccess Optional callback when upload is successful.
+ */
 interface UploadCSVModalProps {
   open: boolean;
   handleClose: () => void;
@@ -16,6 +23,12 @@ interface UploadCSVModalProps {
   onSuccess?: () => void;
 }
 
+/**
+ * Modal for uploading CSV files with drag-and-drop functionality.
+ * Handles file selection and upload process with loading states.
+ *
+ * @param props UploadCSVModalProps
+ */
 const UploadCSVModal: React.FC<UploadCSVModalProps> = ({
   open,
   handleClose,

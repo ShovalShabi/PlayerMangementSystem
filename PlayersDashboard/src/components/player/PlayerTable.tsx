@@ -9,6 +9,17 @@ import type {
 } from "@mui/x-data-grid";
 import PlayerDTO from "../../dtos/PlayerDTO";
 
+/**
+ * Props for PlayerTable component.
+ * @property rows Array of player data rows.
+ * @property columns Column definitions for the data grid.
+ * @property loading Whether the table is loading data.
+ * @property paginationModel Current pagination state.
+ * @property pageSizeOptions Options for page size selection.
+ * @property rowCount Total number of rows (for server-side pagination).
+ * @property onPaginationModelChange Callback for pagination changes.
+ * @property onRowClick Callback when a row is clicked.
+ */
 interface PlayerTableProps {
   rows: PlayerDTO[];
   columns: GridColDef<PlayerDTO>[];
@@ -20,6 +31,11 @@ interface PlayerTableProps {
   onRowClick: (params: GridRowParams) => void;
 }
 
+/**
+ * Displays a paginated, server-side data grid of players with custom overlays.
+ *
+ * @param props PlayerTableProps
+ */
 const PlayerTable: React.FC<PlayerTableProps> = ({
   rows,
   columns,

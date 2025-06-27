@@ -15,8 +15,19 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import ConfirmationModal from "./ConfirmationModal";
 import PlayerFormFields from "./player/PlayerFormFields";
 
+/**
+ * Modal operation modes.
+ */
 type Mode = "update" | "create";
 
+/**
+ * Props for PlayerModal component.
+ * @property open Whether the modal is open.
+ * @property mode The operation mode (create or update).
+ * @property playerId Optional player ID for update mode.
+ * @property onClose Callback when the modal is closed.
+ * @property onSuccess Optional callback when operation is successful.
+ */
 interface PlayerModalProps {
   open: boolean;
   mode: Mode;
@@ -25,6 +36,9 @@ interface PlayerModalProps {
   onSuccess?: (player: PlayerDTO) => void;
 }
 
+/**
+ * Default empty player object for form initialization.
+ */
 const emptyPlayer: PlayerDTO = {
   firstName: "",
   lastName: "",
@@ -34,6 +48,12 @@ const emptyPlayer: PlayerDTO = {
   height: 1.7,
 };
 
+/**
+ * Modal for creating and updating player records.
+ * Handles form state, API calls, and confirmation dialogs for updates/deletes.
+ *
+ * @param props PlayerModalProps
+ */
 const PlayerModal: React.FC<PlayerModalProps> = ({
   open,
   mode,

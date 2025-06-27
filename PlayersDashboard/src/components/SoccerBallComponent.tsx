@@ -1,6 +1,10 @@
 import { Box } from "@mui/material";
 import soccerBall from "../assets/soccer-ball.svg";
 
+/**
+ * Background soccer ball decoration component.
+ * Displays a large, semi-transparent soccer ball image in the bottom-right corner.
+ */
 const SoccerBallComponent = () => {
   return (
     <>

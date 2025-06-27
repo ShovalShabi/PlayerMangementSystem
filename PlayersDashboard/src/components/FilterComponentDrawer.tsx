@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Positions } from "../dtos/Positions";
+import { Positions } from "../utils/enums/Positions";
 import { colorTokens } from "../theme";
 import listOfCountries from "../utils/objects/countries-object";
 import { Filters } from "../utils/interfaces/filters";
@@ -24,6 +24,10 @@ import AgeFilter from "./filters/AgeFilter";
 
 const drawerWidth = 300;
 
+/**
+ * Styled permanent drawer for filter controls.
+ * Expands or collapses based on the `open` prop.
+ */
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop: string) => prop !== "open",
 })<{ open?: boolean }>(({ theme, open }) => ({
@@ -68,6 +72,15 @@ const Drawer = styled(MuiDrawer, {
 
 const positionOptions = Object.values(Positions);
 
+/**
+ * Props for FilterComponentDrawer.
+ * @property open Whether the drawer is open.
+ * @property onClose Callback to close the drawer.
+ * @property onOpen Callback to open the drawer.
+ * @property filters Current filter values.
+ * @property updateAPIRequest Function to update a filter value (triggers API call).
+ * @property heightUnit Unit for height fields ("m" for meters, "ft" for feet).
+ */
 interface FilterComponentDrawerProps {
   open: boolean;
   onClose: () => void;
@@ -77,6 +90,13 @@ interface FilterComponentDrawerProps {
   heightUnit: "m" | "ft";
 }
 
+/**
+ * Drawer component for filtering the player list by name, nationality, age, height, and position.
+ *
+ * Includes debounced filter updates and unit conversion for height.
+ *
+ * @param props FilterComponentDrawerProps
+ */
 const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   open,
   onClose,

@@ -3,11 +3,21 @@ import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import DownloadIcon from "@mui/icons-material/Download";
 
+/**
+ * Props for UploadCSVButton component.
+ * @property onUpload Callback when a CSV file is selected.
+ * @property loading Optional. Shows a loading spinner and disables the button if true.
+ */
 interface UploadCSVButtonProps {
   onUpload: (file: File) => void;
   loading?: boolean;
 }
 
+/**
+ * Button for uploading a CSV file. Shows a loading spinner when uploading.
+ *
+ * @param props UploadCSVButtonProps
+ */
 const UploadCSVButton: React.FC<UploadCSVButtonProps> = ({
   onUpload,
   loading,

@@ -1,17 +1,28 @@
 import React from "react";
 import { Box, TextField, Chip, FormControl } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import { Positions } from "../../dtos/Positions";
+import { Positions } from "../../utils/enums/Positions";
 import listOfCountries from "../../utils/objects/countries-object";
 import NationalityWithFlag from "../NationalityWithFlag";
 import PlayerDTO from "../../dtos/PlayerDTO";
 
+/**
+ * Props for PlayerFormFields component.
+ * @property form The player form data object.
+ * @property editMode Whether the form is editable.
+ * @property handleChange Callback to update a field value.
+ */
 interface PlayerFormFieldsProps {
   form: PlayerDTO;
   editMode: boolean;
   handleChange: (field: keyof PlayerDTO, value: unknown) => void;
 }
 
+/**
+ * Renders form fields for player data entry/editing, including name, nationalities, date of birth, positions, and height.
+ *
+ * @param props PlayerFormFieldsProps
+ */
 const PlayerFormFields: React.FC<PlayerFormFieldsProps> = ({
   form,
   editMode,

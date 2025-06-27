@@ -1,6 +1,14 @@
 import React from "react";
 import { Box, TextField } from "@mui/material";
 
+/**
+ * Props for AgeFilter component.
+ * @property min Minimum age value.
+ * @property max Maximum age value.
+ * @property onMinChange Callback for minimum age change.
+ * @property onMaxChange Callback for maximum age change.
+ * @property disabled Optional. Disables the input fields if true.
+ */
 interface AgeFilterProps {
   min: string;
   max: string;
@@ -9,6 +17,11 @@ interface AgeFilterProps {
   disabled?: boolean;
 }
 
+/**
+ * Renders two number input fields for filtering by minimum and maximum age.
+ *
+ * @param props AgeFilterProps
+ */
 const AgeFilter: React.FC<AgeFilterProps> = ({
   min,
   max,

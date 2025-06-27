@@ -1,5 +1,9 @@
 // PlayerDTO.ts - Corresponds to backend PlayerDTO.java
 
+/**
+ * Data Transfer Object for player information.
+ * Corresponds to backend PlayerDTO.java structure.
+ */
 export default interface PlayerDTO {
   /** Player ID (optional on POST request) */
   id?: number;
@@ -13,8 +17,8 @@ export default interface PlayerDTO {
   /** Set of nationalities (must not be null or empty) */
   nationalities: string[];
 
-  /** Player's date of birth (must be in the past) */
-  dateOfBirth: string; // ISO date string (LocalDate)
+  /** Player's date of birth (must be in the past) - ISO date string (LocalDate) */
+  dateOfBirth: string;
 
   /** Set of positions (must not be null or empty) */
   positions: string[];
@@ -22,9 +26,9 @@ export default interface PlayerDTO {
   /** Player's height in meters (must be between 1.5 and 2.2) */
   height: number;
 
-  /** Creation date (optional on POST request) */
-  creationDate?: string; // ISO date string (Date)
+  /** Creation date (optional on POST request) - ISO date string (Date) */
+  creationDate?: string;
 
-  /** Last modified date (optional on POST request) */
-  lastModifiedDate?: string; // ISO date string (Date)
+  /** Last modified date (optional on POST request) - ISO date string (Date) */
+  lastModifiedDate?: string;
 }

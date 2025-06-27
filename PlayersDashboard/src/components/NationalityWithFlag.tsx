@@ -4,10 +4,20 @@ import countryLabelToCodeMap from "../utils/objects/country-label-to-code-map";
 import { useSelector } from "react-redux";
 import { State } from "../utils/interfaces/state";
 
+/**
+ * Props for NationalityWithFlag component.
+ * @property nationality The country name to display with flag.
+ */
 interface NationalityWithFlagProps {
   nationality: string;
 }
 
+/**
+ * Displays a nationality name with its corresponding country flag.
+ * Uses country-flag-icons library and adapts to the current theme.
+ *
+ * @param props NationalityWithFlagProps
+ */
 const NationalityWithFlag: React.FC<NationalityWithFlagProps> = ({
   nationality,
 }) => {

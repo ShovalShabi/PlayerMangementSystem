@@ -6,6 +6,10 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { State } from "../utils/interfaces/state";
 import { setTheme } from "../store/theme-reducer";
 
+/**
+ * Toggle button for switching between light and dark themes.
+ * Uses Redux to manage theme state and displays appropriate icons.
+ */
 const ThemeModeSwitcher: React.FC = () => {
   const mode = useSelector((state: State) => state.theme);
   const dispatch = useDispatch();

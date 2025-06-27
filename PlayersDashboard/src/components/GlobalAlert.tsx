@@ -3,6 +3,10 @@ import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import useAlert from "../hooks/useAlert";
 
+/**
+ * Global alert component that displays notifications using the alert context.
+ * Shows a snackbar with the current alert message and severity.
+ */
 const GlobalAlert: React.FC = () => {
   const { alert, setAlert } = useAlert();
   const [open, setOpen] = React.useState(false);

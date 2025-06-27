@@ -4,6 +4,15 @@ import UpdatePlayerDTO from "../../dtos/UpdatePlayerDTO";
 import PlayerDTO from "../../dtos/PlayerDTO";
 import React from "react";
 
+/**
+ * Handles player update operations with error handling and user feedback.
+ *
+ * @param id The player ID to update.
+ * @param data The updated player data.
+ * @param setAlert Function to display alert messages to the user.
+ * @param onSuccess Optional callback to execute on successful update.
+ * @returns Promise that resolves to the updated player or null if failed.
+ */
 export async function handleUpdatePlayer(
   id: number,
   data: UpdatePlayerDTO,

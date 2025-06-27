@@ -2,7 +2,7 @@
 
 /**
  * Interface representing color tokens for the theme.
- * This defines the structure of the color values used in the theme.
+ * Defines the structure of color values used throughout the application.
  */
 interface ColorTokens {
   grey: {
@@ -18,7 +18,7 @@ interface ColorTokens {
 
 /**
  * Color tokens that define a consistent color palette for the application.
- * These color codes will be used in both light and dark themes.
+ * These color codes are used in both light and dark themes with numbered shades.
  */
 export const colorTokens: ColorTokens = {
   grey: {
@@ -63,8 +63,8 @@ export const colorTokens: ColorTokens = {
 };
 
 /**
- * Interface representing the structure of the theme settings.
- * This is used to configure the Material-UI theme settings such as palette and typography.
+ * Interface representing the complete theme settings structure.
+ * Used to configure Material-UI theme with palette, typography, and component overrides.
  */
 export interface ThemeSettings {
   palette: {
@@ -204,9 +204,15 @@ export interface ThemeSettings {
 }
 
 /**
- * Function to generate theme settings based on the mode ('light' or 'dark').
- * @param mode - The theme mode, either 'light' or 'dark'.
- * @returns An object representing the theme settings.
+ * Generates complete theme settings based on the specified mode.
+ *
+ * Creates a comprehensive Material-UI theme configuration with:
+ * - Dynamic color palette for light/dark modes
+ * - Typography settings with Rubik font family
+ * - Component style overrides for consistent UI
+ *
+ * @param mode The theme mode ('light' or 'dark').
+ * @returns Complete theme configuration object for Material-UI.
  */
 export const themeSettings = (mode: string): object => {
   return {

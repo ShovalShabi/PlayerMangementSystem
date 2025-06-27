@@ -2,6 +2,13 @@ import playerService from "../../api/player-service";
 import PlayerDTO from "../../dtos/PlayerDTO";
 import PaginatedResponse from "../interfaces/paginated-response";
 
+/**
+ * Handles paginated player retrieval with filtering and sorting options.
+ *
+ * @param params Query parameters for filtering, sorting, and pagination.
+ * @param setAlert Function to display alert messages to the user.
+ * @returns Promise that resolves to paginated player data or null if failed.
+ */
 export async function handleGetPlayersBySortAndFilter(
   params: {
     name?: string;

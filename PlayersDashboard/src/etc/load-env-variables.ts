@@ -1,23 +1,26 @@
 import type { EnvVariables } from "../utils/types/env-variables";
 
+/**
+ * Cached environment variables to avoid repeated processing.
+ * Set to null initially and populated on first call to getEnvVariables.
+ */
 let cachedEnv: EnvVariables | null = null;
 
 /**
- * Retrieves environment variables and returns them with appropriate defaults
- * for development, production, and testing environments.
+ * Retrieves and caches environment variables with appropriate defaults for different environments.
  *
- * This function reads environment variables (injected through Vite or other methods),
- * constructs URLs for different services, and determines port configurations based on
- * the current environment. It provides a unified object with all necessary environment
- * configurations.
+ * This function reads environment variables injected through Vite, constructs service URLs,
+ * and determines port configurations based on the current environment. It provides a unified
+ * object with all necessary environment configurations and implements caching for performance.
  *
- * @returns {EnvVariables} An object containing the following properties:
- *  - {number} port - The port number on which the server should run.
- *  - {string} env - The current environment ('dev', 'prod', or 'testing').
- *  - {string} playerServiceURL - The URL for the Player Service API.
+ * @returns {EnvVariables} An object containing:
+ *  - port: The port number for the server (0 for testing, 3001 for dev, 3000 for prod)
+ *  - env: The current environment ('dev', 'prod', or 'testing')
+ *  - playerServiceURL: The complete URL for the Player Service API
  */
 const getEnvVariables = (): EnvVariables => {
   if (cachedEnv) return cachedEnv;
+
   // Destructure the necessary environment variables from process.env
   const {
     VITE_PORT, // The port to be used in the application
@@ -25,6 +28,7 @@ const getEnvVariables = (): EnvVariables => {
     VITE_BACKEND_HOST, // Backend server host
     VITE_BACKEND_PORT, // Backend server port
   } = process.env;
+
   // Determine the current environment (defaults to 'dev' if undefined)
   const env = VITE_ENV || "dev";
 
@@ -42,7 +46,7 @@ const getEnvVariables = (): EnvVariables => {
     port = 0;
   }
 
-  //validation for backend host and port environment variables
+  // Validation for backend host and port environment variables
   const backendHost = VITE_BACKEND_HOST || "localhost";
   const backendPort = VITE_BACKEND_PORT || "8081";
 
@@ -50,6 +54,7 @@ const getEnvVariables = (): EnvVariables => {
   const playerServiceURL = `http://${backendHost}:${backendPort}/api/players`;
 
   console.log(playerServiceURL);
+
   // Cache and return the gathered and constructed environment variables
   cachedEnv = {
     port,

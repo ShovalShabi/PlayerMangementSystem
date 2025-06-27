@@ -7,7 +7,13 @@ import getEnvVariables from "../etc/load-env-variables";
 
 const { playerServiceURL } = getEnvVariables();
 
-// Custom params serializer for Spring Boot compatibility
+/**
+ * Custom parameter serializer for Spring Boot compatibility.
+ * Handles array parameters by repeating the key for each value.
+ *
+ * @param params Object containing query parameters.
+ * @returns URL-encoded query string compatible with Spring Boot.
+ */
 const paramsSerializer = (params: Record<string, unknown>): string => {
   const searchParams = new URLSearchParams();
 
@@ -32,6 +38,13 @@ const paramsSerializer = (params: Record<string, unknown>): string => {
   return searchParams.toString();
 };
 
+/**
+ * Wrapper function for API requests that provides consistent error handling.
+ *
+ * @template T The expected return type of the request.
+ * @param request The async function to execute.
+ * @returns Promise that resolves to the request result or throws an error.
+ */
 async function requestWrapper<T>(request: () => Promise<T>): Promise<T> {
   try {
     return await request();
@@ -44,7 +57,17 @@ async function requestWrapper<T>(request: () => Promise<T>): Promise<T> {
     throw new Error("An unexpected error occurred");
   }
 }
+
+/**
+ * Player service API client for communicating with the backend player service.
+ * Provides methods for CRUD operations, filtering, and bulk upload functionality.
+ */
 const playerService = {
+  /**
+   * Creates a new player.
+   * @param player The player data to create.
+   * @returns Promise that resolves to the created player.
+   */
   createPlayer: async (player: PlayerDTO): Promise<PlayerDTO> => {
     return requestWrapper(async () => {
       const response = await axios.post(`${playerServiceURL}`, player);
@@ -52,6 +75,12 @@ const playerService = {
     });
   },
 
+  /**
+   * Updates an existing player by ID.
+   * @param id The player ID to update.
+   * @param player The updated player data.
+   * @returns Promise that resolves to the updated player.
+   */
   updatePlayer: async (
     id: number,
     player: UpdatePlayerDTO
@@ -62,12 +91,22 @@ const playerService = {
     });
   },
 
+  /**
+   * Deletes a player by ID.
+   * @param id The player ID to delete.
+   * @returns Promise that resolves when deletion is complete.
+   */
   deletePlayer: async (id: number): Promise<void> => {
     return requestWrapper(async () => {
       await axios.delete(`${playerServiceURL}/${id}`);
     });
   },
 
+  /**
+   * Retrieves a player by ID.
+   * @param id The player ID to retrieve.
+   * @returns Promise that resolves to the player data.
+   */
   getPlayerById: async (id: number): Promise<PlayerDTO> => {
     return requestWrapper(async () => {
       const response = await axios.get(`${playerServiceURL}/${id}`);
@@ -75,6 +114,11 @@ const playerService = {
     });
   },
 
+  /**
+   * Retrieves a paginated list of players with optional filtering and sorting.
+   * @param params Query parameters for filtering, sorting, and pagination.
+   * @returns Promise that resolves to a paginated response of players.
+   */
   getPlayers: async (params: {
     name?: string;
     nationalities?: string[];
@@ -97,6 +141,11 @@ const playerService = {
     });
   },
 
+  /**
+   * Uploads a CSV file for bulk player creation.
+   * @param file The CSV file to upload.
+   * @returns Promise that resolves to the upload response with results.
+   */
   bulkUpload: async (file: File): Promise<CsvUploadResponse> => {
     const formData = new FormData();
     formData.append("file", file);

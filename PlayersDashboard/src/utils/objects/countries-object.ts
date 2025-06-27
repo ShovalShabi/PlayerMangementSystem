@@ -1,3 +1,11 @@
+/**
+ * Array of all countries with their ISO codes and display names.
+ * Used for nationality selection and flag display throughout the application.
+ *
+ * Each country object contains:
+ * - code: ISO 3166-1 alpha-2 country code (e.g., "US", "GB")
+ * - label: Full country name for display (e.g., "United States", "United Kingdom")
+ */
 const listOfCountries = [
   { code: "AF", label: "Afghanistan" },
   { code: "AL", label: "Albania" },

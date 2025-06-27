@@ -21,6 +21,17 @@ import UploadCSVButton from "../components/player/UploadCSVButton";
 import DashboardHeader from "../components/player/DashboardHeader";
 import { getPlayerColumns } from "../components/playerColumns";
 
+/**
+ * Main page component for the Player Dashboard application.
+ *
+ * Provides a complete interface for managing football players including:
+ * - Filtering and searching players
+ * - Paginated data display
+ * - Adding/editing players
+ * - CSV upload functionality
+ * - Theme switching
+ * - Height unit toggling
+ */
 const MainPage: React.FC = () => {
   const storedFilters = useSelector((state: State) => state.filters);
   const storedMeasurement = useSelector((state: State) => state.units);
@@ -44,7 +55,11 @@ const MainPage: React.FC = () => {
 
   const dispatch = useDispatch();
 
-  // Map filters to API params
+  /**
+   * Maps filter state to API parameters for player queries.
+   * @param currentFilters The current filter state (defaults to filters).
+   * @returns Object containing API parameters for the player service.
+   */
   const getApiParams = (currentFilters = filters) => {
     return {
       name: currentFilters.name || undefined,
@@ -69,7 +84,11 @@ const MainPage: React.FC = () => {
     };
   };
 
-  // Update filters and fetch players
+  /**
+   * Updates filters and triggers API request to fetch filtered players.
+   * @param field The filter field to update.
+   * @param value The new value for the filter field.
+   */
   const updateAPIRequest = (field: string, value: unknown) => {
     setFilters((prev) => {
       const updated = { ...prev, [field]: value };
@@ -80,7 +99,10 @@ const MainPage: React.FC = () => {
     setPage(0);
   };
 
-  // Fetch players function
+  /**
+   * Fetches players from the API based on current filters and pagination.
+   * @param currentFilters The filters to apply (defaults to current filters).
+   */
   const fetchPlayers = async (currentFilters = filters) => {
     setApiLoading(true);
     try {
@@ -108,6 +130,10 @@ const MainPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Handles pagination changes and fetches new data.
+   * @param model The new pagination model from the data grid.
+   */
   const handlePageChange = async (model: GridPaginationModel) => {
     setPage(model.page);
     setFilters((prev) => ({ ...prev, rowsPerPage: model.pageSize }));

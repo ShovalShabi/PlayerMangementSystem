@@ -2,15 +2,14 @@ import { useContext } from "react";
 import { AlertContext } from "../components/AlertProvider";
 
 /**
- * Custom hook to access the alert context for managing global alerts in the application.
+ * Custom hook to access the alert context for managing global alerts.
  *
- * This hook provides access to the alert state and the `setAlert` function,
- * which can be used to trigger alerts in the application. The alerts include messages
- * and severity levels such as "error", "warning", "info", and "success".
+ * Provides access to the alert state and setAlert function for triggering
+ * notifications throughout the application. Alerts include messages and
+ * severity levels: "error", "warning", "info", and "success".
  *
- * @throws Will throw an error if this hook is used outside of the `AlertProvider`.
- *
- * @returns {AlertContextType} The alert context, containing the current alert state and the `setAlert` function.
+ * @throws {Error} When used outside of AlertProvider context.
+ * @returns The alert context containing current alert state and setAlert function.
  */
 const useAlert = () => {
   // Retrieve the alert context using the useContext hook
