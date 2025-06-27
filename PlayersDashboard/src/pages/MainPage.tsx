@@ -20,18 +20,14 @@ import { handleGetPlayersBySortAndFilter } from "../utils/handlers/getPlayerBySo
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay";
 import { getPlayerColumns } from "../components/playerColumns";
 import LoadingModal from "../components/LoadingModal";
+import { useSelector, useDispatch } from "react-redux";
+import { State } from "../utils/interfaces/state";
+import { setFiltersStore } from "../store/filters-reducer";
+import { setMeasurement } from "../store/measurement-reducer";
 
 const MainPage: React.FC = () => {
-  const initialFilters = {
-    name: "",
-    nationality: [] as string[],
-    minAge: "",
-    maxAge: "",
-    minHeight: "",
-    maxHeight: "",
-    positions: [] as string[],
-    rowsPerPage: 10,
-  };
+  const storedFilters = useSelector((state: State) => state.filters);
+  const storedMeasurement = useSelector((state: State) => state.units);
 
   const [apiLoading, setApiLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -42,10 +38,14 @@ const MainPage: React.FC = () => {
   const [totalPlayers, setTotalPlayers] = useState(0);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "update">("create");
-  const [heightUnit, setHeightUnit] = useState<"m" | "ft">("m");
+  const [heightUnit, setHeightUnit] = useState(
+    storedMeasurement ? storedMeasurement.toLowerCase() : "m"
+  );
 
   // Filters state
-  const [filters, setFilters] = useState(initialFilters);
+  const [filters, setFilters] = useState(storedFilters);
+
+  const dispatch = useDispatch();
 
   // Map filters to API params
   const getApiParams = (currentFilters = filters) => {
@@ -76,6 +76,7 @@ const MainPage: React.FC = () => {
   const updateAPIRequest = (field: string, value: unknown) => {
     setFilters((prev) => {
       const updated = { ...prev, [field]: value };
+      dispatch(setFiltersStore(updated));
       fetchPlayers(updated);
       return updated;
     });
@@ -148,6 +149,7 @@ const MainPage: React.FC = () => {
         onOpen={() => setDrawerOpen(true)}
         filters={filters}
         updateAPIRequest={updateAPIRequest}
+        heightUnit={heightUnit as "m" | "ft"}
       />
       <Box
         sx={{
@@ -189,7 +191,12 @@ const MainPage: React.FC = () => {
               <ToggleButtonGroup
                 value={heightUnit}
                 exclusive
-                onChange={(_e, val) => val && setHeightUnit(val)}
+                onChange={(_e, val) => {
+                  if (val) {
+                    setHeightUnit(val);
+                    dispatch(setMeasurement(val));
+                  }
+                }}
                 size="small"
                 aria-label="height unit toggle"
               >
@@ -205,7 +212,7 @@ const MainPage: React.FC = () => {
           <LoadingModal open={apiLoading} message="Loading players..." />
           <CustomDataGrid
             rows={players}
-            columns={getPlayerColumns(heightUnit)}
+            columns={getPlayerColumns(heightUnit === "m" ? "M" : "FT")}
             paginationModel={{ page, pageSize: filters.rowsPerPage }}
             pageSizeOptions={[5, 10, 15, 20, 25]}
             pagination
@@ -225,7 +232,6 @@ const MainPage: React.FC = () => {
               setModalMode("update");
               setPlayerModalOpen(true);
             }}
-            heightUnit={heightUnit}
           />
           <Box
             sx={{

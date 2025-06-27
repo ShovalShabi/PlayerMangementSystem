@@ -7,7 +7,7 @@ const adjustColumnFlex = (columns: GridColDef[]) =>
   columns.map((col) => ({ ...col, flex: col.flex ? col.flex * 0.7 : 0.7 }));
 
 interface CustomDataGridProps extends DataGridProps {
-  heightUnit?: "m" | "ft";
+  heightUnit?: "M" | "FT";
 }
 
 const CustomDataGrid: React.FC<CustomDataGridProps> = (props) => {

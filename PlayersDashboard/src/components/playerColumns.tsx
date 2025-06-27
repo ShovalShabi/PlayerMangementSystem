@@ -13,7 +13,7 @@ const getAge: GridValueGetter<PlayerDTO, unknown> = (_, row) => {
   return Math.abs(ageDate.getUTCFullYear() - 1970); // Years since epoch
 };
 
-export function getPlayerColumns(heightUnit: "m" | "ft"): GridColDef[] {
+export function getPlayerColumns(heightUnit: "M" | "FT"): GridColDef[] {
   return [
     { field: "firstName", headerName: "First Name", flex: 1 },
     { field: "lastName", headerName: "Last Name", flex: 1 },
@@ -24,7 +24,7 @@ export function getPlayerColumns(heightUnit: "m" | "ft"): GridColDef[] {
       flex: 0.5,
       valueGetter: (_, row) => {
         if (typeof row.height !== "number") return "";
-        if (heightUnit === "m") {
+        if (heightUnit === "M") {
           return `${row.height.toFixed(2)} m`;
         } else {
           // 1 meter = 3.28084 feet

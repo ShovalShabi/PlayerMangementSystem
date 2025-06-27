@@ -78,6 +78,7 @@ interface FilterComponentDrawerProps {
   onOpen: () => void;
   filters: Filters;
   updateAPIRequest: (field: string, value: unknown) => void;
+  heightUnit: "m" | "ft";
 }
 
 const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
@@ -86,6 +87,7 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   onOpen,
   filters,
   updateAPIRequest: onFilterChange,
+  heightUnit,
 }) => {
   const [nationalityOpen, setNationalityOpen] = useState(false);
   const [positionsOpen, setPositionsOpen] = useState(false);
@@ -97,15 +99,36 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   const [maxAge, setMaxAge] = useState(filters.maxAge);
   const [minHeight, setMinHeight] = useState(filters.minHeight);
   const [maxHeight, setMaxHeight] = useState(filters.maxHeight);
+  const [minHeightFt, setMinHeightFt] = useState("");
+  const [maxHeightFt, setMaxHeightFt] = useState("");
   const [positions, setPositions] = useState(filters.positions);
+
+  // Sync ft fields when switching units or meters change
+  useEffect(() => {
+    if (heightUnit === "ft") {
+      setMinHeightFt(
+        minHeight ? (parseFloat(minHeight) * 3.28084).toFixed(2) : ""
+      );
+      setMaxHeightFt(
+        maxHeight ? (parseFloat(maxHeight) * 3.28084).toFixed(2) : ""
+      );
+    }
+  }, [heightUnit, minHeight, maxHeight]);
 
   // Debounced values
   const debouncedName = useDebounce(name, 500);
   const debouncedNationality = useDebounce(nationality, 500);
   const debouncedMinAge = useDebounce(minAge, 500);
   const debouncedMaxAge = useDebounce(maxAge, 500);
-  const debouncedMinHeight = useDebounce(minHeight, 500);
-  const debouncedMaxHeight = useDebounce(maxHeight, 500);
+  // For height, debounce the displayed value in the current unit
+  const debouncedMinHeight = useDebounce(
+    heightUnit === "ft" ? minHeightFt : minHeight,
+    500
+  );
+  const debouncedMaxHeight = useDebounce(
+    heightUnit === "ft" ? maxHeightFt : maxHeight,
+    500
+  );
   const debouncedPositions = useDebounce(positions, 500);
 
   // Effects to update API after debounce
@@ -134,16 +157,35 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   }, [debouncedMaxAge, filters.maxAge, onFilterChange]);
 
   useEffect(() => {
-    if (debouncedMinHeight !== filters.minHeight) {
-      onFilterChange("minHeight", debouncedMinHeight);
+    // Only update API with meters
+    if (heightUnit === "ft") {
+      const meters = debouncedMinHeight
+        ? (parseFloat(debouncedMinHeight) / 3.28084).toFixed(2)
+        : "";
+      if (meters !== filters.minHeight) {
+        onFilterChange("minHeight", meters);
+      }
+    } else {
+      if (debouncedMinHeight !== filters.minHeight) {
+        onFilterChange("minHeight", debouncedMinHeight);
+      }
     }
-  }, [debouncedMinHeight, filters.minHeight, onFilterChange]);
+  }, [debouncedMinHeight, filters.minHeight, onFilterChange, heightUnit]);
 
   useEffect(() => {
-    if (debouncedMaxHeight !== filters.maxHeight) {
-      onFilterChange("maxHeight", debouncedMaxHeight);
+    if (heightUnit === "ft") {
+      const meters = debouncedMaxHeight
+        ? (parseFloat(debouncedMaxHeight) / 3.28084).toFixed(2)
+        : "";
+      if (meters !== filters.maxHeight) {
+        onFilterChange("maxHeight", meters);
+      }
+    } else {
+      if (debouncedMaxHeight !== filters.maxHeight) {
+        onFilterChange("maxHeight", debouncedMaxHeight);
+      }
     }
-  }, [debouncedMaxHeight, filters.maxHeight, onFilterChange]);
+  }, [debouncedMaxHeight, filters.maxHeight, onFilterChange, heightUnit]);
 
   useEffect(() => {
     if (debouncedPositions !== filters.positions) {
@@ -326,22 +368,44 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
               <Grid item>
                 <Box sx={{ display: "flex", gap: 1 }}>
                   <TextField
-                    label="Min Height (m)"
+                    label={`Min Height (${heightUnit})`}
                     type="number"
-                    value={minHeight}
-                    onChange={(e) => setMinHeight(e.target.value)}
+                    value={heightUnit === "ft" ? minHeightFt : minHeight}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (heightUnit === "ft") {
+                        setMinHeightFt(val);
+                      } else {
+                        setMinHeight(val);
+                      }
+                    }}
                     fullWidth
                     size="small"
-                    inputProps={{ min: 1.0, max: 2.5, step: 0.01 }}
+                    inputProps={{
+                      min: heightUnit === "ft" ? 3.28 : 1.0,
+                      max: heightUnit === "ft" ? 8.2 : 2.5,
+                      step: 0.01,
+                    }}
                   />
                   <TextField
-                    label="Max Height (m)"
+                    label={`Max Height (${heightUnit})`}
                     type="number"
-                    value={maxHeight}
-                    onChange={(e) => setMaxHeight(e.target.value)}
+                    value={heightUnit === "ft" ? maxHeightFt : maxHeight}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (heightUnit === "ft") {
+                        setMaxHeightFt(val);
+                      } else {
+                        setMaxHeight(val);
+                      }
+                    }}
                     fullWidth
                     size="small"
-                    inputProps={{ min: 1.0, max: 2.5, step: 0.01 }}
+                    inputProps={{
+                      min: heightUnit === "ft" ? 3.28 : 1.0,
+                      max: heightUnit === "ft" ? 8.2 : 2.5,
+                      step: 0.01,
+                    }}
                   />
                 </Box>
               </Grid>
