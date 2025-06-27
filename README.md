@@ -122,6 +122,9 @@ docker compose -f docker-compose.prod.yml down
 docker compose -f docker-compose.dev.yml up
 ```
 
+- Brings up MySQL, backend, and frontend containers
+- Frontend available on [http://localhost:3001](http://localhost:30001)
+- Backend API on [http://localhost:8081](http://localhost:8081)
 - Hot-reloads frontend and backend for local development
 
 ---
