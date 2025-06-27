@@ -73,9 +73,9 @@ jobs:
         run: |
           echo "Step 7: Build and Start Docker Compose Services" | tee -a ci_cd_log.txt
           sudo apt-get update | tee -a ci_cd_log.txt
-          sudo apt-get install -y python3-pip | tee -a ci_cd_log.txt
-          sudo pip3 install docker-compose | tee -a ci_cd_log.txt
-          docker-compose -f docker-compose.prod.yml build | tee -a ci_cd_log.txt
+          sudo apt-get install -y docker-compose-plugin | tee -a ci_cd_log.txt
+          docker compose version | tee -a ci_cd_log.txt
+          docker compose -f docker-compose.prod.yml build | tee -a ci_cd_log.txt
 
           # Tag and push backend image
           BACKEND_IMAGE=$(docker images --format "table {{.Repository}}:{{.Tag}}" | grep "playermangementsystem_backend" | head -1 | awk '{print $1}')
@@ -87,19 +87,19 @@ jobs:
           docker tag $FRONTEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/players-dashboard:main
           docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/PlayerMangementSystem/players-dashboard:main
 
-          docker-compose -f docker-compose.prod.yml up -d | tee -a ci_cd_log.txt
+          docker compose -f docker-compose.prod.yml up -d | tee -a ci_cd_log.txt
 
       # Step 9: Tear down Docker Compose after tests
       - name: Tear Down Docker Compose
         run: |
           echo "Tearing down Docker Compose services..." | tee -a ci_cd_log.txt
-          docker-compose -f docker-compose.prod.yml down | tee -a ci_cd_log.txt
+          docker compose -f docker-compose.prod.yml down | tee -a ci_cd_log.txt
 
       # Step 10: Output logs for all services
       - name: Output logs for all services
         run: |
           echo "Service logs:" | tee -a ci_cd_log.txt
-          docker-compose -f docker-compose.prod.yml logs | tee -a ci_cd_log.txt
+          docker compose -f docker-compose.prod.yml logs | tee -a ci_cd_log.txt
 
       # Step 11: Upload log file
       - name: Upload log file
