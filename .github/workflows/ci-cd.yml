@@ -85,35 +85,28 @@ jobs:
           docker compose version | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml build | tee -a ci_cd_log.txt
 
+          echo "=== Docker images after build ===" | tee -a ci_cd_log.txt
+          docker images | tee -a ci_cd_log.txt
+
+          # Find the actual backend and frontend image names
+          BACKEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E 'backend:latest$' | head -n1)
+          FRONTEND_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E 'frontend:latest$' | head -n1)
+
+          echo "Detected backend image: $BACKEND_IMAGE" | tee -a ci_cd_log.txt
+          echo "Detected frontend image: $FRONTEND_IMAGE" | tee -a ci_cd_log.txt
+
           # Tag and push backend image
-          echo docker images
-          BACKEND_IMAGE=playermangementsystem_backend:latest
           docker tag $BACKEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
           docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
 
           # Tag and push frontend image
-          FRONTEND_IMAGE=playermangementsystem_frontend:latest
           docker tag $FRONTEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main
           docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main
 
-      # Step 8.5: Patch docker-compose.prod.yml to use pushed images
-      - name: Patch docker-compose.prod.yml to use pushed images
+      # Step 9: Start Docker Compose with built images
+      - name: Start Docker Compose with built images
         run: |
-          echo "--- BEFORE PATCHING ---" | tee -a ci_cd_log.txt
-          grep -E 'backend:|frontend:|build:|image:' docker-compose.prod.yml | tee -a ci_cd_log.txt
-
-          # Patch backend service
-          sed -i '/backend:/,/^[^ ]/ {s|build:.*|image: docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main|;}' docker-compose.prod.yml
-          # Patch frontend service
-          sed -i '/frontend:/,/^[^ ]/ {s|build:.*|image: docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main|;}' docker-compose.prod.yml
-
-          echo "--- AFTER PATCHING ---" | tee -a ci_cd_log.txt
-          grep -E 'backend:|frontend:|build:|image:' docker-compose.prod.yml | tee -a ci_cd_log.txt
-
-      # Step 9: Start Docker Compose with pushed images
-      - name: Start Docker Compose with pushed images
-        run: |
-          echo "Step 8: Start Docker Compose with pushed images" | tee -a ci_cd_log.txt
+          echo "Step 8: Start Docker Compose with built images" | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml up -d | tee -a ci_cd_log.txt
 
       # Step 10: Tear down Docker Compose after tests
