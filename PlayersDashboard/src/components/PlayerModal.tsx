@@ -9,12 +9,8 @@ import listOfCountries from "../utils/objects/countries-object";
 import {
   Box,
   TextField,
-  MenuItem,
   Chip,
-  Select,
-  InputLabel,
   FormControl,
-  OutlinedInput,
   CircularProgress,
 } from "@mui/material";
 import useAlert from "../hooks/useAlert";
@@ -205,29 +201,26 @@ const PlayerModal: React.FC<PlayerModalProps> = ({
         disabled={!editMode}
       />
       <FormControl fullWidth>
-        <InputLabel>Positions</InputLabel>
-        <Select
+        <Autocomplete
           multiple
+          options={Object.values(Positions)}
+          getOptionLabel={(option) => option}
           value={form.positions}
-          onChange={(e) =>
-            handleChange("positions", e.target.value as string[])
-          }
-          input={<OutlinedInput label="Positions" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-              {(selected as string[]).map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
+          onChange={(_e, value) => handleChange("positions", value)}
           disabled={!editMode}
-        >
-          {Object.values(Positions).map((pos) => (
-            <MenuItem key={pos} value={pos}>
-              {pos}
-            </MenuItem>
-          ))}
-        </Select>
+          renderOption={(props, option) => (
+            <li {...props} key={option}>
+              {option}
+            </li>
+          )}
+          renderTags={(selected, getTagProps) =>
+            selected.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index });
+              return <Chip key={key} label={option} {...tagProps} />;
+            })
+          }
+          renderInput={(params) => <TextField {...params} label="Positions" />}
+        />
       </FormControl>
       <TextField
         label="Height (m)"
