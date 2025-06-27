@@ -281,7 +281,11 @@ const MainPage: React.FC = () => {
                 hidden
                 onChange={async (e) => {
                   if (e.target.files && e.target.files.length > 0) {
-                    await handleUploadCsv(e.target.files[0], setAlert);
+                    await handleUploadCsv(
+                      e.target.files[0],
+                      setAlert,
+                      fetchPlayers
+                    );
                     e.target.value = "";
                   }
                 }}
@@ -304,6 +308,7 @@ const MainPage: React.FC = () => {
             setPlayerModalOpen(false);
             setModalMode("create");
             setSelectedPlayerId(null);
+            fetchPlayers();
           }}
         />
       </Box>
