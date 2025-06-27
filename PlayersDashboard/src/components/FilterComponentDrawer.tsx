@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { Positions } from "../utils/enums/Positions";
 import { colorTokens } from "../theme";
 import listOfCountries from "../utils/objects/countries-object";
@@ -21,6 +22,8 @@ import NationalityFilter from "./filters/NationalityFilter";
 import HeightFilter from "./filters/HeightFilter";
 import PositionFilter from "./filters/PositionFilter";
 import AgeFilter from "./filters/AgeFilter";
+import { useDispatch } from "react-redux";
+import { resetFiltersStore } from "../store/filters-reducer";
 
 const drawerWidth = 300;
 
@@ -105,6 +108,7 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
   updateAPIRequest: onFilterChange,
   heightUnit,
 }) => {
+  const dispatch = useDispatch();
   // Local state for each filter
   const [name, setName] = useState(filters.name);
   const [nationality, setNationality] = useState(filters.nationality);
@@ -128,6 +132,18 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
     }
   }, [heightUnit, minHeight, maxHeight]);
 
+  const handleResetFilters = () => {
+    setNationality([]);
+    setMinAge("");
+    setMaxAge("");
+    setMinHeight("");
+    setMaxHeight("");
+    setMinHeightFt("");
+    setMaxHeightFt("");
+    setName("");
+    setPositions([]);
+    dispatch(resetFiltersStore());
+  };
   // Debounced values
   const debouncedName = useDebounce(name, 500);
   const debouncedNationality = useDebounce(nationality, 500);
@@ -291,6 +307,27 @@ const FilterComponentDrawer: React.FC<FilterComponentDrawerProps> = ({
                   options={positionOptions}
                   disabled={!open}
                 />
+              </Grid>
+              <Grid item>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    mt: 1,
+                  }}
+                >
+                  <Tooltip title="Reset all filters">
+                    <IconButton
+                      color="primary"
+                      onClick={handleResetFilters}
+                      size="large"
+                      sx={{ mt: 0 }}
+                    >
+                      <RestartAltIcon fontSize="inherit" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               </Grid>
             </Grid>
           </Box>
