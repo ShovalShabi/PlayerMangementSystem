@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # 1. Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -24,27 +24,27 @@ jobs:
         run: |
           echo "Step 1: Checkout repository" | tee -a ci_cd_log.txt
 
-      # Step 2: Set up Java 17
+      # 2. JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: "17"
           distribution: "temurin"
 
-      # Step 3: Convert gradlew to Unix line endings
+      # 3. dos2unix
       - name: Convert gradlew to Unix format
         run: |
           sudo apt-get update && sudo apt-get install -y dos2unix
           dos2unix ./PlayerService/gradlew
           echo "Converted gradlew to Unix format" | tee -a ci_cd_log.txt
 
-      # Step 4: Set execution permission for gradlew
+      # 4. chmod gradlew
       - name: Set execution permission for gradlew
         run: |
           chmod +x ./PlayerService/gradlew
           echo "Execution permission set for gradlew" | tee -a ci_cd_log.txt
 
-      # Step 5: Run Backend Tests Only
+      # 5. Tests
       - name: Run backend tests
         run: |
           echo "Running backend tests..." | tee -a ci_cd_log.txt
@@ -52,7 +52,7 @@ jobs:
           ../PlayerService/gradlew test --no-daemon | tee -a ../ci_cd_log.txt
           cd ..
 
-      # Step 6: Set up Docker Buildx
+      # 6. Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -60,7 +60,7 @@ jobs:
         run: |
           echo "Step 2: Set up Docker Buildx" | tee -a ci_cd_log.txt
 
-      # Step 7: Log in to Docker Hub
+      # 7. Login to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -68,51 +68,69 @@ jobs:
           username: ${{ secrets.DOCKERHUBUSERNAME }}
           password: ${{ secrets.DOCKERHUBPASSWORD }}
 
-      # Step 7.5: Create .env.prod for frontend
+      # 7.5 Create frontend env
       - name: Create .env.prod for frontend
         run: |
           cat <<EOF > PlayersDashboard/.env.prod
-          VITE_API_URL=${{ secrets.VITE_API_URL }}
-          VITE_SOME_KEY=${{ secrets.VITE_SOME_KEY }}
+          VITE_PORT=${{ secrets.VITEPORT }}
+          VITE_BACKEND_HOST=${{ secrets.VITEBACKENDHOST }}
+          VITE_BACKEND_PORT${{secrets.VITEBACKENDPORT}}
           EOF
 
-      # Step 8: Build Docker Compose Images
-      - name: Build Docker Compose Images
+      # 8. Build & Push (now including mysql)
+      - name: Build Docker Compose Images and Push to Docker Hub
         run: |
-          echo "Step 7: Build Docker Compose Images" | tee -a ci_cd_log.txt
+          echo "Step 3: Build images" | tee -a ci_cd_log.txt
           sudo apt-get update | tee -a ci_cd_log.txt
           sudo apt-get install -y docker-compose-plugin | tee -a ci_cd_log.txt
           docker compose version | tee -a ci_cd_log.txt
+
           docker compose -f docker-compose.prod.yml build | tee -a ci_cd_log.txt
 
           echo "=== Docker images after build ===" | tee -a ci_cd_log.txt
-          docker images | tee -a ci_cd_log.txt
+          docker images --format '{{.Repository}}:{{.Tag}}' | tee -a ci_cd_log.txt
 
-          # Push all images with :latest tag built by docker compose
-          for IMAGE in $(docker images --format '{{.Repository}}:{{.Tag}}' | grep ':latest$'); do
-            echo "Pushing image: $IMAGE" | tee -a ci_cd_log.txt
-            docker push $IMAGE | tee -a ci_cd_log.txt
+          # Retag & push mysql, backend and frontend
+          for SERVICE in mysql backend frontend; do
+            IMAGE=$(docker images \
+              --filter "label=com.docker.compose.service=$SERVICE" \
+              --format '{{.Repository}}:{{.Tag}}' | head -n1)
+
+            if [ -z "$IMAGE" ]; then
+              echo "No image found for service $SERVICE" | tee -a ci_cd_log.txt
+              continue
+            fi
+
+            # extract original tag (after the last ':')
+            TAG="${IMAGE##*:}"
+
+            TARGET="players-dashboard-system/$SERVICE:$TAG"
+            echo "Tagging $IMAGE → $TARGET" | tee -a ci_cd_log.txt
+            docker tag "$IMAGE" "$TARGET" | tee -a ci_cd_log.txt
+
+            echo "Pushing $TARGET" | tee -a ci_cd_log.txt
+            docker push "$TARGET" | tee -a ci_cd_log.txt
           done
 
-      # Step 9: Start Docker Compose with built images
+      # 9. Up
       - name: Start Docker Compose with built images
         run: |
-          echo "Step 8: Start Docker Compose with built images" | tee -a ci_cd_log.txt
+          echo "Step 4: Start Docker Compose" | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml up -d | tee -a ci_cd_log.txt
 
-      # Step 10: Tear down Docker Compose after tests
+      # 10. Down
       - name: Tear Down Docker Compose
         run: |
           echo "Tearing down Docker Compose services..." | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml down | tee -a ci_cd_log.txt
 
-      # Step 11: Output logs for all services
+      # 11. Logs
       - name: Output logs for all services
         run: |
           echo "Service logs:" | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml logs | tee -a ci_cd_log.txt
 
-      # Step 12: Upload log file
+      # 12. Upload logs
       - name: Upload log file
         uses: actions/upload-artifact@v4
         with:
