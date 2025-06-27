@@ -72,9 +72,8 @@ jobs:
       - name: Create .env.prod for frontend
         run: |
           cat <<EOF > PlayersDashboard/.env.prod
-          VITE_PORT=${{ secrets.VITEPORT }}
-          VITE_BACKEND_HOST=${{ secrets.VITEBACKENDHOST }}
-          VITE_BACKEND_PORT=${{ secrets.VITEBACKENDPORT }}
+          VITE_API_URL=${{ secrets.VITE_API_URL }}
+          VITE_SOME_KEY=${{ secrets.VITE_SOME_KEY }}
           EOF
 
       # Step 8: Build and Start Docker Compose Services
@@ -88,29 +87,47 @@ jobs:
 
           # Tag and push backend image
           BACKEND_IMAGE=playermangementsystem_backend:latest
-          docker tag $BACKEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/player-service:main
-          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/player-service:main
+          docker tag $BACKEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
+          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main
 
           # Tag and push frontend image
           FRONTEND_IMAGE=playermangementsystem_frontend:latest
-          docker tag $FRONTEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/players-dashboard:main
-          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/playermangementsystem/players-dashboard:main
+          docker tag $FRONTEND_IMAGE docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main
+          docker push docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main
 
+      # Step 8.5: Patch docker-compose.prod.yml to use pushed images
+      - name: Patch docker-compose.prod.yml to use pushed images
+        run: |
+          echo "--- BEFORE PATCHING ---" | tee -a ci_cd_log.txt
+          grep -E 'backend:|frontend:|build:|image:' docker-compose.prod.yml | tee -a ci_cd_log.txt
+
+          # Patch backend service
+          sed -i '/backend:/,/^[^ ]/ {s|build:.*|image: docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/player-service:main|;}' docker-compose.prod.yml
+          # Patch frontend service
+          sed -i '/frontend:/,/^[^ ]/ {s|build:.*|image: docker.io/${{ secrets.DOCKERHUBUSERNAME }}/player-mangement-system/players-dashboard:main|;}' docker-compose.prod.yml
+
+          echo "--- AFTER PATCHING ---" | tee -a ci_cd_log.txt
+          grep -E 'backend:|frontend:|build:|image:' docker-compose.prod.yml | tee -a ci_cd_log.txt
+
+      # Step 9: Start Docker Compose with pushed images
+      - name: Start Docker Compose with pushed images
+        run: |
+          echo "Step 8: Start Docker Compose with pushed images" | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml up -d | tee -a ci_cd_log.txt
 
-      # Step 9: Tear down Docker Compose after tests
+      # Step 10: Tear down Docker Compose after tests
       - name: Tear Down Docker Compose
         run: |
           echo "Tearing down Docker Compose services..." | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml down | tee -a ci_cd_log.txt
 
-      # Step 10: Output logs for all services
+      # Step 11: Output logs for all services
       - name: Output logs for all services
         run: |
           echo "Service logs:" | tee -a ci_cd_log.txt
           docker compose -f docker-compose.prod.yml logs | tee -a ci_cd_log.txt
 
-      # Step 11: Upload log file
+      # Step 12: Upload log file
       - name: Upload log file
         uses: actions/upload-artifact@v4
         with:
