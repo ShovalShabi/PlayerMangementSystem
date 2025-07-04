@@ -59,6 +59,9 @@ public class PlayerServiceImpl implements PlayerService {
     public PlayerDTO createPlayer(PlayerDTO dto) {
         log.info("Attempting to create player: {} {}", dto.getFirstName(), dto.getLastName());
 
+        dto.setFirstName(dto.getFirstName().strip());
+        dto.setLastName(dto.getLastName().strip());
+
         if (dto.getDateOfBirth() == null || dto.getDateOfBirth().isAfter(LocalDate.now())) {
             log.warn("Invalid date of birth: {}", dto.getDateOfBirth());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Date of birth must be in the past");
@@ -117,10 +120,10 @@ public class PlayerServiceImpl implements PlayerService {
 
         // Safe editing on non nullish values
         if (dto.getFirstName() != null)
-            existing.setFirstName(dto.getFirstName());
+            existing.setFirstName(dto.getFirstName().strip());
 
         if (dto.getLastName() != null)
-            existing.setLastName(dto.getLastName());
+            existing.setLastName(dto.getLastName().strip());
 
         if (dto.getDateOfBirth() != null)
             existing.setDateOfBirth(dto.getDateOfBirth());
@@ -240,6 +243,8 @@ public class PlayerServiceImpl implements PlayerService {
             if (nationalities != null && !nationalities.isEmpty()) {
                 for (String nat : nationalities) {
                     predicates.add(cb.equal(root.join("nationalities").get("name"), nat));
+                    // predicates.add(root.join("nationalities").get("name").in(nationalities));
+                    // this is 'any of' sorting method
                 }
             }
 
