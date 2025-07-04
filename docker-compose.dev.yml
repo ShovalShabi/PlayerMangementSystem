@@ -40,7 +40,7 @@ services:
     container_name: frontend-dev
     build:
       context: ./PlayersDashboard
-      target: prod
+      target: dev # Mistakenly left this line on prod instead of dev which caused differnet target for build!
     ports:
       - "3001:3001"
     depends_on:
