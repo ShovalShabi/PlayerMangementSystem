@@ -23,15 +23,9 @@ public class PositionEntity {
     private Long id;
 
     /**
-     * Position group (Defenders, Midfielders, Forwards)
+     * Position enum value (e.g., CB, LB, ST)
      */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Positions positionGroup;
-
-    /**
-     * Name of the position (e.g., CB, LB, ST)
-     */
-    @Column(nullable = false)
-    private String name;
+    private Positions position;
 }

@@ -6,10 +6,7 @@ import org.example.dtos.PlayerDTO;
 import org.example.dtos.UpdatePlayerDTO;
 import org.example.services.PlayerService;
 import org.example.utils.TestSecurityConfig;
-import org.example.utils.enums.Defenders;
-import org.example.utils.enums.Forwards;
-import org.example.utils.enums.Midfielders;
-import org.example.utils.enums.SortBy;
+import org.example.utils.enums.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,7 +73,7 @@ class PlayerControllerTest {
                 "Messi",
                 Set.of("Argentina"),
                 LocalDate.of(1987, 6, 24),
-                new HashSet<>(List.of(Forwards.ST.name(), Midfielders.CAM.name())),
+                new HashSet<>(List.of(Positions.ST, Positions.CAM)),
                 1.70,
                 new Date(),
                 new Date());
@@ -87,7 +84,7 @@ class PlayerControllerTest {
                 "Cristiano",
                 "Ronaldo",
                 Set.of("Portugal"),
-                new HashSet<>(List.of(Forwards.ST.name())),
+                new HashSet<>(List.of(Positions.ST)),
                 LocalDate.of(1985, 2, 5),
                 1.87);
     }
@@ -95,7 +92,8 @@ class PlayerControllerTest {
     // Helper method to load the CSV file for bulk upload testing
     private byte[] loadCsvFile() throws IOException {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("test_bulk_players.csv")) {
-            if (is == null) throw new FileNotFoundException("test_bulk_players.csv not found in test resources");
+            if (is == null)
+                throw new FileNotFoundException("test_bulk_players.csv not found in test resources");
             return is.readAllBytes();
         }
     }
@@ -237,7 +235,7 @@ class PlayerControllerTest {
                         .param("nationalities", "Argentina")
                         .param("minAge", "20")
                         .param("maxAge", "40")
-                        .param("positions", Forwards.ST.name())
+                        .param("positions", Positions.ST.name())
                         .param("minHeight", "1.60")
                         .param("maxHeight", "1.80")
                         .param("sortBy", "NAME")
@@ -251,7 +249,7 @@ class PlayerControllerTest {
 
         verify(playerService, times(1)).getPlayers(
                 eq("Messi"), eq(List.of("Argentina")), eq(20), eq(40),
-                eq(List.of(Forwards.ST.name())), eq(1.60), eq(1.80), eq(SortBy.NAME),
+                eq(List.of(Positions.ST.name())), eq(1.60), eq(1.80), eq(SortBy.NAME),
                 eq("asc"), eq(0), eq(10));
     }
 
@@ -293,7 +291,7 @@ class PlayerControllerTest {
 
         Map<String, Object> uploadResult = new HashMap<>();
         uploadResult.put("successfully_created", "500 items passed"); // String value
-        uploadResult.put("failed_to_create", "No one failed");        // String value
+        uploadResult.put("failed_to_create", "No one failed"); // String value
 
         when(playerService.bulkUploadPlayers(any())).thenReturn(uploadResult);
 
@@ -396,9 +394,9 @@ class PlayerControllerTest {
         PlayerDTO playerWithMultiple = createSamplePlayerDTO();
         playerWithMultiple.setNationalities(new HashSet<>(Arrays.asList("Argentina", "Spain")));
         playerWithMultiple.setPositions(new HashSet<>(Arrays.asList(
-                Forwards.ST.name(),
-                Midfielders.CAM.name(),
-                Defenders.CB.name())));
+                Positions.ST,
+                Positions.CAM,
+                Positions.CB)));
 
         when(playerService.createPlayer(any(PlayerDTO.class))).thenReturn(playerWithMultiple);
 
@@ -483,8 +481,7 @@ class PlayerControllerTest {
                 eq(SortBy.NAME),
                 eq("asc"),
                 eq(0),
-                eq(10)
-        )).thenReturn(emptyPage);
+                eq(10))).thenReturn(emptyPage);
 
         // Act & Assert
         mockMvc.perform(get("/api/players")
@@ -499,7 +496,6 @@ class PlayerControllerTest {
                 isNull(), isNull(), isNull(), eq(SortBy.NAME),
                 eq("asc"), eq(0), eq(10));
     }
-
 
     @Test
     @DisplayName("Should handle bulk upload with invalid file format")
@@ -556,7 +552,8 @@ class PlayerControllerTest {
         uploadResult.put("success", true);
         uploadResult.put("processed", 502);
         uploadResult.put("errors", 5);
-        uploadResult.put("details", Arrays.asList("450 players created successfully", "5 players failed validation"));
+        uploadResult.put("details",
+                Arrays.asList("450 players created successfully", "5 players failed validation"));
 
         when(playerService.bulkUploadPlayers(any())).thenReturn(uploadResult);
 
@@ -672,13 +669,14 @@ class PlayerControllerTest {
     void testAllPositionTypesFromEnums() throws Exception {
         // Arrange
         PlayerDTO defenderPlayer = createSamplePlayerDTO();
-        defenderPlayer.setPositions(new HashSet<>(Arrays.asList(Defenders.CB.name(), Defenders.RB.name())));
+        defenderPlayer.setPositions(new HashSet<>(Arrays.asList(Positions.CB, Positions.RB)));
 
         PlayerDTO midfielderPlayer = createSamplePlayerDTO();
-        midfielderPlayer.setPositions(new HashSet<>(Arrays.asList(Midfielders.CM.name(), Midfielders.CAM.name())));
+        midfielderPlayer.setPositions(
+                new HashSet<>(Arrays.asList(Positions.CM, Positions.CAM)));
 
         PlayerDTO forwardPlayer = createSamplePlayerDTO();
-        forwardPlayer.setPositions(new HashSet<>(Arrays.asList(Forwards.ST.name(), Forwards.LW.name())));
+        forwardPlayer.setPositions(new HashSet<>(Arrays.asList(Positions.ST, Positions.LW)));
 
         when(playerService.createPlayer(any(PlayerDTO.class)))
                 .thenReturn(defenderPlayer)

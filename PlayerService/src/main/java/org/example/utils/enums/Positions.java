@@ -1,20 +1,26 @@
 package org.example.utils.enums;
 
-import lombok.Getter;
-
 /**
- * Enum representing all possible player positions, grouped by type (Defenders,
- * Midfielders, Forwards).
+ * Enum representing all possible player positions.
  */
-@Getter
 public enum Positions {
-    Defenders(Defenders.class),
-    Midfielders(Midfielders.class),
-    Forwards(Forwards.class);
-
-    private final Class<? extends Enum<?>> typeClass;
-
-    Positions(Class<? extends Enum<?>> typeClass) {
-        this.typeClass = typeClass;
-    }
+    // Defenders
+    CB,
+    RB,
+    LB,
+    LWB,
+    RWB,
+    // Midfielders
+    CDM,
+    CM,
+    CAM,
+    RM,
+    LM,
+    // Forwards
+    RF,
+    LF,
+    CF,
+    ST,
+    LW,
+    RW,
 }

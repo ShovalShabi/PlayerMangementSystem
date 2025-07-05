@@ -8,6 +8,7 @@ import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.repositories.PlayerRepository;
+import org.example.utils.enums.Positions;
 import org.example.utils.enums.SortBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,7 +63,7 @@ class PlayerServiceImplTest {
                 "Messi",
                 Set.of("Argentina"),
                 LocalDate.of(1987, 6, 24),
-                Set.of("ST", "CAM"),
+                Set.of(Positions.ST, Positions.CAM),
                 1.70,
                 new Date(),
                 new Date());
@@ -71,7 +72,7 @@ class PlayerServiceImplTest {
                 "Lionel",
                 "Messi",
                 new HashSet<>(Set.of(new NationalityEntity(null, "Argentina"))),
-                new HashSet<>(Set.of(new PositionEntity(null, null, "ST"))),
+                new HashSet<>(Set.of(new PositionEntity(null, Positions.ST))),
                 LocalDate.of(1987, 6, 24),
                 1.70,
                 new Date(),
@@ -80,7 +81,7 @@ class PlayerServiceImplTest {
                 "Leo",
                 "Messi",
                 Set.of("Argentina"),
-                Set.of("ST"),
+                Set.of(Positions.ST),
                 LocalDate.of(1987, 6, 24),
                 1.70);
     }

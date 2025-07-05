@@ -11,7 +11,7 @@ import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
 import org.example.repositories.PlayerRepository;
-import org.example.utils.classes.PositionUtils;
+import org.example.utils.enums.Positions;
 import org.example.utils.enums.SortBy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -146,13 +146,11 @@ public class PlayerServiceImpl implements PlayerService {
 
         // Rebuild and link Positions on Set existence
         if (dto.getPositions() != null) {
+            // Enum values are already validated by the type system
+            // No additional validation needed since we're using the enum directly
+
             Set<PositionEntity> newPositions = dto.getPositions().stream()
-                    .map(pos -> {
-                        PositionEntity entity = new PositionEntity();
-                        entity.setName(pos.toUpperCase());
-                        entity.setPositionGroup(PositionUtils.resolvePositionGroup(pos));
-                        return entity;
-                    })
+                    .map(pos -> new PositionEntity(null, pos))
                     .collect(Collectors.toSet());
             existing.getPositions().clear();
             existing.getPositions().addAll(newPositions);
@@ -265,7 +263,8 @@ public class PlayerServiceImpl implements PlayerService {
             // Positions filter (intersection)
             if (positions != null && !positions.isEmpty()) {
                 for (String pos : positions) {
-                    predicates.add(cb.equal(root.join("positions").get("name"), pos.toUpperCase()));
+                    predicates.add(
+                            cb.equal(root.join("positions").get("position"), Positions.valueOf(pos.toUpperCase())));
                 }
             }
 
@@ -432,9 +431,10 @@ public class PlayerServiceImpl implements PlayerService {
                 .collect(Collectors.toSet());
         dto.setNationalities(nationalities);
 
-        Set<String> positions = Arrays.stream(data.get("positions").split("[|/;#!%]"))
+        Set<Positions> positions = Arrays.stream(data.get("positions").split("[|/;#!%]"))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
+                .map(Positions::valueOf)
                 .collect(Collectors.toSet());
         dto.setPositions(positions);
 
