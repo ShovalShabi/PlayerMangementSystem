@@ -10,7 +10,10 @@ import org.example.dtos.UpdatePlayerDTO;
 import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
+import org.example.repositories.NationalityRepository;
 import org.example.repositories.PlayerRepository;
+import org.example.repositories.PositionRepository;
+import org.example.utils.enums.Nationality;
 import org.example.utils.enums.Positions;
 import org.example.utils.enums.SortBy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +44,18 @@ import java.util.stream.Collectors;
 public class PlayerServiceImpl implements PlayerService {
 
     private final PlayerRepository playerRepository;
+    private final NationalityRepository nationalityRepository;
+    private final PositionRepository positionRepository;
     private final Validator validator;
 
     @Autowired
-    public PlayerServiceImpl(PlayerRepository playerRepository, Validator validator) {
+    public PlayerServiceImpl(PlayerRepository playerRepository,
+            NationalityRepository nationalityRepository,
+            PositionRepository positionRepository,
+            Validator validator) {
         this.playerRepository = playerRepository;
+        this.nationalityRepository = nationalityRepository;
+        this.positionRepository = positionRepository;
         this.validator = validator;
     }
 
@@ -94,7 +104,42 @@ public class PlayerServiceImpl implements PlayerService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Illegal positions list has been provided");
         }
 
-        PlayerEntity entity = PlayerDTO.toEntity(dto);
+        // Use findOrCreate for nationalities and positions to avoid duplicate key
+        // errors
+        Set<NationalityEntity> nationalityEntities = dto.getNationalities().stream()
+                .map(nationalityRepository::findOrCreate)
+                .collect(Collectors.toSet());
+
+        Set<PositionEntity> positionEntities = dto.getPositions().stream()
+                .map(positionRepository::findOrCreate)
+                .collect(Collectors.toSet());
+
+        PlayerEntity entity = new PlayerEntity(
+                dto.getId(),
+                dto.getFirstName(),
+                dto.getLastName(),
+                nationalityEntities,
+                positionEntities,
+                dto.getDateOfBirth(),
+                dto.getHeight(),
+                null,
+                null);
+
+        // Ensure bidirectional relationships are properly established
+        for (NationalityEntity nationality : nationalityEntities) {
+            if (nationality.getPlayers() == null) {
+                nationality.setPlayers(new HashSet<>());
+            }
+            nationality.getPlayers().add(entity);
+        }
+
+        for (PositionEntity position : positionEntities) {
+            if (position.getPlayers() == null) {
+                position.setPlayers(new HashSet<>());
+            }
+            position.getPlayers().add(entity);
+        }
+
         PlayerEntity saved = playerRepository.save(entity);
         log.info("Player created with ID: {}", saved.getId());
 
@@ -134,14 +179,26 @@ public class PlayerServiceImpl implements PlayerService {
         // Rebuild and link Nationalities on Set existence
         if (dto.getNationalities() != null) {
             Set<NationalityEntity> newNationalities = dto.getNationalities().stream()
-                    .map(name -> {
-                        NationalityEntity entity = new NationalityEntity();
-                        entity.setName(name);
-                        return entity;
-                    })
+                    .map(nationalityRepository::findOrCreate)
                     .collect(Collectors.toSet());
+
+            // Remove player from old nationalities
+            for (NationalityEntity oldNationality : existing.getNationalities()) {
+                if (oldNationality.getPlayers() != null) {
+                    oldNationality.getPlayers().remove(existing);
+                }
+            }
+
             existing.getNationalities().clear();
             existing.getNationalities().addAll(newNationalities);
+
+            // Add player to new nationalities
+            for (NationalityEntity nationality : newNationalities) {
+                if (nationality.getPlayers() == null) {
+                    nationality.setPlayers(new HashSet<>());
+                }
+                nationality.getPlayers().add(existing);
+            }
         }
 
         // Rebuild and link Positions on Set existence
@@ -150,10 +207,26 @@ public class PlayerServiceImpl implements PlayerService {
             // No additional validation needed since we're using the enum directly
 
             Set<PositionEntity> newPositions = dto.getPositions().stream()
-                    .map(pos -> new PositionEntity(null, pos))
+                    .map(positionRepository::findOrCreate)
                     .collect(Collectors.toSet());
+
+            // Remove player from old positions
+            for (PositionEntity oldPosition : existing.getPositions()) {
+                if (oldPosition.getPlayers() != null) {
+                    oldPosition.getPlayers().remove(existing);
+                }
+            }
+
             existing.getPositions().clear();
             existing.getPositions().addAll(newPositions);
+
+            // Add player to new positions
+            for (PositionEntity position : newPositions) {
+                if (position.getPlayers() == null) {
+                    position.setPlayers(new HashSet<>());
+                }
+                position.getPlayers().add(existing);
+            }
         }
 
         PlayerDTO tempDTO = PlayerDTO.fromEntity(existing);
@@ -226,7 +299,10 @@ public class PlayerServiceImpl implements PlayerService {
             String order,
             int page,
             int size) {
-        Pageable pageable = PageRequest.of(page, size);
+
+        // Use a more efficient approach to avoid N+1 queries
+        Pageable pageable = getPageableWithSort(sortBy, order, page, size);
+
         return playerRepository.findAll((Specification<PlayerEntity>) (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -234,15 +310,14 @@ public class PlayerServiceImpl implements PlayerService {
             if (name != null && !name.isBlank()) {
                 Expression<String> fullName = cb.concat(cb.lower(root.get("firstName")),
                         cb.concat(" ", cb.lower(root.get("lastName"))));
-                predicates.add(cb.like(fullName, "%" + name.toLowerCase() + "%"));
+                predicates.add(cb.like(fullName, "%" + name.strip().toLowerCase() + "%"));
             }
 
             // Nationalities filter (intersection)
             if (nationalities != null && !nationalities.isEmpty()) {
                 for (String nat : nationalities) {
-                    predicates.add(cb.equal(root.join("nationalities").get("name"), nat));
-                    // predicates.add(root.join("nationalities").get("name").in(nationalities));
-                    // this is 'any of' sorting method
+                    predicates.add(cb.equal(root.join("nationalities").get("nationality"),
+                            Nationality.valueOf(nat.toUpperCase())));
                 }
             }
 
@@ -277,7 +352,7 @@ public class PlayerServiceImpl implements PlayerService {
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
-        }, getPageableWithSort(sortBy, order, page, size)).map(PlayerDTO::fromEntity);
+        }, pageable).map(PlayerDTO::fromEntity);
     }
 
     /**
@@ -289,7 +364,7 @@ public class PlayerServiceImpl implements PlayerService {
     public List<PlayerDTO> getAll() {
         log.info("Fetching all players (DEV/TEST only)");
         return this.playerRepository
-                .findAll()
+                .findAllWithNationalitiesAndPositions()
                 .stream()
                 .map(PlayerDTO::fromEntity)
                 .toList();
@@ -425,9 +500,10 @@ public class PlayerServiceImpl implements PlayerService {
         dto.setDateOfBirth(LocalDate.parse(data.get("dateOfBirth")));
         dto.setHeight(Double.parseDouble(data.get("height")));
 
-        Set<String> nationalities = Arrays.stream(data.get("nationalities").split("[|/;#!%]"))
+        Set<Nationality> nationalities = Arrays.stream(data.get("nationalities").split("[|/;#!%]"))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
+                .map(Nationality::fromCode)
                 .collect(Collectors.toSet());
         dto.setNationalities(nationalities);
 
