@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
+import org.example.utils.enums.Nationality;
 import org.example.utils.enums.Positions;
 
 import java.time.LocalDate;
@@ -48,7 +49,7 @@ public class PlayerDTO {
          */
         @NotNull(message = "Nationalities list cannot be null")
         @Size(min = 1, message = "At least one nationality must be provided")
-        private Set<@NotBlank(message = "Nationality name must not be blank") String> nationalities;
+        private Set<Nationality> nationalities;
 
         /**
          * Player's date of birth (must be in the past)
@@ -88,9 +89,9 @@ public class PlayerDTO {
          * @return the corresponding PlayerDTO
          */
         public static PlayerDTO fromEntity(PlayerEntity player) {
-                Set<String> nationalities = player.getNationalities() != null
+                Set<Nationality> nationalities = player.getNationalities() != null
                                 ? player.getNationalities().stream()
-                                                .map(NationalityEntity::getName)
+                                                .map(NationalityEntity::getNationality)
                                                 .collect(Collectors.toSet())
                                 : null;
 
@@ -121,13 +122,13 @@ public class PlayerDTO {
         public static PlayerEntity toEntity(PlayerDTO dto) {
                 Set<NationalityEntity> nationalityEntities = dto.getNationalities() != null
                                 ? dto.getNationalities().stream()
-                                                .map(name -> new NationalityEntity(null, name))
+                                                .map(nationality -> new NationalityEntity(nationality, null))
                                                 .collect(Collectors.toSet())
                                 : null;
 
                 Set<PositionEntity> positionEntities = dto.getPositions() != null
                                 ? dto.getPositions().stream()
-                                                .map(position -> new PositionEntity(null, position))
+                                                .map(position -> new PositionEntity(position, null))
                                                 .collect(Collectors.toSet())
                                 : null;
 

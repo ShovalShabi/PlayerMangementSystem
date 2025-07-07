@@ -3,7 +3,11 @@ package org.example.entities;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.example.utils.enums.Nationality;
+
+import java.util.Set;
 
 /**
  * JPA entity representing a nationality associated with a player.
@@ -15,15 +19,17 @@ import lombok.NoArgsConstructor;
 public class NationalityEntity {
 
     /**
-     * Unique identifier for the nationality
+     * Unique identifier for the nationality which is the ISO 3166-1 alpha-2 code
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, unique = true)
+    private Nationality nationality;
 
     /**
-     * Name of the nationality
+     * Set of players associated with the nationality
      */
-    @Column(nullable = false)
-    private String name;
+    @ManyToMany(mappedBy = "nationalities")
+    @EqualsAndHashCode.Exclude
+    private Set<PlayerEntity> players;
 }
