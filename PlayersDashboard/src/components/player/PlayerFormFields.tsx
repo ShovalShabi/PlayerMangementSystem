@@ -52,18 +52,18 @@ const PlayerFormFields: React.FC<PlayerFormFieldsProps> = ({
         options={listOfCountries}
         getOptionLabel={(option) => option.label}
         value={listOfCountries.filter((c) =>
-          form.nationalities.includes(c.label)
+          form.nationalities.includes(c.code)
         )}
         onChange={(_e, value) =>
           handleChange(
             "nationalities",
-            value.map((v) => v.label)
+            value.map((v) => v.code)
           )
         }
         disabled={!editMode}
         renderOption={(props, option) => (
           <li {...props} key={option.code}>
-            <NationalityWithFlag nationality={option.label} />
+            <NationalityWithFlag nationality={option.code} />
           </li>
         )}
         renderTags={(selected, getTagProps) =>
@@ -72,7 +72,7 @@ const PlayerFormFields: React.FC<PlayerFormFieldsProps> = ({
             return (
               <Chip
                 key={key}
-                label={<NationalityWithFlag nationality={option.label} />}
+                label={<NationalityWithFlag nationality={option.code} />}
                 {...tagProps}
               />
             );

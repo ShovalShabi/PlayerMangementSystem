@@ -1,14 +1,14 @@
 import listOfCountries from "./countries-object";
 
 /**
- * Map that converts country names (labels) to their ISO country codes.
+ * Map that converts ISO country codes to their country names (labels).
  * Used for flag display and nationality filtering.
  *
- * Key: Country name (e.g., "United States")
- * Value: ISO country code (e.g., "US")
+ * Key: ISO country code (e.g., "US")
+ * Value: Country name (e.g., "United States of America")
  */
 const countryLabelToCodeMap = new Map<string, string>(
-  listOfCountries.map((country) => [country.label, country.code])
+  listOfCountries.map((country) => [country.code, country.label])
 );
 
 export default countryLabelToCodeMap;

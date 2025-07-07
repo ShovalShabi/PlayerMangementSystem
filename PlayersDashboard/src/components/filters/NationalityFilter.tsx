@@ -14,7 +14,7 @@ interface NationalityOption {
 
 /**
  * Props for NationalityFilter component.
- * @property value Array of selected nationality labels.
+ * @property value Array of selected nationality codes (ISO codes).
  * @property onChange Callback when the selected nationalities change.
  * @property options List of all possible nationality options.
  * @property disabled Optional. Disables the input if true.
@@ -41,12 +41,12 @@ const NationalityFilter: React.FC<NationalityFilterProps> = ({
     multiple
     options={options}
     getOptionLabel={(option) => option.label}
-    value={options.filter((c) => value.includes(c.label))}
-    onChange={(_e, val) => onChange(val.map((v) => v.label))}
+    value={options.filter((c) => value.includes(c.code))}
+    onChange={(_e, val) => onChange(val.map((v) => v.code))}
     disabled={disabled}
     renderOption={(props, option) => (
       <li {...props} key={option.code}>
-        <NationalityWithFlag nationality={option.label} />
+        <NationalityWithFlag nationality={option.code} />
       </li>
     )}
     renderTags={(selected, getTagProps) =>
@@ -55,7 +55,7 @@ const NationalityFilter: React.FC<NationalityFilterProps> = ({
         return (
           <Chip
             key={key}
-            label={<NationalityWithFlag nationality={option.label} />}
+            label={<NationalityWithFlag nationality={option.code} />}
             {...tagProps}
           />
         );

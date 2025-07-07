@@ -6,14 +6,14 @@ import { State } from "../utils/interfaces/state";
 
 /**
  * Props for NationalityWithFlag component.
- * @property nationality The country name to display with flag.
+ * @property nationality The ISO country code to display with flag and label.
  */
 interface NationalityWithFlagProps {
   nationality: string;
 }
 
 /**
- * Displays a nationality name with its corresponding country flag.
+ * Displays a nationality with its corresponding country flag and label.
  * Uses country-flag-icons library and adapts to the current theme.
  *
  * @param props NationalityWithFlagProps
@@ -22,24 +22,24 @@ const NationalityWithFlag: React.FC<NationalityWithFlagProps> = ({
   nationality,
 }) => {
   const theme = useSelector((state: State) => state.theme);
-  const code = countryLabelToCodeMap.get(nationality) || "";
-  const FlagComponent = code
+  const countryLabel = countryLabelToCodeMap.get(nationality) || nationality;
+  const FlagComponent = nationality
     ? (
         FlagIcons as Record<
           string,
           React.ComponentType<React.SVGProps<SVGSVGElement>>
         >
-      )[code]
+      )[nationality]
     : null;
 
   return (
     <span
       style={{ display: "inline-flex", alignItems: "center", marginRight: 8 }}
     >
-      {nationality}
+      {countryLabel}
       {FlagComponent && (
         <FlagComponent
-          aria-label={nationality}
+          aria-label={countryLabel}
           style={{
             marginLeft: 4,
             width: 18,
