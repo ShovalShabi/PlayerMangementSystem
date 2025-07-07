@@ -3,6 +3,7 @@ package org.example.entities;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -40,15 +41,17 @@ public class PlayerEntity {
     /**
      * Set of nationalities associated with the player
      */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "player_id")
+    @ManyToMany()
+    @JoinTable(name = "player_nationalities", joinColumns = @JoinColumn(name = "player_id"), inverseJoinColumns = @JoinColumn(name = "nationality"))
+    @EqualsAndHashCode.Exclude
     private Set<NationalityEntity> nationalities;
 
     /**
      * Set of positions associated with the player
      */
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "player_id")
+    @ManyToMany()
+    @JoinTable(name = "player_positions", joinColumns = @JoinColumn(name = "player_id"), inverseJoinColumns = @JoinColumn(name = "position"))
+    @EqualsAndHashCode.Exclude
     private Set<PositionEntity> positions;
 
     /**
