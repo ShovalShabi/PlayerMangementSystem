@@ -237,7 +237,7 @@ const listOfCountries = [
   { code: "UA", label: "Ukraine" },
   { code: "AE", label: "United Arab Emirates" },
   { code: "GB", label: "United Kingdom of Great Britain and Northern Ireland" },
-  { code: "US", label: "USA" },
+  { code: "US", label: "United States of America" },
   { code: "UY", label: "Uruguay" },
   { code: "UZ", label: "Uzbekistan" },
   { code: "VU", label: "Vanuatu" },
