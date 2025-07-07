@@ -3,6 +3,7 @@ package org.example.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.utils.enums.Nationality;
 import org.example.utils.enums.Positions;
 
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ public class UpdatePlayerDTO {
     /**
      * Set of nationalities (optional)
      */
-    private Set<String> nationalities;
+    private Set<Nationality> nationalities;
     /**
      * Set of positions (optional)
      */
