@@ -134,7 +134,7 @@ public class PlayerController {
      * @return list of all players
      */
     @GetMapping("/all")
-    @Profile({"dev", "test"})
+    @Profile({ "dev", "test" })
     public ResponseEntity<List<PlayerDTO>> getAll() {
         return ResponseEntity.ok(playerService.getAll());
     }
@@ -145,7 +145,7 @@ public class PlayerController {
      * @return HTTP 200 if deleted
      */
     @DeleteMapping("/all")
-    @Profile({"dev", "test"})
+    @Profile({ "dev", "test" })
     public ResponseEntity<Void> deleteAll() {
         playerService.deleteAll();
         return ResponseEntity.ok().build();
