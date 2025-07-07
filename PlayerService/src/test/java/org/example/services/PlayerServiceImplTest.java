@@ -7,7 +7,10 @@ import org.example.dtos.UpdatePlayerDTO;
 import org.example.entities.NationalityEntity;
 import org.example.entities.PlayerEntity;
 import org.example.entities.PositionEntity;
+import org.example.repositories.NationalityRepository;
 import org.example.repositories.PlayerRepository;
+import org.example.repositories.PositionRepository;
+import org.example.utils.enums.Nationality;
 import org.example.utils.enums.Positions;
 import org.example.utils.enums.SortBy;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +47,10 @@ class PlayerServiceImplTest {
     @Mock
     private PlayerRepository playerRepository;
     @Mock
+    private NationalityRepository nationalityRepository;
+    @Mock
+    private PositionRepository positionRepository;
+    @Mock
     private Validator validator;
     @Mock
     private MultipartFile multipartFile;
@@ -61,7 +68,7 @@ class PlayerServiceImplTest {
                 1L,
                 "Lionel",
                 "Messi",
-                Set.of("Argentina"),
+                Set.of(Nationality.AR),
                 LocalDate.of(1987, 6, 24),
                 Set.of(Positions.ST, Positions.CAM),
                 1.70,
@@ -71,8 +78,8 @@ class PlayerServiceImplTest {
                 1L,
                 "Lionel",
                 "Messi",
-                new HashSet<>(Set.of(new NationalityEntity(null, "Argentina"))),
-                new HashSet<>(Set.of(new PositionEntity(null, Positions.ST))),
+                new HashSet<>(Set.of(new NationalityEntity(Nationality.AR, null))),
+                new HashSet<>(Set.of(new PositionEntity(Positions.ST, null))),
                 LocalDate.of(1987, 6, 24),
                 1.70,
                 new Date(),
@@ -80,7 +87,7 @@ class PlayerServiceImplTest {
         validUpdatePlayerDTO = new UpdatePlayerDTO(
                 "Leo",
                 "Messi",
-                Set.of("Argentina"),
+                Set.of(Nationality.AR),
                 Set.of(Positions.ST),
                 LocalDate.of(1987, 6, 24),
                 1.70);
@@ -93,6 +100,10 @@ class PlayerServiceImplTest {
         void createsPlayerSuccessfully() {
 
             when(playerRepository.save(any(PlayerEntity.class))).thenReturn(validPlayerEntity);
+            when(nationalityRepository.findOrCreate(any(Nationality.class)))
+                    .thenReturn(new NationalityEntity(Nationality.AR, null));
+            when(positionRepository.findOrCreate(any(Positions.class)))
+                    .thenReturn(new PositionEntity(Positions.ST, null));
 
             PlayerDTO result = playerService.createPlayer(validPlayerDTO);
             assertThat(result.getFirstName()).isEqualTo("Lionel");
@@ -172,6 +183,10 @@ class PlayerServiceImplTest {
             when(playerRepository.findById(anyLong())).thenReturn(Optional.of(validPlayerEntity));
             when(playerRepository.saveAndFlush(any(PlayerEntity.class))).thenReturn(validPlayerEntity);
             when(validator.validate(any(PlayerDTO.class))).thenReturn(Collections.emptySet());
+            when(nationalityRepository.findOrCreate(any(Nationality.class)))
+                    .thenReturn(new NationalityEntity(Nationality.AR, null));
+            when(positionRepository.findOrCreate(any(Positions.class)))
+                    .thenReturn(new PositionEntity(Positions.ST, null));
 
             PlayerDTO result = playerService.updatePlayer(1L, validUpdatePlayerDTO);
             assertThat(result.getFirstName()).isEqualTo("Leo");
@@ -190,6 +205,10 @@ class PlayerServiceImplTest {
         void throwsIfValidationFails() {
             when(playerRepository.findById(anyLong())).thenReturn(Optional.of(validPlayerEntity));
             when(validator.validate(any(PlayerDTO.class))).thenReturn(Set.of(mock(ConstraintViolation.class)));
+            when(nationalityRepository.findOrCreate(any(Nationality.class)))
+                    .thenReturn(new NationalityEntity(Nationality.AR, null));
+            when(positionRepository.findOrCreate(any(Positions.class)))
+                    .thenReturn(new PositionEntity(Positions.ST, null));
             ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                     () -> playerService.updatePlayer(1L, validUpdatePlayerDTO));
             assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
@@ -245,7 +264,7 @@ class PlayerServiceImplTest {
     class GetAll {
         @Test
         void getsAllPlayers() {
-            when(playerRepository.findAll()).thenReturn(List.of(validPlayerEntity));
+            when(playerRepository.findAllWithNationalitiesAndPositions()).thenReturn(List.of(validPlayerEntity));
             List<PlayerDTO> result = playerService.getAll();
             assertThat(result).hasSize(1);
         }

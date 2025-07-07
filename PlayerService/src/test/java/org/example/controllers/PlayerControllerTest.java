@@ -71,7 +71,7 @@ class PlayerControllerTest {
                 1L,
                 "Lionel",
                 "Messi",
-                Set.of("Argentina"),
+                Set.of(Nationality.AR),
                 LocalDate.of(1987, 6, 24),
                 new HashSet<>(List.of(Positions.ST, Positions.CAM)),
                 1.70,
@@ -83,7 +83,7 @@ class PlayerControllerTest {
         return new UpdatePlayerDTO(
                 "Cristiano",
                 "Ronaldo",
-                Set.of("Portugal"),
+                Set.of(Nationality.PT),
                 new HashSet<>(List.of(Positions.ST)),
                 LocalDate.of(1985, 2, 5),
                 1.87);
@@ -392,7 +392,7 @@ class PlayerControllerTest {
     void handleMultipleNationalitiesAndPositions() throws Exception {
         // Arrange
         PlayerDTO playerWithMultiple = createSamplePlayerDTO();
-        playerWithMultiple.setNationalities(new HashSet<>(Arrays.asList("Argentina", "Spain")));
+        playerWithMultiple.setNationalities(new HashSet<>(Arrays.asList(Nationality.AR, Nationality.ES)));
         playerWithMultiple.setPositions(new HashSet<>(Arrays.asList(
                 Positions.ST,
                 Positions.CAM,
