@@ -6,6 +6,7 @@ import type {
   GridPaginationModel,
   GridSlotsComponent,
   GridRowParams,
+  GridSortModel,
 } from "@mui/x-data-grid";
 import PlayerDTO from "../../dtos/PlayerDTO";
 
@@ -28,6 +29,7 @@ interface PlayerTableProps {
   pageSizeOptions: number[];
   rowCount: number;
   onPaginationModelChange: (model: GridPaginationModel) => void;
+  onSortModelChange: (model: GridSortModel) => void;
   onRowClick: (params: GridRowParams) => void;
 }
 
@@ -44,6 +46,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
   pageSizeOptions,
   rowCount,
   onPaginationModelChange,
+  onSortModelChange,
   onRowClick,
 }) => (
   <CustomDataGrid
@@ -64,6 +67,7 @@ const PlayerTable: React.FC<PlayerTableProps> = ({
       } as Partial<GridSlotsComponent>
     }
     onRowClick={onRowClick}
+    onSortModelChange={onSortModelChange}
   />
 );
 
