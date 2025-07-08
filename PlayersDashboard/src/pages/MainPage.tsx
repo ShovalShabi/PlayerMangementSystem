@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import type { GridPaginationModel, GridRowParams } from "@mui/x-data-grid";
+import type {
+  GridPaginationModel,
+  GridRowParams,
+  GridSortModel,
+} from "@mui/x-data-grid";
 import PlayerDTO from "../dtos/PlayerDTO";
 import ThemeModeSwitcher from "../components/ThemeModeSwitcher";
 import FilterComponentDrawer from "../components/FilterComponentDrawer";
@@ -20,6 +24,7 @@ import PlayerTable from "../components/player/PlayerTable";
 import UploadCSVButton from "../components/player/UploadCSVButton";
 import DashboardHeader from "../components/player/DashboardHeader";
 import { getPlayerColumns } from "../components/playerColumns";
+import { SortBy } from "../utils/enums/sortBy";
 
 /**
  * Main page component for the Player Dashboard application.
@@ -49,6 +54,8 @@ const MainPage: React.FC = () => {
     storedMeasurement ? storedMeasurement.toLowerCase() : "m"
   );
   const [csvUploadLoading, setCsvUploadLoading] = useState(false);
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   // Filters state
   const [filters, setFilters] = useState(storedFilters);
@@ -79,6 +86,8 @@ const MainPage: React.FC = () => {
         currentFilters.positions.length > 0
           ? currentFilters.positions
           : undefined,
+      sortBy: sortBy ? SortBy[sortBy] : undefined,
+      order: sortDirection,
       page,
       size: currentFilters.rowsPerPage,
     };
@@ -158,6 +167,67 @@ const MainPage: React.FC = () => {
     }
   };
 
+  /**
+   * Handles sorting changes and updates the sortBy state.
+   * @param model The new sort model from the data grid.
+   */
+  const handleSortChange = async (model: GridSortModel) => {
+    if (model.length > 0) {
+      let newSortBy: SortBy = SortBy.NAME;
+      let newSortDirection: "asc" | "desc" = "asc";
+
+      // Determine the new sort field
+      switch (model[0].field) {
+        case "firstName":
+        case "lastName":
+          newSortBy = SortBy.NAME;
+          break;
+        case "age":
+          newSortBy = SortBy.AGE;
+          break;
+        case "height":
+          newSortBy = SortBy.HEIGHT;
+          break;
+        case "positions":
+          newSortBy = SortBy.POSITIONS;
+          break;
+        case "nationalities":
+          newSortBy = SortBy.NATIONALITY;
+          break;
+      }
+
+      // Determine the new sort direction
+      newSortDirection = model[0].sort === "desc" ? "desc" : "asc";
+
+      // Update state
+      setSortBy(newSortBy);
+      setSortDirection(newSortDirection);
+
+      setApiLoading(true);
+      try {
+        const params = getApiParams({
+          ...filters,
+        });
+        params.sortBy = SortBy[newSortBy];
+        params.order = newSortDirection;
+        const result = await handleGetPlayersBySortAndFilter(params, setAlert);
+        if (result) {
+          setPlayers(result.content || []);
+          setTotalPlayers(result.totalElements || 0);
+        } else {
+          setPlayers([]);
+          setTotalPlayers(0);
+        }
+      } catch (error) {
+        setPlayers([]);
+        setTotalPlayers(0);
+        console.error("Error fetching players:", error);
+      } finally {
+        setApiLoading(false);
+      }
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -230,6 +300,7 @@ const MainPage: React.FC = () => {
               setModalMode("update");
               setPlayerModalOpen(true);
             }}
+            onSortModelChange={handleSortChange}
           />
           <Box
             sx={{
